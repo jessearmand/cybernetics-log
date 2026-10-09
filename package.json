@@ -1,0 +1,35 @@
+{
+  "name": "cybernetics-log",
+  "version": "0.0.0",
+  "type": "module",
+  "imports": {
+    "#*": "./agent/*",
+    "#evals/*": "./evals/*"
+  },
+  "scripts": {
+    "build": "eve build",
+    "dev": "eve dev",
+    "start": "eve start",
+    "typecheck": "tsc",
+    "test": "node --test test/*.test.ts",
+    "check": "tsc && node --test test/*.test.ts",
+    "data:build": "python3 scripts/build_discourse.py && node scripts/sync-default-instruction.mjs",
+    "instruction:sync": "node scripts/sync-default-instruction.mjs"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.1",
+    "@vercel/connect": "2.2.0",
+    "ai": "^7.0.128",
+    "eve": "^0.75.1",
+    "just-bash": "^3.6.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "24.x",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "description": "eve agent that re-renders a styled page about the machine-consciousness discourse on X whenever a GitHub deployment of this repo succeeds."
+}
