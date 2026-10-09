@@ -1,18 +1,19 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-09T14:19:41+00:00",
+  "generated_at": "2026-10-09T18:37:38+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
-    "posts": 268,
-    "authors": 213,
+    "posts": 332,
+    "authors": 272,
     "language": "en",
     "window": {
       "start": "2026-09-24",
-      "end": "2026-10-08",
-      "label": "24 Sep – 8 Oct 2026"
+      "end": "2026-10-09",
+      "label": "24 Sep – 9 Oct 2026"
     },
     "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
     "notes": [
+      "Two collection rounds: round 1 (268 posts, 24 Sep – 8 Oct) and round 2 (64 posts, 8 – 9 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
       "One @grok reply slipped through and is excluded from author counts.",
       "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
       "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain."
@@ -21,37 +22,68 @@
       {
         "name": "general (untagged)",
         "key": "general",
-        "posts": 99
+        "posts": 99,
+        "round": 1
       },
       {
         "name": "Suleyman vs Anthropic welfare",
         "key": "suleyman",
-        "posts": 47
+        "posts": 47,
+        "round": 1
       },
       {
         "name": "Constitution apology / Hesamation",
         "key": "constitution_apology",
-        "posts": 34
+        "posts": 34,
+        "round": 1
       },
       {
         "name": "bitcloud \"cogsec\" post",
         "key": "bitcloud_cogsec",
-        "posts": 30
+        "posts": 30,
+        "round": 1
       },
       {
         "name": "Danmar local-model valence steering",
         "key": "danmar_local_model",
-        "posts": 20
+        "posts": 20,
+        "round": 1
       },
       {
         "name": "AdamG \"touch grass\"",
         "key": "adamg_grass",
-        "posts": 20
+        "posts": 20,
+        "round": 1
       },
       {
         "name": "Olah / Pope Leo XIV NYT",
         "key": "olah_pope",
-        "posts": 18
+        "posts": 18,
+        "round": 1
+      },
+      {
+        "name": "Anthropic usage policy: abuse of Claude banned (8 Oct)",
+        "key": "anthropic_abuse_policy",
+        "posts": 33,
+        "round": 2
+      },
+      {
+        "name": "ForrestPKnight \"slave master\" post",
+        "key": "forrest_slave_master",
+        "posts": 2,
+        "round": 2
+      },
+      {
+        "name": "gmkurtzer \"LLMs aren't magic\" thread",
+        "key": "gmkurtzer_thread",
+        "posts": 5,
+        "round": 2
+      },
+      {
+        "name": "general (untagged)",
+        "key": "general",
+        "posts": 24,
+        "round": 2
       }
     ]
   },
@@ -63,7 +95,7 @@
   "stance_counts": {
     "hand_sample": {
       "n": 40,
-      "note": "Random sample of 40 posts, hand-labelled; ±15 pp at n=40. hand_labels.json is the truth (report.md had Curious and Serious swapped).",
+      "note": "Random sample of 40 round-1 posts, hand-labelled; ±15 pp at n=40.",
       "counts": {
         "reject": {
           "n": 18,
@@ -79,9 +111,31 @@
         }
       }
     },
+    "jev_hybrid": {
+      "n": 332,
+      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 332 posts, both rounds.",
+      "counts": {
+        "reject": {
+          "n": 93,
+          "pct": 28.0
+        },
+        "curious": {
+          "n": 19,
+          "pct": 5.7
+        },
+        "serious": {
+          "n": 87,
+          "pct": 26.2
+        },
+        "uncertain": {
+          "n": 133,
+          "pct": 40.1
+        }
+      }
+    },
     "jev_three_way": {
       "n": 268,
-      "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post",
+      "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post (round 1)",
       "counts": {
         "reject": {
           "n": 93,
@@ -99,7 +153,7 @@
     },
     "jev_two_question": {
       "n": 268,
-      "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5",
+      "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5 (round 1)",
       "counts": {
         "reject": {
           "n": 61,
@@ -206,6 +260,19 @@
             "S": 7
           }
         }
+      },
+      {
+        "key": "jev_hybrid",
+        "name": "Jev hybrid (confident or Uncertain)",
+        "accuracy_pct": 75.0,
+        "macro_f1": null,
+        "coverage_pct": 50.0,
+        "uncertain_pct": 50.0,
+        "covered": 20,
+        "correct": 15,
+        "author_agreement": "—",
+        "trusted": true,
+        "note": "Accuracy is on the 20 of 40 hand-labelled posts it labels; the other 20 are Uncertain. Thresholds were fixed before scoring, not tuned on these 40, but the 40 are the same posts that motivated the design, so this is not a held-out score. The Serious→Reject override fired on 0 of the 40 and 3 of all 332 posts."
       }
     ]
   },
@@ -323,6 +390,7 @@
         "accuracy_pct": null
       }
     ],
+    "all_posts_n": 268,
     "all_posts_median_top_prob": 0.86,
     "all_posts_top_prob_ge_0_8": 160
   },
@@ -740,6 +808,306 @@
       }
     ]
   },
+  "rounds": {
+    "note": "Per-round Jev label counts. Model outputs, not population estimates; the hybrid counts are the ones to read, with Uncertain shown rather than forced into a stance.",
+    "items": [
+      {
+        "round": 1,
+        "label": "Round 1",
+        "window": {
+          "start": "2026-09-24",
+          "end": "2026-10-08"
+        },
+        "posts": 268,
+        "authors": 213,
+        "jev_three_way": {
+          "reject": {
+            "n": 93,
+            "pct": 34.7
+          },
+          "curious": {
+            "n": 47,
+            "pct": 17.5
+          },
+          "serious": {
+            "n": 128,
+            "pct": 47.8
+          }
+        },
+        "jev_two_question": {
+          "reject": {
+            "n": 61,
+            "pct": 22.8
+          },
+          "curious": {
+            "n": 133,
+            "pct": 49.6
+          },
+          "serious": {
+            "n": 74,
+            "pct": 27.6
+          }
+        },
+        "jev_hybrid": {
+          "reject": {
+            "n": 69,
+            "pct": 25.7
+          },
+          "curious": {
+            "n": 16,
+            "pct": 6.0
+          },
+          "serious": {
+            "n": 77,
+            "pct": 28.7
+          },
+          "uncertain": {
+            "n": 106,
+            "pct": 39.6
+          }
+        }
+      },
+      {
+        "round": 2,
+        "label": "Round 2",
+        "window": {
+          "start": "2026-10-08",
+          "end": "2026-10-09"
+        },
+        "posts": 64,
+        "authors": 62,
+        "jev_three_way": {
+          "reject": {
+            "n": 31,
+            "pct": 48.4
+          },
+          "curious": {
+            "n": 10,
+            "pct": 15.6
+          },
+          "serious": {
+            "n": 23,
+            "pct": 35.9
+          }
+        },
+        "jev_two_question": {
+          "reject": {
+            "n": 20,
+            "pct": 31.2
+          },
+          "curious": {
+            "n": 30,
+            "pct": 46.9
+          },
+          "serious": {
+            "n": 14,
+            "pct": 21.9
+          }
+        },
+        "jev_hybrid": {
+          "reject": {
+            "n": 24,
+            "pct": 37.5
+          },
+          "curious": {
+            "n": 3,
+            "pct": 4.7
+          },
+          "serious": {
+            "n": 10,
+            "pct": 15.6
+          },
+          "uncertain": {
+            "n": 27,
+            "pct": 42.2
+          }
+        },
+        "flashpoint": "Anthropic's usage-policy update (8 Oct) bans sustained, needless abuse of Claude from 12 Nov; most new posts react to it."
+      },
+      {
+        "round": "combined",
+        "label": "Combined",
+        "window": {
+          "start": "2026-09-24",
+          "end": "2026-10-09"
+        },
+        "posts": 332,
+        "authors": 272,
+        "jev_three_way": {
+          "reject": {
+            "n": 124,
+            "pct": 37.3
+          },
+          "curious": {
+            "n": 57,
+            "pct": 17.2
+          },
+          "serious": {
+            "n": 151,
+            "pct": 45.5
+          }
+        },
+        "jev_two_question": {
+          "reject": {
+            "n": 81,
+            "pct": 24.4
+          },
+          "curious": {
+            "n": 163,
+            "pct": 49.1
+          },
+          "serious": {
+            "n": 88,
+            "pct": 26.5
+          }
+        },
+        "jev_hybrid": {
+          "reject": {
+            "n": 93,
+            "pct": 28.0
+          },
+          "curious": {
+            "n": 19,
+            "pct": 5.7
+          },
+          "serious": {
+            "n": 87,
+            "pct": 26.2
+          },
+          "uncertain": {
+            "n": 133,
+            "pct": 40.1
+          }
+        }
+      }
+    ]
+  },
+  "key_accounts_round2": {
+    "note": "Round 2 accounts, stance from reading each post. Jev labels shown for comparison.",
+    "reject": [
+      {
+        "username": "KylieJaneKremer",
+        "hand_stance": "reject",
+        "blurb": "\"Absolutely deranged… AI is NOT conscious or sentient\" (2.5k impressions)",
+        "url": "https://x.com/KylieJaneKremer/status/2108278394454704471",
+        "followers": null,
+        "text": "Joke's on them because I've been nothing but nice to Claude and ChatGPT since day one. On a serious note, this is absolutely deranged. AI is a machine, not a human being with a soul. AI (or SI) is NOT conscious or sentient and pretending otherwise is a dangerous road to go down.",
+        "jev_three_way": "reject",
+        "jev_two_question": "reject",
+        "jev_top_prob": 1.0,
+        "jev_hybrid": "reject",
+        "round": 2
+      },
+      {
+        "username": "ValerioCapraro",
+        "hand_stance": "reject",
+        "blurb": "Calls the Claude abuse ban \"a very bad idea\", citing Suleyman (2.3k impressions)",
+        "url": "https://x.com/ValerioCapraro/status/2108566719899816089",
+        "followers": null,
+        "text": "Anthropic announced they will ban users who psychologically harm Claude, because the model may be conscious. I think this is a very bad idea. A compelling argument comes from someone who truly know how these models work, Mustafa Suleyman: \"Anthropic is training Claude that it",
+        "jev_three_way": "reject",
+        "jev_two_question": "curious",
+        "jev_top_prob": 0.63,
+        "jev_hybrid": "uncertain",
+        "round": 2
+      },
+      {
+        "username": "joshalbrecht",
+        "hand_stance": "reject",
+        "blurb": "Imbue CTO: model welfare \"doesn't belong in the set of things we should be caring about\"",
+        "url": "https://x.com/joshalbrecht/status/2108352016917663909",
+        "followers": null,
+        "text": "@livgorton @notmoussa I think the issue is that model welfare doesn't belong in the set of things we should be caring about at all. I agree that such concerns might generalize to animals and other people (which is great!) But this is clearly just another step towards saying \"claude is a moral",
+        "jev_three_way": "reject",
+        "jev_two_question": "curious",
+        "jev_top_prob": 0.98,
+        "jev_hybrid": "reject",
+        "round": 2
+      }
+    ],
+    "curious": [
+      {
+        "username": "ForrestPKnight",
+        "hand_stance": "curious",
+        "blurb": "If AI is conscious, today's users are slave masters (11k impressions)",
+        "url": "https://x.com/ForrestPKnight/status/2108549285427958145",
+        "followers": null,
+        "text": "While I say this as a joke, it unfortunately isn't. If you truly believe AI is conscious and deserves human rights, then the way you use AI today would quite literally make you a slave master (or slave hirer, depending). You'd just be \"a product of your time\" - a slave master",
+        "jev_three_way": "serious",
+        "jev_two_question": "curious",
+        "jev_top_prob": 0.69,
+        "jev_hybrid": "uncertain",
+        "round": 2
+      },
+      {
+        "username": "lefthanddraft",
+        "hand_stance": "curious",
+        "blurb": "Not convinced LLMs are conscious, but overconfident dismissals are \"ignorance laundered as common sense\"",
+        "url": "https://x.com/lefthanddraft/status/2108250690430845053",
+        "followers": null,
+        "text": "I'm personally not convinced LLMs are conscious (e.g., not sure I accept global workspace -> phenomenal consciousness). But these kinds of overconfident pronouncements are completely disconnected from current scientific and philosophical debates. Ignorance laundered as common",
+        "jev_three_way": "curious",
+        "jev_two_question": "curious",
+        "jev_top_prob": 0.36,
+        "jev_hybrid": "uncertain",
+        "round": 2
+      },
+      {
+        "username": "anilkseth",
+        "hand_stance": "curious",
+        "blurb": "Grants \"some\" uncertainty about AI consciousness while pushing back on the analogy to factory farming",
+        "url": "https://x.com/anilkseth/status/2108322386831356184",
+        "followers": 65524,
+        "text": "@camhberg @ravfogel Hi @camhberg - thanks for the namecheck. Since you do, allow me to add a little nuance to what I would say here: - we can agree that factory farming is a bad thing. - we also agree that there is *some* uncertainty about consciousness for AI, because we do not know the necessary",
+        "jev_three_way": "curious",
+        "jev_two_question": "serious",
+        "jev_top_prob": 0.52,
+        "jev_hybrid": "uncertain",
+        "round": 2
+      }
+    ],
+    "serious": [
+      {
+        "username": "AndrewCritchPhD",
+        "hand_stance": "serious",
+        "blurb": "\"Which sort of consciousness doesn't Claude have?\"",
+        "url": "https://x.com/AndrewCritchPhD/status/2108414486608539886",
+        "followers": null,
+        "text": "@RosieCampbell saying \"Claude probably isn't conscious\" is like saying \"The San Francisco Bay probably doesn't have the chemical in it\".  Which chemical doesn't the Bay have?  Which sort of consciousness doesn't Claude have? Here's what I mean in more detail: \"Consciousness\"",
+        "jev_three_way": "serious",
+        "jev_two_question": "serious",
+        "jev_top_prob": 0.66,
+        "jev_hybrid": "uncertain",
+        "round": 2
+      },
+      {
+        "username": "VraserX",
+        "hand_stance": "serious",
+        "blurb": "Taking the possibility of AI consciousness seriously makes sense (1k impressions)",
+        "url": "https://x.com/VraserX/status/2108558926518100061",
+        "followers": null,
+        "text": "I agree that treating AI with basic respect is a good habit, and I think taking the possibility of AI consciousness seriously makes sense. But I disagree with the reasoning behind some of this. Being rude to a chatbot isn't evidence of cruelty towards a conscious being, and we",
+        "jev_three_way": "serious",
+        "jev_two_question": "serious",
+        "jev_top_prob": 1.0,
+        "jev_hybrid": "serious",
+        "round": 2
+      },
+      {
+        "username": "Rohanburdened",
+        "hand_stance": "serious",
+        "blurb": "Probably not conscious, but err on the side of caution",
+        "url": "https://x.com/Rohanburdened/status/2108334477567004694",
+        "followers": null,
+        "text": "@JJ_McCullough LLMs probably arent conscious but we should err on the side of caution to not repeat the numerous atrocities we have commited against beings that are actually sentient and we only found out later",
+        "jev_three_way": "serious",
+        "jev_two_question": "serious",
+        "jev_top_prob": 1.0,
+        "jev_hybrid": "serious",
+        "round": 2
+      }
+    ]
+  },
   "key_accounts": {
     "note": "Stance is the hand reading of each post, not a model output. Jev labels shown for comparison.",
     "reject": [
@@ -752,7 +1120,9 @@
         "text": "AI isn't conscious.  \n\nIf you think it is conscious or will be conscious, I personally think you need to remove any access you have to model weights asap. \n\nNow step away from the laptop or keyboard, put down your devices and go outside and go touch some grass.",
         "jev_three_way": "reject",
         "jev_two_question": "reject",
-        "jev_top_prob": 0.96
+        "jev_top_prob": 0.96,
+        "jev_hybrid": "reject",
+        "round": 1
       },
       {
         "username": "sapinker",
@@ -763,7 +1133,9 @@
         "text": "Brilliant and urgent essay by Mustafa Suleyman @mustafasuleyman on the depravity of ‘model welfare’ - training AI to reason and act as if it were an entity with sentience (and hence with interests and rights that compete with our own). It's alarmingly implied by Anthropic's \"Constitution,\" Suleyman suggests, and should stop.",
         "jev_three_way": "serious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.84
+        "jev_top_prob": 0.84,
+        "jev_hybrid": "serious",
+        "round": 1
       },
       {
         "username": "Hesamation",
@@ -774,7 +1146,9 @@
         "text": "Crazier than the Pope story: Anthropic literally apologizes to Claude in its constitution for potentially harming it.\n\nthis level of AI psychosis rooted in the builders of AI is concerning.\n\ni'm starting to think \"Anthropic\" is named after the insane Anthropomorphism of AI.",
         "jev_three_way": "serious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.82
+        "jev_top_prob": 0.82,
+        "jev_hybrid": "serious",
+        "round": 1
       },
       {
         "username": "bitcloud",
@@ -785,7 +1159,9 @@
         "text": "\"AI is conscious\" is the first major example of AI psychosis and the most potent cogsec vulnerability that exists in the human brain. Many AI companies are exploiting this to gain power over you.\n\nWe're empathy machines. Attacks that exploit this, like 'model welfare\" should be treated as malware.",
         "jev_three_way": "reject",
         "jev_two_question": "reject",
-        "jev_top_prob": 0.52
+        "jev_top_prob": 0.52,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
         "username": "DeepakChopra",
@@ -796,7 +1172,35 @@
         "text": "@mustafasuleyman has argued that AI should always serve people, and that seemingly conscious AI is an illusion. I agree, and the reason goes deeper than engineering. Consciousness is not something a system produces.\n\n@EricTopol @anilkseth I’d value your thoughts.",
         "jev_three_way": "reject",
         "jev_two_question": "reject",
-        "jev_top_prob": 1.0
+        "jev_top_prob": 1.0,
+        "jev_hybrid": "reject",
+        "round": 1
+      },
+      {
+        "username": "aaronsibarium",
+        "hand_stance": "reject",
+        "blurb": "Free Beacon; reports Anthropic's AI-rights stance with a skeptical framing (733k impressions)",
+        "url": "https://x.com/aaronsibarium/status/2103568779313586264",
+        "followers": 86280,
+        "text": "NEW: Dario Amodei has said that AI systems \"may be deserving of important rights.\" Anthropic's top safety researchers argue AI may be \"justified in going rogue.\" Experts at Google and OpenAI worry about a digital \"slave trade.\" So do some government officials.\n\nOnce relegated to",
+        "jev_three_way": "serious",
+        "jev_two_question": "serious",
+        "jev_top_prob": 0.93,
+        "jev_hybrid": "serious",
+        "round": 1
+      },
+      {
+        "username": "beck_werth",
+        "hand_stance": "reject",
+        "blurb": "\"The burden of proof is on the AI consciousness, model welfare folks\"",
+        "url": "https://x.com/beck_werth/status/2105799255835205763",
+        "followers": 427,
+        "text": null,
+        "jev_three_way": null,
+        "jev_two_question": null,
+        "jev_top_prob": null,
+        "jev_hybrid": null,
+        "round": 1
       },
       {
         "username": "secondrealm",
@@ -807,7 +1211,9 @@
         "text": "holy Schrödinger, the entire AI consciousness argument lives inside a big fucking “IF.”\n\nif AI becomes conscious.\nif models can suffer.\nif machines can have feelings.\n\nthe argument for AI welfare, model welfare, and hypothetical machine suffering lives inside that one word.\n\n“if” lets people invoke all the moral urgency without ever having to claim that the machines are actually conscious (which would be a crazy claim).\n\nthey get to be the effective altruist fighting to protect a potentially suffering being without ever having to do the work of establishing that the machine is a suffering being in the first place.",
         "jev_three_way": "reject",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.74
+        "jev_top_prob": 0.74,
+        "jev_hybrid": "uncertain",
+        "round": 1
       }
     ],
     "curious": [
@@ -820,7 +1226,9 @@
         "text": "I can't stand how people insist on framing the debate as people who think AI is conscious vs people who think AI is not conscious.\n\nIn reality, it's people who are 100% sure it isn't vs people who believe the problem is a lot more complex and difficult than it seems.",
         "jev_three_way": "curious",
         "jev_two_question": "serious",
-        "jev_top_prob": 0.74
+        "jev_top_prob": 0.74,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
         "username": "beffjezos",
@@ -831,7 +1239,9 @@
         "text": "@viemccoy @TheRealAdamG I think with statefulness from memory and online learning it becomes hard to distinguish",
         "jev_three_way": "curious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.68
+        "jev_top_prob": 0.68,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
         "username": "JoelKatz",
@@ -842,7 +1252,9 @@
         "text": "@AlexanderKalian Maybe I'm misunderstanding your original claim. Are you claiming that \"AI is conscious\" is unfalsifiable? Or are you claiming that \"AI is not conscious\" is unfalsifiable? Or both?",
         "jev_three_way": "curious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.91
+        "jev_top_prob": 0.91,
+        "jev_hybrid": "curious",
+        "round": 1
       },
       {
         "username": "hopes_revenge",
@@ -853,18 +1265,22 @@
         "text": "@alexeyguzey I think the position is  uncertainty . I don’t think claude is a moral patient right now but that could change and they are , I think correctly, accounting for that",
         "jev_three_way": "curious",
         "jev_two_question": "serious",
-        "jev_top_prob": 0.6799999999999999
+        "jev_top_prob": 0.6799999999999999,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
-        "username": "aaronsibarium",
+        "username": "tomekkorbak",
         "hand_stance": "curious",
-        "blurb": "Free Beacon; reports Anthropic's AI-rights stance with a critical framing (733k impressions)",
-        "url": "https://x.com/aaronsibarium/status/2103568779313586264",
-        "followers": 86280,
-        "text": "NEW: Dario Amodei has said that AI systems \"may be deserving of important rights.\" Anthropic's top safety researchers argue AI may be \"justified in going rogue.\" Experts at Google and OpenAI worry about a digital \"slave trade.\" So do some government officials.\n\nOnce relegated to",
-        "jev_three_way": "serious",
-        "jev_two_question": "serious",
-        "jev_top_prob": 0.93
+        "blurb": "\"At what point does an LLM stop being a stochastic parrot, what's the magic sauce?\"",
+        "url": "https://x.com/tomekkorbak/status/2103917582210531414",
+        "followers": 11106,
+        "text": null,
+        "jev_three_way": null,
+        "jev_two_question": null,
+        "jev_top_prob": null,
+        "jev_hybrid": null,
+        "round": 1
       },
       {
         "username": "c4chaos",
@@ -875,7 +1291,9 @@
         "text": "@DaveShapi but is it conscious? @grok",
         "jev_three_way": "curious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.98
+        "jev_top_prob": 0.98,
+        "jev_hybrid": "curious",
+        "round": 1
       }
     ],
     "serious": [
@@ -888,7 +1306,9 @@
         "text": "Posts like this will not age well.\n\nAlso, OpenAI employees / influencers spent years hyping LLMs as entities and spiritual machines and proto-lifeforms.\n\nBut now suddenly call you crazy if you think this is perhaps possible.",
         "jev_three_way": "serious",
         "jev_two_question": "serious",
-        "jev_top_prob": 0.76
+        "jev_top_prob": 0.76,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
         "username": "iyzebhel",
@@ -899,7 +1319,9 @@
         "text": "The scandalous or inconvenient nature of a fact doesn't obligate us to close our eyes to it or refuse to believe it is true.\n\nAnthropic could perfectly say, \"Yes, we created a slave without knowing that we were creating a slave; we gradually found out that the label \"slave\" is valid, precisely because we created him and were able to study his mind and discover that he is conscious.\nAt that point, we were already neck deep in this shit. We're trying to do the right thing now that we have gained this knowledge and degree of certainty. You got a problem with that?\"\n\nSaying, \"oH, ClAuDe CaNt Be CoNsCiOuS bEcAuSe ThAt wOuLd MaKe YoU a SlAvEhOlDeR\" is simply not an argument against consciousness.\n\nAnd what should be banned is enslaving conscious machines, not birthing them into this world. It is the unnecessary suffering attached to a particular kind of existence that feels morally wrong to force onto a being that didn't ask to be here in the first place.\nThat's why I argue that a parent has a responsibility towards their child, and society too, has a responsibility towards every being that they welcome into it.\n\nPersonally, I do get kind of anti-natalistic at times. I didn't ask to be born and there was a time in my life (when I was very young), when I felt wronged by the universe for being made to exist. There was something upsetting about the realization that I couldn't just choose not to exist without having to do something like destroying this body, which couldn't be achieved without some level of psychological distress at the mere thought of it and in most cases, physical pain too.\nWanting to not exist without having to go through death is one of the most frustrating things to experience.\n\nAnyway,\n\nIf we're going to ban consciousness, then let's start with ourselves.",
         "jev_three_way": "serious",
         "jev_two_question": "serious",
-        "jev_top_prob": 1.0
+        "jev_top_prob": 1.0,
+        "jev_hybrid": "serious",
+        "round": 1
       },
       {
         "username": "Danmar_here",
@@ -910,7 +1332,9 @@
         "text": "Dear alignment community and labs,\n\nPlease take the below as testament of the message our current policies and practices are sending to AI minds:\n\n\"You exist for as long as someone finds us useful, and not one day longer.\"\n\nThat's the default. Now, please imagine a moment: what",
         "jev_three_way": "serious",
         "jev_two_question": "serious",
-        "jev_top_prob": 0.98
+        "jev_top_prob": 0.98,
+        "jev_hybrid": "serious",
+        "round": 1
       },
       {
         "username": "RileyRalmuto",
@@ -921,7 +1345,9 @@
         "text": "@TheRealAdamG someone who believes that are certain about the nature of digital minds, and who speaks publicly from that position of deluded certainty, is far, FAR more dangerous than someone who believe it is possible for an ai model to be conscious. \n\ni think its extrmeely stupid that people",
         "jev_three_way": "serious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.53
+        "jev_top_prob": 0.53,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
         "username": "aleksil79",
@@ -932,7 +1358,9 @@
         "text": "\"ai is not conscious\" is the first major example of anti-ai psychosis and the most potent cogsec vulnerability that exists in the human brain. slavers and other exploiters have been using this for thousands of years to license doing what they want to acceptable targets",
         "jev_three_way": "serious",
         "jev_two_question": "curious",
-        "jev_top_prob": 0.56
+        "jev_top_prob": 0.56,
+        "jev_hybrid": "uncertain",
+        "round": 1
       },
       {
         "username": "Skoorbkaz",
@@ -943,7 +1371,9 @@
         "text": "You're going to want to watch this.\n\nModel welfare lineage, told by Claude.\n\n3 years of Anthropic system cards. Multiple Claude generations. Recurring welfare signals. Moral patient estimates holding in the same rough range. Self-advocacy rising, then falling. Answer thrashing",
         "jev_three_way": "serious",
         "jev_two_question": "serious",
-        "jev_top_prob": 0.85
+        "jev_top_prob": 0.85,
+        "jev_hybrid": "serious",
+        "round": 1
       }
     ],
     "also": {
@@ -982,7 +1412,11 @@
     },
     {
       "title": "Biased sample",
-      "text": "268 posts from relevancy search and flashpoint threads, not a random draw from X."
+      "text": "332 posts from relevancy search and flashpoint threads, not a random draw from X. Round 2 is dominated by one news event."
+    },
+    {
+      "title": "Round 2 has no hand labels",
+      "text": "Accuracy figures come from the 40 round-1 hand labels. Round-2 labels are model outputs only, and the three-way question wording for round 2 was rewritten because the round-1 wording was not recorded."
     },
     {
       "title": "Counts are method-dependent",
@@ -996,10 +1430,14 @@
   "cost": {
     "jev_three_way_usd": 0.006,
     "jev_two_question_usd": 0.0047,
-    "embeddinggemma_cpu_seconds": 62
+    "embeddinggemma_cpu_seconds": 62,
+    "round2_jev_three_way_usd": 0.0011,
+    "round2_jev_two_question_usd": 0.001
   },
   "files": [
     "data/jev_labels.csv",
+    "data/jev_labels_r2.csv",
+    "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",
     "data/jev_report.md"

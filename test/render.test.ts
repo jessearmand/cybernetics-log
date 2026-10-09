@@ -8,9 +8,9 @@ const meta = { renderedAt: "2026-10-09T00:00:00Z", model: "deepseek/deepseek-v4.
 
 test("render: every section is present and numbers come from the data", () => {
   const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
-  for (const id of ["stance", "methods", "confidence", "pair", "clusters", "accounts", "caveats"]) assert.match(html, new RegExp(`<section id="${id}"`));
-  assert.match(html, /<b>268<\/b> English posts/);
-  assert.match(html, /<b>213<\/b> authors/);
+  for (const id of ["stance", "methods", "confidence", "pair", "clusters", "accounts", "caveats", "rounds"]) assert.match(html, new RegExp(`<section id="${id}"`));
+  assert.match(html, /<b>332<\/b> English posts/);
+  assert.match(html, /<b>272<\/b> authors/);
   assert.match(html, /title="Reject: 18 \(45%\)"/);
   assert.match(html, /title="Curious: 10 \(25%\)"/);
   assert.match(html, /title="Serious: 12 \(30%\)"/);
@@ -18,6 +18,9 @@ test("render: every section is present and numbers come from the data", () => {
   assert.match(html, /title="Curious: 133 /);
   assert.match(html, /<b>55%<\/b>/);
   assert.match(html, /<b>47.5%<\/b>/);
+  assert.match(html, /Jev hybrid \(confident or Uncertain\) ★/);
+  assert.match(html, /title="Uncertain: 133 /);
+  assert.ok(!html.includes("report.md"));
   assert.match(html, /x\.com\/aleksil79\/status\/2105591033228890336/);
   assert.equal((html.match(/class="card"/g) ?? []).length, 8);
 });

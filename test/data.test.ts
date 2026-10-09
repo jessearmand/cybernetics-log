@@ -13,10 +13,18 @@ const count = (key: string) => rows.reduce<Record<string, number>>((acc, r) => (
 
 test("data: corpus matches the brief", () => {
   assert.equal(rows.length, 268);
-  assert.equal(discourse.corpus.posts, 268);
-  assert.equal(discourse.corpus.authors, 213);
+  assert.equal(discourse.corpus.posts, 332);
+  assert.equal(discourse.corpus.authors, 272);
   assert.equal(discourse.corpus.window.start, "2026-09-24");
-  assert.equal(discourse.corpus.window.end, "2026-10-08");
+  assert.equal(discourse.corpus.window.end, "2026-10-09");
+  const [r1, r2, all] = discourse.rounds.items;
+  assert.equal(r1!.posts, 268);
+  assert.equal(r2!.posts, 64);
+  assert.equal(all!.posts, 332);
+  const hyb = discourse.accuracy.methods.find((m) => m.key === "jev_hybrid") as { coverage_pct: number; accuracy_pct: number };
+  assert.equal(hyb.coverage_pct, 50);
+  assert.equal(hyb.accuracy_pct, 75);
+  assert.ok(!JSON.stringify(discourse.stance_counts).includes("report.md"));
 });
 
 test("data: hand sample is 45/25/30 from hand_labels.json (not report.md's swapped split)", () => {

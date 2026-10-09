@@ -39,8 +39,11 @@ const ACCENT_HEX: Record<Accent, [string, string]> = {
   slate: ["#334155", "#f1f5f9"],
 };
 
-const STANCE_COLOR = { reject: "#dc2626", curious: "#d97706", serious: "#2563eb" } as const;
-type StanceName = keyof typeof STANCE_COLOR;
+const STANCE_COLOR = { reject: "#dc2626", curious: "#d97706", serious: "#2563eb", uncertain: "#9ca3af" } as const;
+type StanceName = "reject" | "curious" | "serious";
+type BucketName = keyof typeof STANCE_COLOR;
+type Counts = Record<string, { n: number; pct: number }>;
+const bucketsOf = (c: Counts): BucketName[] => (c.uncertain ? [...STANCES, "uncertain"] : STANCES);
 const STANCES: StanceName[] = ["reject", "curious", "serious"];
 const CAP = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -83,7 +86,7 @@ function note(editorial: Editorial, key: SectionKey): string {
   return text ? `<p class="note">${prose(text)}</p>` : "";
 }
 
-function stackedBar(parts: { stance: StanceName; n: number; pct: number }[], label: string, sub: string): string {
+function stackedBar(parts: { stance: BucketName; n: number; pct: number }[], label: string, sub: string): string {
   const segs = parts
     .map(
       (p) =>
@@ -97,16 +100,19 @@ function stackedBar(parts: { stance: StanceName; n: number; pct: number }[], lab
 
 function stanceSection(d: Discourse, e: Editorial): string {
   const sc = d.stance_counts;
+  const hyb = sc.jev_hybrid.counts as Counts;
   const rows: [string, string, { n: number; pct: number }[]][] = [
     ["Hand sample", `n=${sc.hand_sample.n} random posts · ground truth`, STANCES.map((s) => sc.hand_sample.counts[s])],
+    ["Jev hybrid", `all ${sc.jev_hybrid.n} posts · confident labels + Uncertain`, bucketsOf(hyb).map((s) => hyb[s]!)],
     ["Jev three-way", `all ${sc.jev_three_way.n} posts`, STANCES.map((s) => sc.jev_three_way.counts[s])],
     ["Jev two-question", `all ${sc.jev_two_question.n} posts`, STANCES.map((s) => sc.jev_two_question.counts[s])],
     ["embeddinggemma-2", `all ${sc.embeddinggemma_2.n} posts · near chance`, STANCES.map((s) => sc.embeddinggemma_2.counts[s])],
   ];
   const ha = sc.hand_authors.counts;
   return `<section id="stance"><h2>Stance distribution</h2>${note(e, "stance")}
-<div class="legend">${STANCES.map((s) => `<span><i style="background:${STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
-<div class="bars">${rows.map(([l, sub, c]) => stackedBar(STANCES.map((s, i) => ({ stance: s, n: c[i]!.n, pct: c[i]!.pct })), l, sub)).join("")}</div>
+<div class="legend">${(["reject", "curious", "serious", "uncertain"] as BucketName[]).map((s) => `<span><i style="background:${STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
+<div class="bars">${rows.map(([l, sub, c]) => stackedBar(c.map((x, i) => ({ stance: (c.length === 4 ? bucketsOf(hyb) : STANCES)[i]!, n: x.n, pct: x.pct })), l, sub)).join("")}</div>
+<p class="fine">${esc(sc.jev_hybrid.note)}</p>
 <p class="fine">${esc(sc.hand_sample.note)} Of ${sc.hand_authors.n} hand-read authors: ${ha.reject} Reject, ${ha.curious} Curious, ${ha.serious} Serious.</p></section>`;
 }
 
@@ -119,11 +125,12 @@ function confusionTable(m: Record<string, Record<string, number>>): string {
 
 function methodsSection(d: Discourse, e: Editorial): string {
   const a = d.accuracy;
-  const best = Math.max(...a.methods.map((m) => m.accuracy_pct));
   const rows = a.methods
     .map((m) => {
+      const mm = m as { coverage_pct?: number; trusted?: boolean };
+      const cov = mm.coverage_pct != null ? `${mm.coverage_pct}%` : "100%";
       const held = "held_out_accuracy_pct" in m && m.held_out_accuracy_pct != null ? `${m.held_out_accuracy_pct}%` : "—";
-      return `<tr${m.accuracy_pct === best ? ' class="best"' : ""}><th scope="row">${esc(m.name)}</th><td><div class="acc"><span class="accbar" style="width:${m.accuracy_pct}%"></span><b>${m.accuracy_pct}%</b></div></td><td>${
+      return `<tr${mm.trusted ? ' class="best"' : ""}><th scope="row">${esc(m.name)}${mm.trusted ? " ★" : ""}</th><td><div class="acc"><span class="accbar" style="width:${m.accuracy_pct}%"></span><b>${m.accuracy_pct}%</b></div></td><td>${cov}</td><td>${
         m.macro_f1 ?? "—"
       }</td><td>${held}</td><td>${esc(m.author_agreement)}</td><td class="mnote">${esc(m.note)}</td></tr>`;
     })
@@ -133,8 +140,8 @@ function methodsSection(d: Discourse, e: Editorial): string {
     .map((m) => `<figure><figcaption>${esc(m.name)}</figcaption>${confusionTable((m as { confusion: Record<string, Record<string, number>> }).confusion)}</figure>`)
     .join("");
   return `<section id="methods"><h2>Method comparison</h2>${note(e, "methods")}
-<div class="tablewrap"><table class="methods"><thead><tr><th>Method</th><th>Accuracy on ${a.n_hand} hand labels</th><th>Macro-F1</th><th>Held-out</th><th>Author agreement</th><th>Notes</th></tr></thead>
-<tbody>${rows}<tr class="baseline"><th scope="row">Majority-class baseline</th><td><div class="acc"><span class="accbar" style="width:${a.majority_baseline_pct}%"></span><b>${a.majority_baseline_pct}%</b></div></td><td>—</td><td>—</td><td>—</td><td class="mnote">Always answer “Reject”.</td></tr></tbody></table></div>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Method</th><th>Accuracy on ${a.n_hand} hand labels</th><th>Coverage</th><th>Macro-F1</th><th>Held-out</th><th>Author agreement</th><th>Notes</th></tr></thead>
+<tbody>${rows}<tr class="baseline"><th scope="row">Majority-class baseline</th><td><div class="acc"><span class="accbar" style="width:${a.majority_baseline_pct}%"></span><b>${a.majority_baseline_pct}%</b></div></td><td>100%</td><td>—</td><td>—</td><td>—</td><td class="mnote">Always answer “Reject”.</td></tr></tbody></table></div>
 <div class="confusions">${confusions}</div></section>`;
 }
 
@@ -169,7 +176,7 @@ function confidenceSection(d: Discourse, e: Editorial): string {
 <div class="chartlegend">${series.map((s) => `<span><i style="background:${s.color}"></i>${esc(s.key)}</span>`).join("")}</div>
 <div class="chart">${svg}</div>
 <details><summary>Table</summary><div class="tablewrap"><table class="small"><thead><tr><th>Threshold</th><th>Three-way kept</th><th>Three-way acc.</th><th>2Q kept</th><th>2Q acc.</th></tr></thead><tbody>${rows}</tbody></table></div></details>
-<p class="fine">${esc(c.note)} Across all ${d.corpus.posts} posts the median three-way top probability is ${c.all_posts_median_top_prob}; ${c.all_posts_top_prob_ge_0_8} posts are ≥0.8.</p></section>`;
+<p class="fine">${esc(c.note)} Across all ${c.all_posts_n} round-1 posts the median three-way top probability is ${c.all_posts_median_top_prob}; ${c.all_posts_top_prob_ge_0_8} posts are ≥0.8.</p></section>`;
 }
 
 function pairSection(d: Discourse, e: Editorial): string {
@@ -220,6 +227,29 @@ function accountsSection(d: Discourse, e: Editorial): string {
   };
   return `<section id="accounts"><h2>Key accounts</h2>${note(e, "accounts")}<p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div>
 <p class="fine">AI-persona accounts in the corpus: ${ka.ai_persona_accounts.map((u) => link(`https://x.com/${u}`, `@${esc(u)}`)).join(", ")}.</p></section>`;
+}
+
+function roundsSection(d: Discourse): string {
+  const r = d.rounds;
+  const rows = r.items
+    .map((it) => {
+      const h = it.jev_hybrid as Counts;
+      return stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), `${it.label}: Jev hybrid`, `${it.posts} posts · ${it.authors} authors · ${it.window.start} → ${it.window.end}`);
+    })
+    .join("");
+  const t3 = r.items
+    .map((it) => `<tr><th scope="row">${esc(it.label)}</th><td>${it.posts}</td>${STANCES.map((s) => `<td>${it.jev_three_way[s].n} (${it.jev_three_way[s].pct}%)</td>`).join("")}${STANCES.map((s) => `<td>${(it.jev_hybrid as Counts)[s]!.n}</td>`).join("")}<td>${(it.jev_hybrid as Counts).uncertain!.n} (${(it.jev_hybrid as Counts).uncertain!.pct}%)</td></tr>`)
+    .join("");
+  const fl = r.items.map((it) => ("flashpoint" in it && it.flashpoint ? `<p class="fine"><b>${esc(it.label)}:</b> ${esc(it.flashpoint)}</p>` : "")).join("");
+  const fps = d.corpus.flashpoints.filter((f) => f.round === 2).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  const ka = d.key_accounts_round2;
+  const col = (s: StanceName) =>
+    `<div class="acol ${s}"><h3><i style="background:${STANCE_COLOR[s]}"></i>${CAP(s)}</h3><ul>${ka[s]
+      .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}<p>${esc(a.blurb)}</p><div class="chips">${a.jev_hybrid ? `<span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</div></li>`)
+      .join("")}</ul></div>`;
+  return `<section id="rounds"><h2>Rounds</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
+${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><h3>Round 2 key accounts</h3><p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div></section>`;
 }
 
 function caveatsSection(d: Discourse, e: Editorial): string {
@@ -299,10 +329,10 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <body>${meta.banner ? `<div class="banner">${esc(meta.banner)}</div>` : ""}
 <header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
 <h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
-<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>3 classifiers compared</span></div></div></header>
-<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
+<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
+<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
-${stanceSection(d, e)}${methodsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
+${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
 <footer><dl>
 <dt>Corpus</dt><dd>${esc(d.corpus.source)}. ${d.corpus.notes.map(esc).join(" ")}</dd>
 <dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>

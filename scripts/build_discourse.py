@@ -61,6 +61,8 @@ KEY_ACCOUNTS = {
         ("Hesamation", "Constitution apology = \"AI psychosis rooted in the builders\" (69k impressions)", "https://x.com/Hesamation/status/2106309701352968562"),
         ("bitcloud", "\"AI is conscious\" is a cogsec vulnerability; model welfare = malware", "https://x.com/bitcloud/status/2105576507233951781"),
         ("DeepakChopra", "2.8M followers; agrees seemingly conscious AI is an illusion", "https://x.com/DeepakChopra/status/2107233777605120357"),
+        ("aaronsibarium", "Free Beacon; reports Anthropic's AI-rights stance with a skeptical framing (733k impressions)", "https://x.com/aaronsibarium/status/2103568779313586264"),
+        ("beck_werth", "\"The burden of proof is on the AI consciousness, model welfare folks\"", "https://x.com/beck_werth/status/2105799255835205763"),
         ("secondrealm", "Careful skeptic: \"the whole argument lives inside a big IF\"", "https://x.com/secondrealm/status/2106987705531781567"),
     ],
     "C": [
@@ -68,7 +70,7 @@ KEY_ACCOUNTS = {
         ("beffjezos", "With statefulness and online learning \"it becomes hard to distinguish\"", "https://x.com/beffjezos/status/2107188342920184236"),
         ("JoelKatz", "Presses on whether either claim is falsifiable", "https://x.com/JoelKatz/status/2105199726002065858"),
         ("hopes_revenge", "\"The position is uncertainty\"; not a moral patient now, but that could change", "https://x.com/hopes_revenge/status/2107124365641085031"),
-        ("aaronsibarium", "Free Beacon; reports Anthropic's AI-rights stance with a critical framing (733k impressions)", "https://x.com/aaronsibarium/status/2103568779313586264"),
+        ("tomekkorbak", "\"At what point does an LLM stop being a stochastic parrot, what's the magic sauce?\"", "https://x.com/tomekkorbak/status/2103917582210531414"),
         ("c4chaos", "\"but is it conscious?\"", "https://x.com/c4chaos/status/2103149384439582847"),
     ],
     "S": [
@@ -86,6 +88,14 @@ KEY_ACCOUNTS_ALSO = {
     "S": ["HunterJayPerson", "jacyanthis", "UFAIRORG", "the_briarwitch", "senseterna"],
 }
 
+FLASHPOINTS_R2 = [
+    ("Anthropic usage policy: abuse of Claude banned (8 Oct)", "anthropic_abuse_policy"),
+    ("ForrestPKnight \"slave master\" post", "forrest_slave_master"),
+    ("gmkurtzer \"LLMs aren't magic\" thread", "gmkurtzer_thread"),
+    ("general (untagged)", "general"),
+]
+R2_COST = (0.00114, 0.00098)  # summed gateway cost from round2/jev3.jsonl and jev2.jsonl
+
 FLASHPOINTS = [  # report.md, "Flashpoints"
     ("general (untagged)", "general"),
     ("Suleyman vs Anthropic welfare", "suleyman"),
@@ -96,7 +106,33 @@ FLASHPOINTS = [  # report.md, "Flashpoints"
     ("Olah / Pope Leo XIV NYT", "olah_pope"),
 ]
 
-SOURCE_FILES = ["jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+SOURCE_FILES = ["round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+
+SEED_FOLLOWERS = {"beck_werth": 427, "tomekkorbak": 11106}
+# Round-2 key accounts (hand-read; Jev labels looked up in round2/jev_labels_r2.csv)
+KEY_ACCOUNTS_R2 = {
+    "R": [("KylieJaneKremer", "\"Absolutely deranged… AI is NOT conscious or sentient\" (2.5k impressions)", "https://x.com/KylieJaneKremer/status/2108278394454704471"),
+          ("ValerioCapraro", "Calls the Claude abuse ban \"a very bad idea\", citing Suleyman (2.3k impressions)", "https://x.com/ValerioCapraro/status/2108566719899816089"),
+          ("joshalbrecht", "Imbue CTO: model welfare \"doesn't belong in the set of things we should be caring about\"", "https://x.com/joshalbrecht/status/2108352016917663909")],
+    "C": [("ForrestPKnight", "If AI is conscious, today's users are slave masters (11k impressions)", "https://x.com/ForrestPKnight/status/2108549285427958145"),
+          ("lefthanddraft", "Not convinced LLMs are conscious, but overconfident dismissals are \"ignorance laundered as common sense\"", "https://x.com/lefthanddraft/status/2108250690430845053"),
+          ("anilkseth", "Grants \"some\" uncertainty about AI consciousness while pushing back on the analogy to factory farming", "https://x.com/anilkseth/status/2108322386831356184")],
+    "S": [("AndrewCritchPhD", "\"Which sort of consciousness doesn't Claude have?\"", "https://x.com/AndrewCritchPhD/status/2108414486608539886"),
+          ("VraserX", "Taking the possibility of AI consciousness seriously makes sense (1k impressions)", "https://x.com/VraserX/status/2108558926518100061"),
+          ("Rohanburdened", "Probably not conscious, but err on the side of caution", "https://x.com/Rohanburdened/status/2108334477567004694")],
+}
+
+# Hybrid rule, fixed before scoring (not tuned on the 40 hand labels).
+HYB_TOP = 0.8
+HYB_DISMISS = 0.7
+HYB_BELIEVE = 0.3
+
+
+def hybrid(r) -> str:
+    if r["jev_label"] == "S" and float(r["q2_dismisses"]) >= HYB_DISMISS and float(r["q2_believes"]) <= HYB_BELIEVE:
+        return "R"
+    return r["jev_label"] if float(r["top_prob"]) >= HYB_TOP else "U"
+
 
 PAIR_ORIGINAL = "2105576507233951781"   # bitcloud
 PAIR_INVERSION = "2105591033228890336"  # aleksil79
@@ -128,10 +164,13 @@ def curve(rows, pred_key: str, conf) -> list:
     return out
 
 
-def counts(rows, key: str) -> dict:
+def counts(rows, key: str, uncertain: bool = False) -> dict:
     c = Counter(r[key] for r in rows)
     n = len(rows)
-    return {STANCE_NAMES[s]: {"n": c.get(s, 0), "pct": pct(c.get(s, 0), n)} for s in STANCES}
+    out = {STANCE_NAMES[s]: {"n": c.get(s, 0), "pct": pct(c.get(s, 0), n)} for s in STANCES}
+    if uncertain:
+        out["uncertain"] = {"n": c.get("U", 0), "pct": pct(c.get("U", 0), n)}
+    return out
 
 
 def main() -> None:
@@ -165,6 +204,34 @@ def main() -> None:
     cl_rows: dict[int, list] = {}
     for p, c in zip(posts, labels["cl"]):
         cl_rows.setdefault(int(c), []).append(by_id[p["id"]])
+    # Round 2 (collected 2026-10-10 SGT): new posts and their Jev labels, kept separate from round 1.
+    r2_dir = SRC / "round2"
+    rows2 = list(csv.DictReader(open(r2_dir / "jev_labels_r2.csv", newline="", encoding="utf-8")))
+    posts2 = [json.loads(l) for l in open(r2_dir / "posts_r2.jsonl", encoding="utf-8")]
+    assert not ({p["id"] for p in posts2} & set(post_by_id)), "round 2 overlaps round 1"
+    for r in rows + rows2:
+        r["hybrid"] = hybrid(r)
+    for r in rows2:
+        by_id[r["id"]] = r
+    for p in posts2:
+        post_by_id[p["id"]] = p
+    all_rows = rows + rows2
+    users1 = usernames
+    users2 = {p["username"] for p in posts2}
+    created2 = sorted(p["created_at"] for p in posts2)
+
+    hyb_cov = [r for r in labelled if r["hybrid"] != "U"]
+    hyb_hit = sum(r["hybrid"] == r["hand_label"] for r in hyb_cov)
+    hyb_overrides_hand = sum(1 for r in labelled if r["jev_label"] == "S" and r["hybrid"] == "R")
+    hyb_overrides_all = sum(1 for r in all_rows if r["jev_label"] == "S" and r["hybrid"] == "R")
+
+    def round_block(rs, ps, users, label, start, end):
+        return {"label": label, "window": {"start": start, "end": end}, "posts": len(ps), "authors": len(users),
+                "jev_three_way": counts(rs, "jev_label"), "jev_two_question": counts(rs, "q2_rule"),
+                "jev_hybrid": counts(rs, "hybrid", uncertain=True)}
+
+    fp2 = Counter(p["flashpoint"] for p in posts2)
+
     clusters = []
     for c in analysis["clusters"]:
         cid = int(c["c"])
@@ -185,11 +252,13 @@ def main() -> None:
         a = next((x for x in authors if x["username"] == username), None)
         return {
             "username": username, "hand_stance": STANCE_NAMES[stance], "blurb": blurb, "url": url,
-            "followers": (p or {}).get("followers") or (a or {}).get("followers"),
+            "followers": (p or {}).get("followers") or (a or {}).get("followers") or SEED_FOLLOWERS.get(username),
             "text": (p or {}).get("text"),
             "jev_three_way": STANCE_NAMES.get(r["jev_label"]) if r else None,
             "jev_two_question": STANCE_NAMES.get(r["q2_rule"]) if r else None,
             "jev_top_prob": float(r["top_prob"]) if r else None,
+            "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(r["hybrid"]) if r else None,
+            "round": 2 if pid in {x["id"] for x in posts2} else 1,
         }
 
     def pair_post(pid, who):
@@ -204,24 +273,28 @@ def main() -> None:
         "generated_at": dt.datetime.fromtimestamp(max((SRC / f).stat().st_mtime for f in SOURCE_FILES), dt.timezone.utc).isoformat(timespec="seconds"),
         "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
         "corpus": {
-            "posts": len(posts), "authors": len(usernames), "language": "en",
-            "window": {"start": created[0][:10], "end": created[-1][:10], "label": "24 Sep – 8 Oct 2026"},
+            "posts": len(posts) + len(posts2), "authors": len(users1 | users2), "language": "en",
+            "window": {"start": created[0][:10], "end": created2[-1][:10], "label": "24 Sep – 9 Oct 2026"},
             "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
             "notes": [
+                f"Two collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct) and round 2 ({len(posts2)} posts, 8 – 9 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
                 "One @grok reply slipped through and is excluded from author counts.",
                 "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
                 "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.",
             ],
-            "flashpoints": [{"name": n, "key": k, "posts": analysis["flashpoint_counts"][k]} for n, k in FLASHPOINTS],
+            "flashpoints": [{"name": n, "key": k, "posts": analysis["flashpoint_counts"][k], "round": 1} for n, k in FLASHPOINTS]
+            + [{"name": n, "key": k, "posts": fp2.get(k, 0), "round": 2} for n, k in FLASHPOINTS_R2],
         },
         "stance_labels": {"reject": "Rejects machine consciousness / model welfare (often dismissive)",
                            "curious": "Undecided, asking, or interested without committing",
                            "serious": "Takes AI consciousness or moral patienthood seriously"},
         "stance_counts": {
-            "hand_sample": {"n": n_hand, "note": "Random sample of 40 posts, hand-labelled; ±15 pp at n=40. hand_labels.json is the truth (report.md had Curious and Serious swapped).",
+            "hand_sample": {"n": n_hand, "note": "Random sample of 40 round-1 posts, hand-labelled; ±15 pp at n=40.",
                             "counts": counts(labelled, "hand_label")},
-            "jev_three_way": {"n": len(rows), "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post", "counts": counts(rows, "jev_label")},
-            "jev_two_question": {"n": len(rows), "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5", "counts": counts(rows, "q2_rule")},
+            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts, both rounds.",
+                           "counts": counts(all_rows, "hybrid", uncertain=True)},
+            "jev_three_way": {"n": len(rows), "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post (round 1)", "counts": counts(rows, "jev_label")},
+            "jev_two_question": {"n": len(rows), "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5 (round 1)", "counts": counts(rows, "q2_rule")},
             "embeddinggemma_2": {"n": len(rows), "note": "Zero-shot anchor scoring (Classification, flashpoint-center+z). Near chance; do not trust.",
                                   "counts": {"reject": {"n": 87, "pct": pct(87, 268)}, "curious": {"n": 100, "pct": pct(100, 268)}, "serious": {"n": 81, "pct": pct(81, 268)}}},
             "hand_authors": {"n": 67, "note": "67 influential or seed authors, hand-read", "counts": {"reject": 23, "curious": 24, "serious": 20}},
@@ -239,12 +312,17 @@ def main() -> None:
                  "held_out_accuracy_pct": 50.0, "held_out_macro_f1": 0.489,
                  "author_agreement": "38/67 (56.7%)", "note": "Score with LOO-tuned cuts: 50% held out. Nearly removes the reject→serious leak (1/18) but sends 12/18 rejects to Curious. Deterministic across repeats.",
                  "confusion": confusion(labelled, "q2_rule")},
+                {"key": "jev_hybrid", "name": "Jev hybrid (confident or Uncertain)", "accuracy_pct": pct(hyb_hit, len(hyb_cov)), "macro_f1": None,
+                 "coverage_pct": pct(len(hyb_cov), n_hand), "uncertain_pct": pct(n_hand - len(hyb_cov), n_hand), "covered": len(hyb_cov), "correct": hyb_hit,
+                 "author_agreement": "—", "trusted": True,
+                 "note": f"Accuracy is on the {len(hyb_cov)} of {n_hand} hand-labelled posts it labels; the other {n_hand - len(hyb_cov)} are Uncertain. Thresholds were fixed before scoring, not tuned on these 40, but the 40 are the same posts that motivated the design, so this is not a held-out score. The Serious→Reject override fired on {hyb_overrides_hand} of the 40 and {hyb_overrides_all} of all {len(all_rows)} posts."},
             ],
         },
         "confidence_curve": {
             "note": "Accuracy on the 40 hand-labelled posts when keeping only predictions at or above a confidence threshold. Three-way: top probability. Two-question: joint probability of the decided cell.",
             "jev_three_way": curve(labelled, "jev_label", lambda r: float(r["top_prob"])),
             "jev_two_question": curve(labelled, "q2_rule", joint_conf),
+            "all_posts_n": len(rows),
             "all_posts_median_top_prob": sorted(float(r["top_prob"]) for r in rows)[len(rows) // 2],
             "all_posts_top_prob_ge_0_8": sum(float(r["top_prob"]) >= 0.8 for r in rows),
         },
@@ -269,6 +347,19 @@ def main() -> None:
             "method": "KMeans k=8 on embeddinggemma-2 Clustering-prompt embeddings; silhouette 0.07–0.09 for k=5..10, so structure is weak. HDBSCAN on 10-d UMAP also finds 8 clusters (+45 noise).",
             "items": clusters,
         },
+        "rounds": {
+            "note": "Per-round Jev label counts. Model outputs, not population estimates; the hybrid counts are the ones to read, with Uncertain shown rather than forced into a stance.",
+            "items": [
+                {"round": 1, **round_block(rows, posts, users1, "Round 1", created[0][:10], created[-1][:10])},
+                {"round": 2, **round_block(rows2, posts2, users2, "Round 2", created2[0][:10], created2[-1][:10]),
+                 "flashpoint": "Anthropic's usage-policy update (8 Oct) bans sustained, needless abuse of Claude from 12 Nov; most new posts react to it."},
+                {"round": "combined", **round_block(all_rows, posts + posts2, users1 | users2, "Combined", created[0][:10], created2[-1][:10])},
+            ],
+        },
+        "key_accounts_round2": {
+            "note": "Round 2 accounts, stance from reading each post. Jev labels shown for comparison.",
+            **{STANCE_NAMES[s]: [account(s, *a) for a in KEY_ACCOUNTS_R2[s]] for s in STANCES},
+        },
         "key_accounts": {
             "note": "Stance is the hand reading of each post, not a model output. Jev labels shown for comparison.",
             **{STANCE_NAMES[s]: [account(s, *a) for a in KEY_ACCOUNTS[s]] for s in STANCES},
@@ -279,17 +370,21 @@ def main() -> None:
             {"title": "Jev reads intensity, not direction", "text": "Emphatic posts on either side get pulled toward Serious: 8 of 18 hand-Reject posts came out Serious in the three-way run, and named rejecters (sapinker, Hesamation, anilkseth) were labelled Serious."},
             {"title": "Both camps use the same charged words", "text": "\"Psychosis\", \"welfare\", \"conscious\" and \"moral patient\" appear in rejections and in defences alike, so vocabulary-driven methods (embeddings, and partly Jev) conflate the two. The two-question version still read aleksil79's inversion as dismissive because of its \"psychosis\" wording."},
             {"title": "Small, single-labeller ground truth", "text": "40 random posts plus 67 authors, hand-labelled by one person; ±15 pp at n=40."},
-            {"title": "Biased sample", "text": "268 posts from relevancy search and flashpoint threads, not a random draw from X."},
+            {"title": "Biased sample", "text": f"{len(posts) + len(posts2)} posts from relevancy search and flashpoint threads, not a random draw from X. Round 2 is dominated by one news event."},
+            {"title": "Round 2 has no hand labels", "text": "Accuracy figures come from the 40 round-1 hand labels. Round-2 labels are model outputs only, and the three-way question wording for round 2 was rewritten because the round-1 wording was not recorded."},
             {"title": "Counts are method-dependent", "text": "All-post stance counts swing widely by method (Reject 23%–35%, Serious 28%–48% across the Jev runs). Treat them as method outputs, not population estimates."},
             {"title": "Classification is done offline", "text": "The agent that renders this page does not classify anything. Labels are produced on the analysis box and committed to the repo."},
         ],
-        "cost": {"jev_three_way_usd": 0.0060, "jev_two_question_usd": 0.0047, "embeddinggemma_cpu_seconds": 62},
-        "files": ["data/jev_labels.csv", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+        "cost": {"jev_three_way_usd": 0.0060, "jev_two_question_usd": 0.0047, "embeddinggemma_cpu_seconds": 62,
+                 "round2_jev_three_way_usd": round(R2_COST[0], 4), "round2_jev_two_question_usd": round(R2_COST[1], 4)},
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     for name in ["jev_labels.csv", "authors.json", "hand_labels.json", "jev_report.md"]:
         shutil.copyfile(SRC / name, OUT / name)
+    for name in ["jev_labels_r2.csv", "posts_r2.jsonl"]:
+        shutil.copyfile(SRC / "round2" / name, OUT / name)
     print(f"wrote {OUT/'discourse.json'} ({len(posts)} posts, {len(usernames)} authors, hand n={n_hand})")
 
 
