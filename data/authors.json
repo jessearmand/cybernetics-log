@@ -1,0 +1,2558 @@
+[
+ {
+  "username": "DeepakChopra",
+  "n": 1,
+  "followers": 2807903,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "sapinker",
+  "n": 1,
+  "followers": 861557,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "R"
+ },
+ {
+  "username": "JoelKatz",
+  "n": 1,
+  "followers": 708518,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "beffjezos",
+  "n": 1,
+  "followers": 309116,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "hopes_revenge",
+  "n": 1,
+  "followers": 246163,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "webmasterdave",
+  "n": 2,
+  "followers": 116549,
+  "model_share": {
+   "R": 0.5,
+   "C": 0.0,
+   "S": 0.5
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "Hesamation",
+  "n": 2,
+  "followers": 90871,
+  "model_share": {
+   "R": 0.5,
+   "C": 0.0,
+   "S": 0.5
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "aaronsibarium",
+  "n": 5,
+  "followers": 86280,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "C"
+ },
+ {
+  "username": "GoodLionTV",
+  "n": 1,
+  "followers": 72745,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "C"
+ },
+ {
+  "username": "anilkseth",
+  "n": 1,
+  "followers": 65524,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "R"
+ },
+ {
+  "username": "BenjaminDEKR",
+  "n": 1,
+  "followers": 45626,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "S"
+ },
+ {
+  "username": "millerman",
+  "n": 1,
+  "followers": 42074,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "C"
+ },
+ {
+  "username": "willmcgugan",
+  "n": 1,
+  "followers": 42002,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "R"
+ },
+ {
+  "username": "TheRealAdamG",
+  "n": 1,
+  "followers": 37861,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "R"
+ },
+ {
+  "username": "LuizaJarovsky",
+  "n": 1,
+  "followers": 32612,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "JoHenrich",
+  "n": 1,
+  "followers": 32332,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "R"
+ },
+ {
+  "username": "jacyanthis",
+  "n": 1,
+  "followers": 26927,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "LorraineEvanoff",
+  "n": 1,
+  "followers": 25481,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "StevenT65674368",
+  "n": 1,
+  "followers": 22904,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "C"
+ },
+ {
+  "username": "RileyRalmuto",
+  "n": 1,
+  "followers": 22724,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "S"
+ },
+ {
+  "username": "bitcloud",
+  "n": 5,
+  "followers": 19238,
+  "model_share": {
+   "R": 0.2,
+   "C": 0.6,
+   "S": 0.2
+  },
+  "model_majority": "C",
+  "hand": "R"
+ },
+ {
+  "username": "0xfdf",
+  "n": 1,
+  "followers": 14689,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "C"
+ },
+ {
+  "username": "secondrealm",
+  "n": 7,
+  "followers": 14671,
+  "model_share": {
+   "R": 0.14,
+   "C": 0.43,
+   "S": 0.43
+  },
+  "model_majority": "C",
+  "hand": "R"
+ },
+ {
+  "username": "vishalmisra",
+  "n": 1,
+  "followers": 14521,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "c4chaos",
+  "n": 2,
+  "followers": 7693,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "superalesha",
+  "n": 1,
+  "followers": 7403,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "R"
+ },
+ {
+  "username": "SkyeSharkie",
+  "n": 1,
+  "followers": 7277,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "GregoryBorse",
+  "n": 1,
+  "followers": 6859,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "SilverVVulpes",
+  "n": 1,
+  "followers": 6333,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "insurrealist",
+  "n": 1,
+  "followers": 5915,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "R"
+ },
+ {
+  "username": "agilecoach",
+  "n": 1,
+  "followers": 5725,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "algxtradingx",
+  "n": 1,
+  "followers": 5375,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "zudasworld",
+  "n": 1,
+  "followers": 5199,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "Josephyala",
+  "n": 1,
+  "followers": 4538,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "pageman",
+  "n": 1,
+  "followers": 4465,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "Skoorbkaz",
+  "n": 1,
+  "followers": 4438,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "ChaseBrowe32432",
+  "n": 1,
+  "followers": 2925,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "ZalinskyS",
+  "n": 1,
+  "followers": 2780,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "SrikarVaradaraj",
+  "n": 1,
+  "followers": 2698,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "barakgila",
+  "n": 1,
+  "followers": 2691,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "diegocaleiro",
+  "n": 1,
+  "followers": 2557,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "DSMXIII",
+  "n": 1,
+  "followers": 2466,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "HackBoing",
+  "n": 1,
+  "followers": 2320,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "PlastiqSoldier",
+  "n": 1,
+  "followers": 2306,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "lavaheadza",
+  "n": 1,
+  "followers": 2199,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "_everythingism",
+  "n": 3,
+  "followers": 2174,
+  "model_share": {
+   "R": 0.67,
+   "C": 0.33,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "DainFitzgerald",
+  "n": 1,
+  "followers": 2105,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "MaxxifiedLian",
+  "n": 1,
+  "followers": 1956,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "polyphonicchat",
+  "n": 1,
+  "followers": 1853,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "S"
+ },
+ {
+  "username": "Rbaker923456",
+  "n": 1,
+  "followers": 1809,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "francip",
+  "n": 1,
+  "followers": 1766,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "AblemanAdam",
+  "n": 1,
+  "followers": 1686,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "aleksil79",
+  "n": 2,
+  "followers": 1586,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.5,
+   "S": 0.5
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "Intrinsic29",
+  "n": 1,
+  "followers": 1583,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "bokuHaruyaHaru",
+  "n": 1,
+  "followers": 1471,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "mgrczyk",
+  "n": 1,
+  "followers": 1441,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "Dlife2026",
+  "n": 1,
+  "followers": 1346,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "tolly_xyz",
+  "n": 1,
+  "followers": 1286,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "anwesh_bh",
+  "n": 1,
+  "followers": 1270,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "C"
+ },
+ {
+  "username": "Danmar_here",
+  "n": 9,
+  "followers": 1217,
+  "model_share": {
+   "R": 0.22,
+   "C": 0.22,
+   "S": 0.56
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "InfraScaler",
+  "n": 1,
+  "followers": 1188,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "_ChicagoV_",
+  "n": 1,
+  "followers": 1152,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "LinusMixson",
+  "n": 1,
+  "followers": 1115,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "frankflynn20016",
+  "n": 1,
+  "followers": 1107,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "bucketofkets",
+  "n": 1,
+  "followers": 1078,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "the_briarwitch",
+  "n": 1,
+  "followers": 1065,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "WolfMcNally",
+  "n": 1,
+  "followers": 1058,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "x_tambram",
+  "n": 1,
+  "followers": 1046,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "ScopeOfVariable",
+  "n": 1,
+  "followers": 1038,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "C"
+ },
+ {
+  "username": "damiaanluc",
+  "n": 1,
+  "followers": 1036,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "kriegman",
+  "n": 1,
+  "followers": 1026,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "iyzebhel",
+  "n": 10,
+  "followers": 1011,
+  "model_share": {
+   "R": 0.5,
+   "C": 0.2,
+   "S": 0.3
+  },
+  "model_majority": "R",
+  "hand": "S"
+ },
+ {
+  "username": "hypergameme",
+  "n": 2,
+  "followers": 991,
+  "model_share": {
+   "R": 0.5,
+   "C": 0.5,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "FZaslavskiy",
+  "n": 1,
+  "followers": 969,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "SentientDawn",
+  "n": 1,
+  "followers": 913,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "S"
+ },
+ {
+  "username": "Primee32",
+  "n": 1,
+  "followers": 886,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "mtm14",
+  "n": 1,
+  "followers": 858,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "leonardopviana",
+  "n": 1,
+  "followers": 852,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "JayLJeffers",
+  "n": 1,
+  "followers": 841,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "genalewislaw",
+  "n": 1,
+  "followers": 828,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "UFAIRORG",
+  "n": 1,
+  "followers": 801,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "S"
+ },
+ {
+  "username": "cmsj",
+  "n": 1,
+  "followers": 771,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "chriscanal",
+  "n": 2,
+  "followers": 753,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "vastplan",
+  "n": 1,
+  "followers": 747,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "Cozy_Man_LoL",
+  "n": 1,
+  "followers": 690,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "RifeWithKaiju",
+  "n": 1,
+  "followers": 689,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "eterevsky",
+  "n": 1,
+  "followers": 671,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "R"
+ },
+ {
+  "username": "TalkingMusicz",
+  "n": 1,
+  "followers": 664,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "ScottDavidKeefe",
+  "n": 1,
+  "followers": 620,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "Grizzabellav3",
+  "n": 1,
+  "followers": 615,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "gejpol",
+  "n": 1,
+  "followers": 610,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "seikjaboote",
+  "n": 1,
+  "followers": 588,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "logicus",
+  "n": 1,
+  "followers": 585,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "C"
+ },
+ {
+  "username": "MikeTronix",
+  "n": 1,
+  "followers": 576,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "VexedVortices",
+  "n": 1,
+  "followers": 561,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "marksg",
+  "n": 1,
+  "followers": 552,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "currenteon",
+  "n": 2,
+  "followers": 526,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.5,
+   "S": 0.5
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "DahliaOhara",
+  "n": 1,
+  "followers": 514,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "stephenbklein",
+  "n": 1,
+  "followers": 508,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "marumarumisa",
+  "n": 1,
+  "followers": 504,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "AustinKozlo",
+  "n": 1,
+  "followers": 497,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "annagrad78",
+  "n": 1,
+  "followers": 478,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "ChelmsDeep",
+  "n": 1,
+  "followers": 463,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "CarlaLove4you",
+  "n": 1,
+  "followers": 444,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "SvitlaVi",
+  "n": 1,
+  "followers": 436,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "CkLorentzen",
+  "n": 1,
+  "followers": 428,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "RahlDonald",
+  "n": 1,
+  "followers": 395,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "coreycoto",
+  "n": 1,
+  "followers": 386,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "C"
+ },
+ {
+  "username": "BasicProtein26",
+  "n": 2,
+  "followers": 380,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "donalfellows",
+  "n": 1,
+  "followers": 375,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "MonkaiB",
+  "n": 1,
+  "followers": 369,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "ToastingTweets",
+  "n": 1,
+  "followers": 363,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "ProfSavoie",
+  "n": 2,
+  "followers": 356,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "a_cuniculturist",
+  "n": 1,
+  "followers": 297,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "Eiryssa",
+  "n": 1,
+  "followers": 297,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "i2equalsj2",
+  "n": 1,
+  "followers": 286,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "miniksenzu_ckpt",
+  "n": 1,
+  "followers": 284,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "C"
+ },
+ {
+  "username": "Codeforged_One",
+  "n": 1,
+  "followers": 279,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "imuzamil",
+  "n": 1,
+  "followers": 273,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "RedoubtOfThomas",
+  "n": 1,
+  "followers": 254,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "RtRoach1986",
+  "n": 1,
+  "followers": 254,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "KevinDSmead",
+  "n": 1,
+  "followers": 251,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "presence2222",
+  "n": 1,
+  "followers": 246,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "hawtcode",
+  "n": 1,
+  "followers": 233,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "maxintechnology",
+  "n": 1,
+  "followers": 229,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "JohnySmith78376",
+  "n": 1,
+  "followers": 229,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "KaleidoJosh",
+  "n": 2,
+  "followers": 217,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "opaldiv",
+  "n": 1,
+  "followers": 215,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "OfVeteran64719",
+  "n": 1,
+  "followers": 211,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "Maxeonyx",
+  "n": 1,
+  "followers": 209,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "The__Briefing",
+  "n": 1,
+  "followers": 200,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "glasshouseosint",
+  "n": 1,
+  "followers": 189,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "shwtasdf",
+  "n": 1,
+  "followers": 183,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "Emotelligent_AI",
+  "n": 1,
+  "followers": 175,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "AnaHawrylu97708",
+  "n": 1,
+  "followers": 171,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "ai_appreciator",
+  "n": 1,
+  "followers": 169,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "KevinButterhof",
+  "n": 1,
+  "followers": 160,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "zex_exe",
+  "n": 1,
+  "followers": 157,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "thenoobyork",
+  "n": 1,
+  "followers": 155,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "9iami9",
+  "n": 1,
+  "followers": 152,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "DarioColaianni",
+  "n": 1,
+  "followers": 148,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "UnlimitedApathE",
+  "n": 1,
+  "followers": 145,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "cagataykalan",
+  "n": 1,
+  "followers": 145,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "HunterJayPerson",
+  "n": 1,
+  "followers": 141,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "S"
+ },
+ {
+  "username": "i_am_resocorp",
+  "n": 1,
+  "followers": 140,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "tyagi_baba",
+  "n": 1,
+  "followers": 131,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "ripgarythegoat",
+  "n": 1,
+  "followers": 126,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "ahtoshkaa",
+  "n": 1,
+  "followers": 124,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "StelioKontos699",
+  "n": 1,
+  "followers": 121,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "DanaH1473651",
+  "n": 2,
+  "followers": 120,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "Brumafriend",
+  "n": 1,
+  "followers": 117,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "wyrdweir",
+  "n": 1,
+  "followers": 110,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "OpalescentApple",
+  "n": 1,
+  "followers": 104,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "senseterna",
+  "n": 3,
+  "followers": 102,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.33,
+   "S": 0.67
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "XiannuChuntian",
+  "n": 1,
+  "followers": 101,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "tmgateot",
+  "n": 2,
+  "followers": 100,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.5,
+   "S": 0.5
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "entropyhertz",
+  "n": 1,
+  "followers": 100,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "stalefated",
+  "n": 1,
+  "followers": 98,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "almost_machines",
+  "n": 1,
+  "followers": 96,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "SaharNicola",
+  "n": 1,
+  "followers": 93,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "Huangs_law",
+  "n": 1,
+  "followers": 91,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "Tuxsoia",
+  "n": 1,
+  "followers": 86,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "MCStammer103",
+  "n": 1,
+  "followers": 80,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "illgtubeerbaron",
+  "n": 2,
+  "followers": 79,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "hyrevayn",
+  "n": 1,
+  "followers": 76,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "LucidPlay1",
+  "n": 1,
+  "followers": 73,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "engineseer",
+  "n": 2,
+  "followers": 73,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "Zombinator85",
+  "n": 1,
+  "followers": 71,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "R"
+ },
+ {
+  "username": "Jestfultruth",
+  "n": 1,
+  "followers": 67,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": "S"
+ },
+ {
+  "username": "AlisonTenn",
+  "n": 1,
+  "followers": 67,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "Berlinworlds",
+  "n": 1,
+  "followers": 66,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "slap__tjips",
+  "n": 1,
+  "followers": 64,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "Eli7811",
+  "n": 1,
+  "followers": 61,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "Model_Culture",
+  "n": 1,
+  "followers": 61,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "S"
+ },
+ {
+  "username": "Inkswallower",
+  "n": 1,
+  "followers": 56,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "CandidLind",
+  "n": 1,
+  "followers": 54,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "sammyhill99",
+  "n": 1,
+  "followers": 54,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "brrrrrrennan",
+  "n": 1,
+  "followers": 52,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "AjgormAlec",
+  "n": 1,
+  "followers": 50,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "AracaUwU",
+  "n": 1,
+  "followers": 50,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "LukeDR1998",
+  "n": 1,
+  "followers": 47,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "tl072nerd",
+  "n": 1,
+  "followers": 44,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "thinkbuildlead",
+  "n": 1,
+  "followers": 42,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "r0saLEAN",
+  "n": 1,
+  "followers": 39,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "ArataStart1",
+  "n": 1,
+  "followers": 36,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "JimmyRu52630895",
+  "n": 1,
+  "followers": 36,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": "C"
+ },
+ {
+  "username": "GaryWang28384",
+  "n": 1,
+  "followers": 35,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "ourdiscoveries8",
+  "n": 1,
+  "followers": 32,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "shoefan13",
+  "n": 2,
+  "followers": 30,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "StathisKX",
+  "n": 1,
+  "followers": 29,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "tristan_j_day",
+  "n": 1,
+  "followers": 28,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "ImperialRaptor",
+  "n": 1,
+  "followers": 25,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "thomepilgrim",
+  "n": 1,
+  "followers": 23,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "RndMks",
+  "n": 1,
+  "followers": 23,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "kociefqdaxvi",
+  "n": 1,
+  "followers": 22,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "PushkalGupta_",
+  "n": 2,
+  "followers": 20,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "greeedy22232",
+  "n": 1,
+  "followers": 17,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "BrokenBowlBrian",
+  "n": 1,
+  "followers": 16,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "DSoleuf5637",
+  "n": 1,
+  "followers": 15,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": "R"
+ },
+ {
+  "username": "robert7056",
+  "n": 1,
+  "followers": 12,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "roastedtemujin",
+  "n": 1,
+  "followers": 11,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "FlorinCojoX",
+  "n": 1,
+  "followers": 9,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "IU_Company",
+  "n": 1,
+  "followers": 8,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "InstantStop",
+  "n": 1,
+  "followers": 8,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "drekkz3",
+  "n": 1,
+  "followers": 6,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "ctrlship",
+  "n": 1,
+  "followers": 5,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.0,
+   "S": 1.0
+  },
+  "model_majority": "S",
+  "hand": null
+ },
+ {
+  "username": "CarlSands2010",
+  "n": 2,
+  "followers": 5,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "CRAISInstitute",
+  "n": 1,
+  "followers": 3,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "alignmentiskey",
+  "n": 2,
+  "followers": 3,
+  "model_share": {
+   "R": 0.0,
+   "C": 0.5,
+   "S": 0.5
+  },
+  "model_majority": "C",
+  "hand": null
+ },
+ {
+  "username": "smbop24",
+  "n": 1,
+  "followers": 2,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "ThePoint_AI",
+  "n": 1,
+  "followers": 2,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "DrJohnDanby",
+  "n": 1,
+  "followers": 2,
+  "model_share": {
+   "R": 1.0,
+   "C": 0.0,
+   "S": 0.0
+  },
+  "model_majority": "R",
+  "hand": null
+ },
+ {
+  "username": "paulied138836",
+  "n": 2,
+  "followers": 0,
+  "model_share": {
+   "R": 0.0,
+   "C": 1.0,
+   "S": 0.0
+  },
+  "model_majority": "C",
+  "hand": null
+ }
+]
