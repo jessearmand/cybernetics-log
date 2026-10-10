@@ -11,7 +11,7 @@ export interface Editorial {
   readonly instructionSummary?: string;
 }
 
-export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats";
+export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins";
 export const ACCENTS = ["indigo", "teal", "amber", "rose", "slate"] as const;
 export type Accent = (typeof ACCENTS)[number];
 
@@ -64,12 +64,12 @@ function prose(value: string): string {
     .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
-/** Only http(s) links to x.com / github.com / vercel.app are emitted as hrefs. */
+/** Only https links to x.com / github.com / vercel.app / unherd.com are emitted as hrefs. */
 function safeUrl(url: unknown): string | null {
   try {
     const u = new URL(String(url));
     if (u.protocol !== "https:") return null;
-    if (!/(^|\.)x\.com$|(^|\.)twitter\.com$|(^|\.)github\.com$|\.vercel\.app$/.test(u.hostname)) return null;
+    if (!/(^|\.)x\.com$|(^|\.)twitter\.com$|(^|\.)github\.com$|\.vercel\.app$|(^|\.)unherd\.com$/.test(u.hostname)) return null;
     return u.toString();
   } catch {
     return null;
@@ -229,6 +229,65 @@ function accountsSection(d: Discourse, e: Editorial): string {
 <p class="fine">AI-persona accounts in the corpus: ${ka.ai_persona_accounts.map((u) => link(`https://x.com/${u}`, `@${esc(u)}`)).join(", ")}.</p></section>`;
 }
 
+const POSITION_LABEL: Record<string, string> = { support: "Support", oppose: "Oppose", neutral_or_unclear: "Neutral / unclear" };
+const REASON_LABEL: Record<string, string> = {
+  oppose_absurd: "Absurd to protect software",
+  oppose_overreach: "Company policing paying users",
+  support_model_welfare: "Claude might be harmed",
+  support_user_character: "Cruelty harms the user or society",
+  other: "Other / none given",
+};
+const POSITION_COLOR: Record<string, string> = { support: "#2563eb", oppose: "#dc2626", neutral_or_unclear: "#9ca3af" };
+const HYB_COLS = ["R", "C", "S", "U"] as const;
+const HYB_NAME: Record<string, string> = { R: "Reject", C: "Curious", S: "Serious", U: "Uncertain" };
+
+function policySection(d: Discourse, e: Editorial): string {
+  const p = d.policy_debate;
+  const pos = p.position as Record<string, { n: number; pct: number }>;
+  const rea = p.reason as Record<string, { n: number; pct: number }>;
+  const segs = Object.keys(POSITION_LABEL)
+    .map((k) => `<span class="seg" style="width:${Math.max(pos[k]!.pct, 0)}%;background:${POSITION_COLOR[k]}" title="${esc(POSITION_LABEL[k])}: ${pos[k]!.n} (${pos[k]!.pct}%)">${pos[k]!.pct >= 9 ? `${pos[k]!.pct.toFixed(0)}%` : ""}</span>`)
+    .join("");
+  const posBar = `<div class="barrow"><div class="barlabel"><b>Position (Jev)</b><span>${p.n} policy posts</span></div><div class="bar">${segs}</div></div>
+<div class="legend">${Object.keys(POSITION_LABEL).map((k) => `<span><i style="background:${POSITION_COLOR[k]}"></i>${esc(POSITION_LABEL[k])} ${pos[k]!.n}</span>`).join("")}</div>`;
+  const reasonRows = Object.keys(REASON_LABEL)
+    .map((k) => `<tr><th scope="row">${esc(REASON_LABEL[k])}</th><td>${rea[k]!.n} (${rea[k]!.pct}%)</td>${Object.keys(POSITION_LABEL).map((q) => `<td>${(p.position_by_reason as Record<string, Record<string, number>>)[q]![k]}</td>`).join("")}</tr>`)
+    .join("");
+  const hc = p.hand_check;
+  const xt = (counts: Record<string, Record<string, number>>, rows: Record<string, string>, cols: readonly string[]) =>
+    `<table class="methods xtab"><thead><tr><th></th>${cols.map((c) => `<th>${esc(HYB_NAME[c] ?? c)}</th>`).join("")}</tr></thead><tbody>${Object.keys(rows)
+      .map((k) => `<tr><th scope="row">${esc(rows[k])}</th>${cols.map((c) => `<td>${counts[k]![c]}</td>`).join("")}</tr>`)
+      .join("")}</tbody></table>`;
+  const ts = p.topic_share;
+  const tRow = (label: string, t: { n: number; policy: number; minds: number; policy_pct: number }) =>
+    `<tr><th scope="row">${esc(label)}</th><td>${t.n}</td><td>${t.policy} (${t.policy_pct}%)</td><td>${t.minds}</td></tr>`;
+  return `<section id="policy"><h2>The abuse-policy fight</h2>${note(e, "policy")}
+<p class="lede">${esc(p.event)}</p>
+<div class="bars">${posBar}</div>
+<h3>Reasons given</h3><div class="tablewrap"><table class="methods"><thead><tr><th>Reason (Jev)</th><th>All</th>${Object.keys(POSITION_LABEL).map((q) => `<th>${esc(POSITION_LABEL[q])}</th>`).join("")}</tr></thead><tbody>${reasonRows}</tbody></table></div>
+<p class="fine">Hand check: ${hc.n} random policy posts read by hand. Jev matched the position on <b>${hc.position}</b> of ${hc.n} (${hc.position_pct}%), the reason on <b>${hc.reason}</b> (${hc.reason_pct}%) and the policy-vs-minds topic on <b>${hc.topic}</b> (${hc.topic_pct}%). By hand: ${Object.keys(POSITION_LABEL).map((k) => `${esc(POSITION_LABEL[k])} ${(hc.hand_position as Record<string, number>)[k]}`).join(", ")}.</p>
+<h3>Does the policy split follow the consciousness camps?</h3>
+<p>${esc(p.crosstab_finding.text)}</p>
+<div class="xtabs"><div><p class="fine">Policy position × consciousness stance of the same post (Jev hybrid), n=${p.crosstab_position_by_hybrid.n}</p><div class="tablewrap">${xt(p.crosstab_position_by_hybrid.counts as Record<string, Record<string, number>>, POSITION_LABEL, HYB_COLS)}</div></div>
+<div><p class="fine">Reason × consciousness stance (Jev hybrid)</p><div class="tablewrap">${xt(p.crosstab_reason_by_hybrid.counts as Record<string, Record<string, number>>, REASON_LABEL, HYB_COLS)}</div></div></div>
+<p class="fine">${esc(p.crosstab_position_by_author.note)} n=${p.crosstab_position_by_author.n}.</p>
+<h3>Arguing about the policy, or about minds?</h3><p class="fine">${esc(ts.note)}</p>
+<div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About the policy</th><th>About minds</th></tr></thead><tbody>
+${tRow("Round 3, all posts", ts.round3_all)}${tRow("Round 3, policy posts", ts.round3_policy_posts)}${tRow("Round 2, all posts", ts.round2_all)}${tRow("Round 2, policy posts", ts.round2_policy_posts)}</tbody></table></div>
+<ul class="caveats">${p.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
+}
+
+function dawkinsSection(d: Discourse, e: Editorial): string {
+  const k = d.dawkins_spotlight;
+  const h = k.jev_hybrid as Counts;
+  return `<section id="dawkins" class="callout"><h2>Spotlight: Richard Dawkins and “Claudia”</h2>${note(e, "dawkins")}
+<ul>${k.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
+<p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. Essays: ${k.essays.map((x) => link(x.url, esc(x.title))).join(" · ")}.</p>
+<h3>Reactions</h3><ul class="r3acc">${k.reactions.map((r) => `<li>${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}</li>`).join("")}</ul>
+<div class="bars">${stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), "Dawkins items: Jev hybrid", `${k.items} posts`)}</div>
+<p class="fine">Jev on his own posts: ${k.dawkins_own_posts_jev.map((x) => `${link(x.url, "post")} three-way ${esc(x.jev_three_way)} (top ${x.jev_top_prob}), hybrid ${esc(x.jev_hybrid)}`).join("; ")}. ${esc(k.note)}</p></section>`;
+}
+
 function roundsSection(d: Discourse): string {
   const r = d.rounds;
   const rows = r.items
@@ -242,6 +301,11 @@ function roundsSection(d: Discourse): string {
     .join("");
   const fl = r.items.map((it) => ("flashpoint" in it && it.flashpoint ? `<p class="fine"><b>${esc(it.label)}:</b> ${esc(it.flashpoint)}</p>` : "")).join("");
   const fps = d.corpus.flashpoints.filter((f) => f.round === 2).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  const fps3 = d.corpus.flashpoints.filter((f) => f.round === 3).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  const ka3 = d.key_accounts_round3;
+  const r3list = `<h3>Round 3: notable new accounts</h3><p class="fine">${esc(ka3.note)}</p><ul class="r3acc">${ka3.items
+    .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</li>`)
+    .join("")}</ul>`;
   const ka = d.key_accounts_round2;
   const col = (s: StanceName) =>
     `<div class="acol ${s}"><h3><i style="background:${STANCE_COLOR[s]}"></i>${CAP(s)}</h3><ul>${ka[s]
@@ -249,7 +313,7 @@ function roundsSection(d: Discourse): string {
       .join("")}</ul></div>`;
   return `<section id="rounds"><h2>Rounds</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
-${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><h3>Round 2 key accounts</h3><p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div></section>`;
+${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${r3list}<h3>Round 2 key accounts</h3><p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div></section>`;
 }
 
 function caveatsSection(d: Discourse, e: Editorial): string {
@@ -308,6 +372,7 @@ blockquote.post p{white-space:pre-line;font-size:15px}.who{font-size:14px}.role{
 .acols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media (max-width:860px){.acols{grid-template-columns:1fr}}
 .acol ul{list-style:none;padding:0;margin:0}.acol li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14px}.acol li p{margin:4px 0 6px}.fol{color:var(--muted);font-size:12px}.chips{display:flex;gap:6px;flex-wrap:wrap}.also{font-size:13px;color:var(--muted)}
 .caveats li{margin-bottom:8px;max-width:820px}
+.r3acc{padding-left:18px;font-size:14px}.r3acc li{margin-bottom:6px}.xtabs{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:860px){.xtabs{grid-template-columns:1fr}}
 footer{padding:28px 0 60px;color:var(--muted);font-size:13px}footer dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}footer dt{font-weight:600}footer dd{margin:0;word-break:break-word}
 footer pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12.5px}
 code{font:13px ui-monospace,Menlo,monospace;background:var(--accent-soft);padding:0 4px;border-radius:4px}
@@ -330,9 +395,9 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
 <h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
 <div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
-<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
+<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a><a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
-${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
+${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
 <footer><dl>
 <dt>Corpus</dt><dd>${esc(d.corpus.source)}. ${d.corpus.notes.map(esc).join(" ")}</dd>
 <dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>

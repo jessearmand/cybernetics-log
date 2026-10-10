@@ -1,0 +1,10 @@
+{
+  "_note": "Exact ai-cli arguments used in round 3 (model typesafe-ai/jev, --input text, post text on stdin). One call per group per post.",
+  "stance": {"args": ["--choice", "stance=What is the author's stance on whether AI could be conscious? reject = dismisses it; curious = unsure, open or just interested; serious = treats it as a real possibility or deserving moral concern", "--choices", "stance=reject,curious,serious"],
+             "_note": "Round 1/2 three-way wording was not saved; this is a reconstruction used from round 3 on. Round 1/2 labels were not re-run."},
+  "two_question": {"args": ["--boolean", "believes=Does the author think current AI might be conscious or deserve moral consideration?", "--boolean", "dismisses=Does the author treat AI consciousness or model welfare as a joke, delusion, or psychosis?"],
+                   "_note": "Verbatim from round 1/2 (jev_run2.py)."},
+  "topic": {"args": ["--boolean", "topic=Is this post arguing about the policy itself (rules, enforcement, company control of users, how people should treat chatbots) rather than about whether AI is conscious?"]},
+  "policy": {"args": ["--choice", "position=What is the author's position on Anthropic's usage-policy rule banning sustained and needless abusive or cruel behavior toward Claude? support = approves of the rule; oppose = disapproves or mocks it; neutral_or_unclear = just reports it, or no clear position", "--choices", "position=support,oppose,neutral_or_unclear",
+                         "--choice", "reason=What is the author's main reason? oppose_absurd = it is absurd to protect software; oppose_overreach = a company should not police how paying users behave; support_model_welfare = Claude might be harmed or might matter morally; support_user_character = cruelty harms the user or society; other = none of these or no reason given", "--choices", "reason=oppose_absurd,oppose_overreach,support_model_welfare,support_user_character,other"]}
+}
