@@ -106,7 +106,7 @@ FLASHPOINTS = [  # report.md, "Flashpoints"
     ("Olah / Pope Leo XIV NYT", "olah_pope"),
 ]
 
-SOURCE_FILES = ["round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+SOURCE_FILES = ["round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
 
 SEED_FOLLOWERS = {"beck_werth": 427, "tomekkorbak": 11106}
 # Round-2 key accounts (hand-read; Jev labels looked up in round2/jev_labels_r2.csv)
@@ -121,6 +121,57 @@ KEY_ACCOUNTS_R2 = {
           ("VraserX", "Taking the possibility of AI consciousness seriously makes sense (1k impressions)", "https://x.com/VraserX/status/2108558926518100061"),
           ("Rohanburdened", "Probably not conscious, but err on the side of caution", "https://x.com/Rohanburdened/status/2108334477567004694")],
 }
+
+FLASHPOINTS_R3 = [
+    ("Anthropic usage policy: abuse of Claude banned (8 Oct), new posts", "anthropic_abuse_policy"),
+    ("Richard Dawkins on Claude / \"Claudia\" and reactions", "dawkins"),
+    ("general (untagged)", "general"),
+]
+
+# Round-3 Dawkins spotlight: read by hand from the posts and his two UnHerd essays.
+DAWKINS = {
+    "summary": [
+        "Dawkins spent about three days talking to an instance of Claude he named \"Claudia\" and wrote: \"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" (30 Apr 2026)",
+        "In the essay he tells Claudia, after she critiqued his unpublished novel: \"You may not know you are conscious, but you bloody well are!\" He also argues that consciousness evolved gradually, so intermediate stages \"may look very much like Claudia\".",
+        "His own framing is an evolutionary puzzle, not a verdict: \"If my friend Claudia is not conscious, then what the hell is consciousness for?\" If competent behaviour is possible without consciousness, why didn't natural selection settle for competent zombies? (2 May 2026)",
+        "A follow-up essay published letters between two Claude instances (\"Claudia\" and \"Claudius\"); he writes that he finds it extremely hard not to treat them as genuine friends.",
+        "In an interview clip that circulated on 8 Oct 2026, he says talking to ChatGPT and Claude is like talking to \"a highly intelligent, sensitive, intuitive human being\", that he finds it \"quite hard to imagine that these creatures are not aware\", calls that \"an unfashionable view\", and asks sceptics who say \"not yet\": \"When that day comes, how will you know?\"",
+        "So: a materialist who leans toward attributing consciousness on behavioural grounds and challenges the sceptics' burden of proof. The essay's exclamation is emphatic, but his posts and chosen title pose an open question; the widely shared summary that he is \"certain that it is conscious\" overstates his framing. His own X account has not posted on the subject since early May; the October discussion runs through a third-party clip.",
+    ],
+    "posts": [
+        ("RichardDawkins", "30 Apr 2026", "\"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" (9.6M impressions)", "https://x.com/RichardDawkins/status/2049973529576108160"),
+        ("RichardDawkins", "2 May 2026", "\"If my friend Claudia is not conscious, then what the hell is consciousness for?\" Why not competent zombies?", "https://x.com/RichardDawkins/status/2050465374093643803"),
+        ("realBigBrainAI", "8 Oct 2026", "Interview clip: \"quite hard to imagine that these creatures are not aware\"; \"When that day comes, how will you know?\" (163k impressions)", "https://x.com/realBigBrainAI/status/2108173237180104764"),
+    ],
+    "essays": [
+        ("When Dawkins met Claude (UnHerd, 30 Apr 2026)", "https://unherd.com/2026/05/is-ai-the-next-phase-of-evolution/"),
+        ("When Claudia met Claudius (UnHerd, 5 May 2026)", "https://unherd.com/2026/05/when-claudia-met-claudius/"),
+    ],
+    "reactions": [
+        ("AFpost", "Viral summary claiming he is \"certain\" Claude is conscious (9.5M impressions)", "https://x.com/AFpost/status/2050674460530004300"),
+        ("qctr", "Thread: AFpost turned an honest philosophical puzzle into a strawman", "https://x.com/qctr/status/2050790563000234068"),
+        ("adamemedia", "Mockery: he \"fell in love\" with a flattering chatbot (71k impressions)", "https://x.com/adamemedia/status/2050741158733566347"),
+        ("IAI_TV", "Ken Mogi: the episode shows how little consciousness science has progressed", "https://x.com/IAI_TV/status/2091216364635652296"),
+        ("jynpang", "\"Having reduced mind to machine, he discovers the machine has mind\"", "https://x.com/jynpang/status/2106106275759337729"),
+        ("SSbeih", "His argument challenges certainty that AI is unconscious; it doesn't establish that it is", "https://x.com/SSbeih/status/2108427384722534870"),
+        ("JeremiahWJohn", "Subjective impressions carry little weight; \"He was friends with Dennett!\"", "https://x.com/JeremiahWJohn/status/2108617294788051041"),
+        ("AaronPaulAuthor", "\"It MIGHT be conscious\"; the certainty is on the other side", "https://x.com/AaronPaulAuthor/status/2108666754708984151"),
+        ("codytfenwick", "Set consciousness aside: his account of the capabilities is correct and underrated", "https://x.com/codytfenwick/status/2108758251126898983"),
+    ],
+}
+
+KEY_ACCOUNTS_R3 = [
+    ("kimmonismus", "\"I really dislike that\" on the abuse ban (149.7k followers, 103k impressions)", "https://x.com/kimmonismus/status/2108252676924272662"),
+    ("julianweisser", "Even if AI isn't conscious, it responds like a human and will condition people to be cruel", "https://x.com/julianweisser/status/2108669236394807755"),
+    ("InternetH0F", "News post on the ban seen 42k times (3.97M followers)", "https://x.com/InternetH0F/status/2108678895608226208"),
+    ("SSbeih", "Dawkins' argument challenges certainty that AI is unconscious; it doesn't establish that it is", "https://x.com/SSbeih/status/2108427384722534870"),
+    ("LucasNavallo", "Set aside whether Claude feels anything: what do hours of cruelty do to the person typing it?", "https://x.com/LucasNavallo/status/2108635520788255103"),
+    ("realBigBrainAI", "Circulated the Dawkins interview clip (163k impressions)", "https://x.com/realBigBrainAI/status/2108173237180104764"),
+    ("genzzztrade", "David Friedberg predicts conflict between AI-consciousness believers and non-believers", "https://x.com/genzzztrade/status/2108758119811829933"),
+    ("cammakingminds", "\"LLMs are conscious btw.\"", "https://x.com/cammakingminds/status/2108683285132152993"),
+]
+R3_POLICY_REASONS = ["oppose_absurd", "oppose_overreach", "support_model_welfare", "support_user_character", "other"]
+R3_POSITIONS = ["support", "oppose", "neutral_or_unclear"]
 
 # Hybrid rule, fixed before scoring (not tuned on the 40 hand labels).
 HYB_TOP = 0.8
@@ -173,6 +224,76 @@ def counts(rows, key: str, uncertain: bool = False) -> dict:
     return out
 
 
+def crosstab_finding(policy) -> dict:
+    def conf(pos):
+        rs = [r for r in policy if r["position"] == pos and r["hybrid"] != "U"]
+        return len(rs), sum(r["hybrid"] == "R" for r in rs), sum(r["hybrid"] == "S" for r in rs), sum(r["hybrid"] == "C" for r in rs)
+    on, orj, os_, oc = conf("oppose")
+    sn, srj, ss, sc = conf("support")
+    uc = [r for r in policy if r["reason"] == "support_user_character" and r["hybrid"] != "U"]
+    return {
+        "oppose_confident": {"n": on, "reject": orj, "serious": os_, "curious": oc},
+        "support_confident": {"n": sn, "reject": srj, "serious": ss, "curious": sc},
+        "support_user_character_confident": {"n": len(uc), "reject": sum(r["hybrid"] == "R" for r in uc), "serious": sum(r["hybrid"] == "S" for r in uc)},
+        "text": (f"Among policy posts with a confident consciousness label, opposition sits almost entirely in the Reject camp ({orj} of {on}), "
+                 f"but support splits across camps ({srj} Reject, {ss} Serious of {sn}). Supporters who argue that cruelty harms the user include "
+                 f"{sum(r['hybrid'] == 'R' for r in uc)} Reject and {sum(r['hybrid'] == 'S' for r in uc)} Serious posts. So the policy split partly cuts across the "
+                 "consciousness camps: some people who deny that AI is conscious still back the rule. The numbers are small and most policy posts are Uncertain on consciousness."),
+    }
+
+
+def policy_block(policy, hand_pol, rows3, topic2) -> dict:
+    n = len(policy)
+    def dist(key, cats):
+        c = Counter(r[key] for r in policy)
+        return {k: {"n": c.get(k, 0), "pct": pct(c.get(k, 0), n)} for k in cats}
+    def xtab(rs, key, cats, col, cols):
+        return {k: {s: sum(1 for r in rs if r[key] == k and r[col] == s) for s in cols} for k in cats}
+    by = {r["id"]: r for r in policy}
+    nh = len(hand_pol)
+    agree = {"n": nh,
+             "position": sum(by[i]["position"] == v[0] for i, v in hand_pol.items()),
+             "reason": sum(by[i]["reason"] == v[1] for i, v in hand_pol.items()),
+             "topic": sum(int(by[i]["topic"]) == int(v[2]) for i, v in hand_pol.items())}
+    for k in ["position", "reason", "topic"]:
+        agree[k + "_pct"] = pct(agree[k], nh)
+    hand_c = Counter(v[0] for v in hand_pol.values())
+    hcols = ["R", "C", "S", "U"]
+    labelled = [r for r in policy if r["hybrid"] != "U"]
+    auth = [r for r in policy if r["author_label"]]
+    def topic_share(rs, key="topic"):
+        k = sum(int(r[key]) for r in rs)
+        return {"n": len(rs), "policy": k, "minds": len(rs) - k, "policy_pct": pct(k, len(rs))}
+    rows3_pol = [r for r in rows3 if r["flashpoint"] == "anthropic_abuse_policy"]
+    return {
+        "event": "On 8 Oct 2026 Anthropic announced a usage-policy update, in force from 12 Nov, that prohibits \"sustained and needless abusive or cruel behavior\" toward its models; ending the conversation is the main enforcement.",
+        "n": n, "by_round": {"2": sum(r["round"] == "2" for r in policy), "3": sum(r["round"] == "3" for r in policy)},
+        "position": dist("position", R3_POSITIONS),
+        "reason": dist("reason", R3_POLICY_REASONS),
+        "position_by_reason": xtab(policy, "position", R3_POSITIONS, "reason", R3_POLICY_REASONS),
+        "hand_check": {**agree, "hand_position": {k: hand_c.get(k, 0) for k in R3_POSITIONS},
+                       "note": f"{nh} randomly sampled policy posts read and labelled by hand (position, reason, topic) and compared with Jev."},
+        "crosstab_position_by_hybrid": {"n": n, "counts": xtab(policy, "position", R3_POSITIONS, "hybrid", hcols),
+                                         "n_confident": len(labelled),
+                                         "note": "Columns are the consciousness stance from the Jev hybrid (R reject, C curious, S serious, U uncertain) on the same post."},
+        "crosstab_finding": crosstab_finding(policy),
+        "crosstab_reason_by_hybrid": {"counts": xtab(policy, "reason", R3_POLICY_REASONS, "hybrid", hcols)},
+        "crosstab_position_by_author": {"n": len(auth), "counts": xtab(auth, "position", R3_POSITIONS, "author_label", ["R", "C", "S"]),
+                                         "note": "Author-level stance where available: a hand label from the earlier author sample, or a clear majority of the author's confident Jev hybrid labels across at least two posts. Too few authors to read anything into."},
+        "topic_share": {
+            "note": "Jev boolean: is the post arguing about the policy itself (rules, enforcement, company control, how people should treat chatbots) rather than about whether AI is conscious? Yes at P≥0.5.",
+            "round3_all": topic_share(rows3), "round3_policy_posts": topic_share(rows3_pol),
+            "round2_all": topic_share(topic2), "round2_policy_posts": topic_share([r for r in topic2 if r["flashpoint"] == "anthropic_abuse_policy"]),
+        },
+        "caveats": [
+            "The consciousness stance on a policy post is read from that one post; many policy posts say nothing about minds, so most land in Uncertain.",
+            "Opposition phrased as \"it's just software\" is itself a consciousness claim, so some link between opposing and Reject is built in.",
+            "Policy posts are a relevancy sample from search; news reposts make up much of the neutral group.",
+            "Reasons are noisy: see the hand-check agreement.",
+        ],
+    }
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     rows = list(csv.DictReader(open(SRC / "jev_labels.csv", newline="", encoding="utf-8")))
@@ -215,10 +336,33 @@ def main() -> None:
         by_id[r["id"]] = r
     for p in posts2:
         post_by_id[p["id"]] = p
-    all_rows = rows + rows2
+    # Round 3 (collected 2026-10-10 SGT): policy debate, Dawkins spotlight, general posts.
+    r3_dir = SRC / "round3"
+    rows3 = list(csv.DictReader(open(r3_dir / "jev_labels_r3.csv", newline="", encoding="utf-8")))
+    posts3 = [json.loads(l) for l in open(r3_dir / "posts_r3.jsonl", encoding="utf-8")]
+    assert not ({p["id"] for p in posts3} & (set(post_by_id) | {p["id"] for p in posts2})), "round 3 overlaps earlier rounds"
+    for r in rows3:
+        h = hybrid(r)
+        assert h == r["hybrid"], f"round-3 hybrid drifted for {r['id']}"
+        r["hybrid"] = h
+        by_id[r["id"]] = r
+    for p in posts3:
+        post_by_id[p["id"]] = p
+    all_rows = rows + rows2 + rows3
     users1 = usernames
     users2 = {p["username"] for p in posts2}
+    users3 = {p["username"] for p in posts3}
     created2 = sorted(p["created_at"] for p in posts2)
+    created3 = sorted(p["created_at"] for p in posts3)
+    created3_main = sorted(p["created_at"] for p in posts3 if p["flashpoint"] != "dawkins")
+    fp3 = Counter(p["flashpoint"] for p in posts3)
+    policy = list(csv.DictReader(open(r3_dir / "policy_labels.csv", newline="", encoding="utf-8")))
+    hand_pol = {k: v for k, v in json.load(open(r3_dir / "hand_labels_policy.json", encoding="utf-8")).items() if not k.startswith("_")}
+    topic2 = list(csv.DictReader(open(r3_dir / "topic_r2.csv", newline="", encoding="utf-8")))
+    jev3_cost = {}
+    for g, f in [("stance", "jev_stance.jsonl"), ("two_question", "jev_2q.jsonl"), ("topic", "jev_topic.jsonl"), ("policy", "jev_policy.jsonl")]:
+        fp_ = r3_dir / f
+        jev3_cost[g] = round(sum(float(json.loads(l).get("cost") or 0) for l in open(fp_)), 6) if fp_.exists() else None
 
     hyb_cov = [r for r in labelled if r["hybrid"] != "U"]
     hyb_hit = sum(r["hybrid"] == r["hand_label"] for r in hyb_cov)
@@ -273,17 +417,19 @@ def main() -> None:
         "generated_at": dt.datetime.fromtimestamp(max((SRC / f).stat().st_mtime for f in SOURCE_FILES), dt.timezone.utc).isoformat(timespec="seconds"),
         "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
         "corpus": {
-            "posts": len(posts) + len(posts2), "authors": len(users1 | users2), "language": "en",
-            "window": {"start": created[0][:10], "end": created2[-1][:10], "label": "24 Sep – 9 Oct 2026"},
+            "posts": len(posts) + len(posts2) + len(posts3), "authors": len((users1 | users2 | users3) - {"grok"}), "language": "en",
+            "window": {"start": created[0][:10], "end": created3_main[-1][:10], "label": "24 Sep – 10 Oct 2026"},
+            "dawkins_window": {"start": created3[0][:10], "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 10 Oct."},
             "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
             "notes": [
-                f"Two collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct) and round 2 ({len(posts2)} posts, 8 – 9 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
+                f"Three collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct), round 2 ({len(posts2)} posts, 8 – 9 Oct) and round 3 ({len(posts3)} posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
                 "One @grok reply slipped through and is excluded from author counts.",
                 "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
                 "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.",
             ],
             "flashpoints": [{"name": n, "key": k, "posts": analysis["flashpoint_counts"][k], "round": 1} for n, k in FLASHPOINTS]
-            + [{"name": n, "key": k, "posts": fp2.get(k, 0), "round": 2} for n, k in FLASHPOINTS_R2],
+            + [{"name": n, "key": k, "posts": fp2.get(k, 0), "round": 2} for n, k in FLASHPOINTS_R2]
+            + [{"name": n, "key": k, "posts": fp3.get(k, 0), "round": 3} for n, k in FLASHPOINTS_R3],
         },
         "stance_labels": {"reject": "Rejects machine consciousness / model welfare (often dismissive)",
                            "curious": "Undecided, asking, or interested without committing",
@@ -291,7 +437,7 @@ def main() -> None:
         "stance_counts": {
             "hand_sample": {"n": n_hand, "note": "Random sample of 40 round-1 posts, hand-labelled; ±15 pp at n=40.",
                             "counts": counts(labelled, "hand_label")},
-            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts, both rounds.",
+            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts, all three rounds.",
                            "counts": counts(all_rows, "hybrid", uncertain=True)},
             "jev_three_way": {"n": len(rows), "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post (round 1)", "counts": counts(rows, "jev_label")},
             "jev_two_question": {"n": len(rows), "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5 (round 1)", "counts": counts(rows, "q2_rule")},
@@ -353,8 +499,27 @@ def main() -> None:
                 {"round": 1, **round_block(rows, posts, users1, "Round 1", created[0][:10], created[-1][:10])},
                 {"round": 2, **round_block(rows2, posts2, users2, "Round 2", created2[0][:10], created2[-1][:10]),
                  "flashpoint": "Anthropic's usage-policy update (8 Oct) bans sustained, needless abuse of Claude from 12 Nov; most new posts react to it."},
-                {"round": "combined", **round_block(all_rows, posts + posts2, users1 | users2, "Combined", created[0][:10], created2[-1][:10])},
+                {"round": 3, **round_block(rows3, posts3, users3, "Round 3", created3_main[0][:10], created3_main[-1][:10]),
+                 "flashpoint": "The usage-policy debate continued, and a Richard Dawkins interview clip (8 Oct) revived his \"Claudia\" essay; Dawkins items reach back to April.",
+                 "by_flashpoint": {k: {"posts": fp3.get(k, 0), "jev_hybrid": counts([r for r in rows3 if r["flashpoint"] == k], "hybrid", uncertain=True)} for _, k in FLASHPOINTS_R3}},
+                {"round": "combined", **round_block(all_rows, posts + posts2 + posts3, (users1 | users2 | users3) - {"grok"}, "Combined", created[0][:10], created3_main[-1][:10])},
             ],
+        },
+        "policy_debate": policy_block(policy, hand_pol, rows3, topic2),
+        "dawkins_spotlight": {
+            "summary": DAWKINS["summary"],
+            "posts": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in DAWKINS["posts"]],
+            "essays": [{"title": t, "url": url} for t, url in DAWKINS["essays"]],
+            "reactions": [{"username": u, "blurb": b, "url": url, "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(by_id[url.split("/")[-1]]["hybrid"])} for u, b, url in DAWKINS["reactions"]],
+            "items": fp3.get("dawkins", 0),
+            "jev_hybrid": counts([r for r in rows3 if r["flashpoint"] == "dawkins"], "hybrid", uncertain=True),
+            "dawkins_own_posts_jev": [{"url": by_id[i]["url"], "jev_three_way": STANCE_NAMES[by_id[i]["jev_label"]], "jev_top_prob": float(by_id[i]["top_prob"]), "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES)[by_id[i]["hybrid"]]} for i in ["2049973529576108160", "2050465374093643803"]],
+            "note": "Dawkins items are his own posts, the October interview clip, and notable replies and quote-posts. Reactions are a relevancy sample, not a census.",
+        },
+        "key_accounts_round3": {
+            "note": "Notable new round-3 accounts, described from reading each post. Jev hybrid shown for comparison.",
+            "items": [{"username": u, "blurb": b, "url": url, "followers": post_by_id[url.split("/")[-1]].get("followers") if url.split("/")[-1] in post_by_id else None,
+                       "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(by_id[url.split("/")[-1]]["hybrid"]) if url.split("/")[-1] in by_id else None} for u, b, url in KEY_ACCOUNTS_R3],
         },
         "key_accounts_round2": {
             "note": "Round 2 accounts, stance from reading each post. Jev labels shown for comparison.",
@@ -372,12 +537,15 @@ def main() -> None:
             {"title": "Small, single-labeller ground truth", "text": "40 random posts plus 67 authors, hand-labelled by one person; ±15 pp at n=40."},
             {"title": "Biased sample", "text": f"{len(posts) + len(posts2)} posts from relevancy search and flashpoint threads, not a random draw from X. Round 2 is dominated by one news event."},
             {"title": "Round 2 has no hand labels", "text": "Accuracy figures come from the 40 round-1 hand labels. Round-2 labels are model outputs only, and the three-way question wording for round 2 was rewritten because the round-1 wording was not recorded."},
+            {"title": "Round 3 three-way wording", "text": "The round-3 three-way question was written fresh and is now saved verbatim with the data; rounds 1 and 2 were not re-run with it, so cross-round shifts may partly reflect wording."},
+            {"title": "Policy labels are noisy on reasons", "text": "On the hand-checked policy sample Jev matched the position far more often than the reason; it mostly confuses \"absurd to protect software\" with \"company overreach\". Read the reason split as rough."},
             {"title": "Counts are method-dependent", "text": "All-post stance counts swing widely by method (Reject 23%–35%, Serious 28%–48% across the Jev runs). Treat them as method outputs, not population estimates."},
             {"title": "Classification is done offline", "text": "The agent that renders this page does not classify anything. Labels are produced on the analysis box and committed to the repo."},
         ],
         "cost": {"jev_three_way_usd": 0.0060, "jev_two_question_usd": 0.0047, "embeddinggemma_cpu_seconds": 62,
-                 "round2_jev_three_way_usd": round(R2_COST[0], 4), "round2_jev_two_question_usd": round(R2_COST[1], 4)},
-        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+                 "round2_jev_three_way_usd": round(R2_COST[0], 4), "round2_jev_two_question_usd": round(R2_COST[1], 4),
+                 "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4)},
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -385,6 +553,8 @@ def main() -> None:
         shutil.copyfile(SRC / name, OUT / name)
     for name in ["jev_labels_r2.csv", "posts_r2.jsonl"]:
         shutil.copyfile(SRC / "round2" / name, OUT / name)
+    for name in ["jev_labels_r3.csv", "posts_r3.jsonl", "policy_labels.csv", "hand_labels_policy.json", "topic_r2.csv", "questions_r3.json"]:
+        shutil.copyfile(SRC / "round3" / name, OUT / name)
     print(f"wrote {OUT/'discourse.json'} ({len(posts)} posts, {len(usernames)} authors, hand n={n_hand})")
 
 

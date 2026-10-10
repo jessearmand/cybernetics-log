@@ -20,7 +20,7 @@ export default defineTool({
     summary: z.array(z.string().trim().min(20).max(900)).min(1).max(4).describe("Opening paragraphs."),
     takeaways: z.array(z.string().trim().min(5).max(240)).max(5).optional().describe("Short key findings shown as cards."),
     section_notes: z
-      .object({ stance: note, methods: note, confidence: note, pairTest: note, clusters: note, accounts: note, caveats: note })
+      .object({ stance: note, methods: note, confidence: note, pairTest: note, clusters: note, accounts: note, caveats: note, policy: note, dawkins: note })
       .partial()
       .optional()
       .describe("Optional one-paragraph intro for each section."),

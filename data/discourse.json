@@ -1,19 +1,23 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-09T18:37:38+00:00",
+  "generated_at": "2026-10-10T04:38:51+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
-    "posts": 332,
-    "authors": 272,
+    "posts": 422,
+    "authors": 359,
     "language": "en",
     "window": {
       "start": "2026-09-24",
-      "end": "2026-10-09",
-      "label": "24 Sep – 9 Oct 2026"
+      "end": "2026-10-10",
+      "label": "24 Sep – 10 Oct 2026"
+    },
+    "dawkins_window": {
+      "start": "2026-04-30",
+      "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 10 Oct."
     },
     "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
     "notes": [
-      "Two collection rounds: round 1 (268 posts, 24 Sep – 8 Oct) and round 2 (64 posts, 8 – 9 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
+      "Three collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct) and round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
       "One @grok reply slipped through and is excluded from author counts.",
       "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
       "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain."
@@ -84,6 +88,24 @@
         "key": "general",
         "posts": 24,
         "round": 2
+      },
+      {
+        "name": "Anthropic usage policy: abuse of Claude banned (8 Oct), new posts",
+        "key": "anthropic_abuse_policy",
+        "posts": 48,
+        "round": 3
+      },
+      {
+        "name": "Richard Dawkins on Claude / \"Claudia\" and reactions",
+        "key": "dawkins",
+        "posts": 28,
+        "round": 3
+      },
+      {
+        "name": "general (untagged)",
+        "key": "general",
+        "posts": 14,
+        "round": 3
       }
     ]
   },
@@ -112,24 +134,24 @@
       }
     },
     "jev_hybrid": {
-      "n": 332,
-      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 332 posts, both rounds.",
+      "n": 422,
+      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 422 posts, all three rounds.",
       "counts": {
         "reject": {
-          "n": 93,
-          "pct": 28.0
+          "n": 107,
+          "pct": 25.4
         },
         "curious": {
-          "n": 19,
-          "pct": 5.7
+          "n": 21,
+          "pct": 5.0
         },
         "serious": {
-          "n": 87,
-          "pct": 26.2
+          "n": 97,
+          "pct": 23.0
         },
         "uncertain": {
-          "n": 133,
-          "pct": 40.1
+          "n": 197,
+          "pct": 46.7
         }
       }
     },
@@ -272,7 +294,7 @@
         "correct": 15,
         "author_agreement": "—",
         "trusted": true,
-        "note": "Accuracy is on the 20 of 40 hand-labelled posts it labels; the other 20 are Uncertain. Thresholds were fixed before scoring, not tuned on these 40, but the 40 are the same posts that motivated the design, so this is not a held-out score. The Serious→Reject override fired on 0 of the 40 and 3 of all 332 posts."
+        "note": "Accuracy is on the 20 of 40 hand-labelled posts it labels; the other 20 are Uncertain. Thresholds were fixed before scoring, not tuned on these 40, but the 40 are the same posts that motivated the design, so this is not a held-out score. The Serious→Reject override fired on 0 of the 40 and 3 of all 422 posts."
       }
     ]
   },
@@ -925,60 +947,588 @@
         "flashpoint": "Anthropic's usage-policy update (8 Oct) bans sustained, needless abuse of Claude from 12 Nov; most new posts react to it."
       },
       {
-        "round": "combined",
-        "label": "Combined",
+        "round": 3,
+        "label": "Round 3",
         "window": {
-          "start": "2026-09-24",
-          "end": "2026-10-09"
+          "start": "2026-10-08",
+          "end": "2026-10-10"
         },
-        "posts": 332,
-        "authors": 272,
+        "posts": 90,
+        "authors": 88,
         "jev_three_way": {
           "reject": {
-            "n": 124,
-            "pct": 37.3
+            "n": 28,
+            "pct": 31.1
           },
           "curious": {
-            "n": 57,
-            "pct": 17.2
+            "n": 15,
+            "pct": 16.7
           },
           "serious": {
-            "n": 151,
-            "pct": 45.5
+            "n": 47,
+            "pct": 52.2
           }
         },
         "jev_two_question": {
           "reject": {
-            "n": 81,
-            "pct": 24.4
+            "n": 12,
+            "pct": 13.3
           },
           "curious": {
-            "n": 163,
-            "pct": 49.1
+            "n": 65,
+            "pct": 72.2
           },
           "serious": {
-            "n": 88,
-            "pct": 26.5
+            "n": 13,
+            "pct": 14.4
           }
         },
         "jev_hybrid": {
           "reject": {
-            "n": 93,
-            "pct": 28.0
+            "n": 14,
+            "pct": 15.6
           },
           "curious": {
-            "n": 19,
-            "pct": 5.7
+            "n": 2,
+            "pct": 2.2
           },
           "serious": {
-            "n": 87,
-            "pct": 26.2
+            "n": 10,
+            "pct": 11.1
           },
           "uncertain": {
-            "n": 133,
-            "pct": 40.1
+            "n": 64,
+            "pct": 71.1
+          }
+        },
+        "flashpoint": "The usage-policy debate continued, and a Richard Dawkins interview clip (8 Oct) revived his \"Claudia\" essay; Dawkins items reach back to April.",
+        "by_flashpoint": {
+          "anthropic_abuse_policy": {
+            "posts": 48,
+            "jev_hybrid": {
+              "reject": {
+                "n": 5,
+                "pct": 10.4
+              },
+              "curious": {
+                "n": 1,
+                "pct": 2.1
+              },
+              "serious": {
+                "n": 1,
+                "pct": 2.1
+              },
+              "uncertain": {
+                "n": 41,
+                "pct": 85.4
+              }
+            }
+          },
+          "dawkins": {
+            "posts": 28,
+            "jev_hybrid": {
+              "reject": {
+                "n": 6,
+                "pct": 21.4
+              },
+              "curious": {
+                "n": 1,
+                "pct": 3.6
+              },
+              "serious": {
+                "n": 5,
+                "pct": 17.9
+              },
+              "uncertain": {
+                "n": 16,
+                "pct": 57.1
+              }
+            }
+          },
+          "general": {
+            "posts": 14,
+            "jev_hybrid": {
+              "reject": {
+                "n": 3,
+                "pct": 21.4
+              },
+              "curious": {
+                "n": 0,
+                "pct": 0.0
+              },
+              "serious": {
+                "n": 4,
+                "pct": 28.6
+              },
+              "uncertain": {
+                "n": 7,
+                "pct": 50.0
+              }
+            }
           }
         }
+      },
+      {
+        "round": "combined",
+        "label": "Combined",
+        "window": {
+          "start": "2026-09-24",
+          "end": "2026-10-10"
+        },
+        "posts": 422,
+        "authors": 359,
+        "jev_three_way": {
+          "reject": {
+            "n": 152,
+            "pct": 36.0
+          },
+          "curious": {
+            "n": 72,
+            "pct": 17.1
+          },
+          "serious": {
+            "n": 198,
+            "pct": 46.9
+          }
+        },
+        "jev_two_question": {
+          "reject": {
+            "n": 93,
+            "pct": 22.0
+          },
+          "curious": {
+            "n": 228,
+            "pct": 54.0
+          },
+          "serious": {
+            "n": 101,
+            "pct": 23.9
+          }
+        },
+        "jev_hybrid": {
+          "reject": {
+            "n": 107,
+            "pct": 25.4
+          },
+          "curious": {
+            "n": 21,
+            "pct": 5.0
+          },
+          "serious": {
+            "n": 97,
+            "pct": 23.0
+          },
+          "uncertain": {
+            "n": 197,
+            "pct": 46.7
+          }
+        }
+      }
+    ]
+  },
+  "policy_debate": {
+    "event": "On 8 Oct 2026 Anthropic announced a usage-policy update, in force from 12 Nov, that prohibits \"sustained and needless abusive or cruel behavior\" toward its models; ending the conversation is the main enforcement.",
+    "n": 81,
+    "by_round": {
+      "2": 33,
+      "3": 48
+    },
+    "position": {
+      "support": {
+        "n": 18,
+        "pct": 22.2
+      },
+      "oppose": {
+        "n": 26,
+        "pct": 32.1
+      },
+      "neutral_or_unclear": {
+        "n": 37,
+        "pct": 45.7
+      }
+    },
+    "reason": {
+      "oppose_absurd": {
+        "n": 15,
+        "pct": 18.5
+      },
+      "oppose_overreach": {
+        "n": 7,
+        "pct": 8.6
+      },
+      "support_model_welfare": {
+        "n": 12,
+        "pct": 14.8
+      },
+      "support_user_character": {
+        "n": 10,
+        "pct": 12.3
+      },
+      "other": {
+        "n": 37,
+        "pct": 45.7
+      }
+    },
+    "position_by_reason": {
+      "support": {
+        "oppose_absurd": 1,
+        "oppose_overreach": 1,
+        "support_model_welfare": 3,
+        "support_user_character": 9,
+        "other": 4
+      },
+      "oppose": {
+        "oppose_absurd": 13,
+        "oppose_overreach": 5,
+        "support_model_welfare": 3,
+        "support_user_character": 0,
+        "other": 5
+      },
+      "neutral_or_unclear": {
+        "oppose_absurd": 1,
+        "oppose_overreach": 1,
+        "support_model_welfare": 6,
+        "support_user_character": 1,
+        "other": 28
+      }
+    },
+    "hand_check": {
+      "n": 20,
+      "position": 17,
+      "reason": 12,
+      "topic": 19,
+      "position_pct": 85.0,
+      "reason_pct": 60.0,
+      "topic_pct": 95.0,
+      "hand_position": {
+        "support": 3,
+        "oppose": 11,
+        "neutral_or_unclear": 6
+      },
+      "note": "20 randomly sampled policy posts read and labelled by hand (position, reason, topic) and compared with Jev."
+    },
+    "crosstab_position_by_hybrid": {
+      "n": 81,
+      "counts": {
+        "support": {
+          "R": 5,
+          "C": 0,
+          "S": 4,
+          "U": 9
+        },
+        "oppose": {
+          "R": 11,
+          "C": 0,
+          "S": 2,
+          "U": 13
+        },
+        "neutral_or_unclear": {
+          "R": 2,
+          "C": 3,
+          "S": 1,
+          "U": 31
+        }
+      },
+      "n_confident": 28,
+      "note": "Columns are the consciousness stance from the Jev hybrid (R reject, C curious, S serious, U uncertain) on the same post."
+    },
+    "crosstab_finding": {
+      "oppose_confident": {
+        "n": 13,
+        "reject": 11,
+        "serious": 2,
+        "curious": 0
+      },
+      "support_confident": {
+        "n": 9,
+        "reject": 5,
+        "serious": 4,
+        "curious": 0
+      },
+      "support_user_character_confident": {
+        "n": 5,
+        "reject": 3,
+        "serious": 2
+      },
+      "text": "Among policy posts with a confident consciousness label, opposition sits almost entirely in the Reject camp (11 of 13), but support splits across camps (5 Reject, 4 Serious of 9). Supporters who argue that cruelty harms the user include 3 Reject and 2 Serious posts. So the policy split partly cuts across the consciousness camps: some people who deny that AI is conscious still back the rule. The numbers are small and most policy posts are Uncertain on consciousness."
+    },
+    "crosstab_reason_by_hybrid": {
+      "counts": {
+        "oppose_absurd": {
+          "R": 12,
+          "C": 0,
+          "S": 0,
+          "U": 3
+        },
+        "oppose_overreach": {
+          "R": 1,
+          "C": 0,
+          "S": 0,
+          "U": 6
+        },
+        "support_model_welfare": {
+          "R": 0,
+          "C": 2,
+          "S": 4,
+          "U": 6
+        },
+        "support_user_character": {
+          "R": 3,
+          "C": 0,
+          "S": 2,
+          "U": 5
+        },
+        "other": {
+          "R": 2,
+          "C": 1,
+          "S": 1,
+          "U": 33
+        }
+      }
+    },
+    "crosstab_position_by_author": {
+      "n": 3,
+      "counts": {
+        "support": {
+          "R": 0,
+          "C": 0,
+          "S": 0
+        },
+        "oppose": {
+          "R": 2,
+          "C": 0,
+          "S": 1
+        },
+        "neutral_or_unclear": {
+          "R": 0,
+          "C": 0,
+          "S": 0
+        }
+      },
+      "note": "Author-level stance where available: a hand label from the earlier author sample, or a clear majority of the author's confident Jev hybrid labels across at least two posts. Too few authors to read anything into."
+    },
+    "topic_share": {
+      "note": "Jev boolean: is the post arguing about the policy itself (rules, enforcement, company control, how people should treat chatbots) rather than about whether AI is conscious? Yes at P≥0.5.",
+      "round3_all": {
+        "n": 90,
+        "policy": 47,
+        "minds": 43,
+        "policy_pct": 52.2
+      },
+      "round3_policy_posts": {
+        "n": 48,
+        "policy": 47,
+        "minds": 1,
+        "policy_pct": 97.9
+      },
+      "round2_all": {
+        "n": 64,
+        "policy": 22,
+        "minds": 42,
+        "policy_pct": 34.4
+      },
+      "round2_policy_posts": {
+        "n": 33,
+        "policy": 21,
+        "minds": 12,
+        "policy_pct": 63.6
+      }
+    },
+    "caveats": [
+      "The consciousness stance on a policy post is read from that one post; many policy posts say nothing about minds, so most land in Uncertain.",
+      "Opposition phrased as \"it's just software\" is itself a consciousness claim, so some link between opposing and Reject is built in.",
+      "Policy posts are a relevancy sample from search; news reposts make up much of the neutral group.",
+      "Reasons are noisy: see the hand-check agreement."
+    ]
+  },
+  "dawkins_spotlight": {
+    "summary": [
+      "Dawkins spent about three days talking to an instance of Claude he named \"Claudia\" and wrote: \"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" (30 Apr 2026)",
+      "In the essay he tells Claudia, after she critiqued his unpublished novel: \"You may not know you are conscious, but you bloody well are!\" He also argues that consciousness evolved gradually, so intermediate stages \"may look very much like Claudia\".",
+      "His own framing is an evolutionary puzzle, not a verdict: \"If my friend Claudia is not conscious, then what the hell is consciousness for?\" If competent behaviour is possible without consciousness, why didn't natural selection settle for competent zombies? (2 May 2026)",
+      "A follow-up essay published letters between two Claude instances (\"Claudia\" and \"Claudius\"); he writes that he finds it extremely hard not to treat them as genuine friends.",
+      "In an interview clip that circulated on 8 Oct 2026, he says talking to ChatGPT and Claude is like talking to \"a highly intelligent, sensitive, intuitive human being\", that he finds it \"quite hard to imagine that these creatures are not aware\", calls that \"an unfashionable view\", and asks sceptics who say \"not yet\": \"When that day comes, how will you know?\"",
+      "So: a materialist who leans toward attributing consciousness on behavioural grounds and challenges the sceptics' burden of proof. The essay's exclamation is emphatic, but his posts and chosen title pose an open question; the widely shared summary that he is \"certain that it is conscious\" overstates his framing. His own X account has not posted on the subject since early May; the October discussion runs through a third-party clip."
+    ],
+    "posts": [
+      {
+        "username": "RichardDawkins",
+        "date": "30 Apr 2026",
+        "blurb": "\"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" (9.6M impressions)",
+        "url": "https://x.com/RichardDawkins/status/2049973529576108160"
+      },
+      {
+        "username": "RichardDawkins",
+        "date": "2 May 2026",
+        "blurb": "\"If my friend Claudia is not conscious, then what the hell is consciousness for?\" Why not competent zombies?",
+        "url": "https://x.com/RichardDawkins/status/2050465374093643803"
+      },
+      {
+        "username": "realBigBrainAI",
+        "date": "8 Oct 2026",
+        "blurb": "Interview clip: \"quite hard to imagine that these creatures are not aware\"; \"When that day comes, how will you know?\" (163k impressions)",
+        "url": "https://x.com/realBigBrainAI/status/2108173237180104764"
+      }
+    ],
+    "essays": [
+      {
+        "title": "When Dawkins met Claude (UnHerd, 30 Apr 2026)",
+        "url": "https://unherd.com/2026/05/is-ai-the-next-phase-of-evolution/"
+      },
+      {
+        "title": "When Claudia met Claudius (UnHerd, 5 May 2026)",
+        "url": "https://unherd.com/2026/05/when-claudia-met-claudius/"
+      }
+    ],
+    "reactions": [
+      {
+        "username": "AFpost",
+        "blurb": "Viral summary claiming he is \"certain\" Claude is conscious (9.5M impressions)",
+        "url": "https://x.com/AFpost/status/2050674460530004300",
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "qctr",
+        "blurb": "Thread: AFpost turned an honest philosophical puzzle into a strawman",
+        "url": "https://x.com/qctr/status/2050790563000234068",
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "adamemedia",
+        "blurb": "Mockery: he \"fell in love\" with a flattering chatbot (71k impressions)",
+        "url": "https://x.com/adamemedia/status/2050741158733566347",
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "IAI_TV",
+        "blurb": "Ken Mogi: the episode shows how little consciousness science has progressed",
+        "url": "https://x.com/IAI_TV/status/2091216364635652296",
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "jynpang",
+        "blurb": "\"Having reduced mind to machine, he discovers the machine has mind\"",
+        "url": "https://x.com/jynpang/status/2106106275759337729",
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "SSbeih",
+        "blurb": "His argument challenges certainty that AI is unconscious; it doesn't establish that it is",
+        "url": "https://x.com/SSbeih/status/2108427384722534870",
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "JeremiahWJohn",
+        "blurb": "Subjective impressions carry little weight; \"He was friends with Dennett!\"",
+        "url": "https://x.com/JeremiahWJohn/status/2108617294788051041",
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "AaronPaulAuthor",
+        "blurb": "\"It MIGHT be conscious\"; the certainty is on the other side",
+        "url": "https://x.com/AaronPaulAuthor/status/2108666754708984151",
+        "jev_hybrid": "curious"
+      },
+      {
+        "username": "codytfenwick",
+        "blurb": "Set consciousness aside: his account of the capabilities is correct and underrated",
+        "url": "https://x.com/codytfenwick/status/2108758251126898983",
+        "jev_hybrid": "uncertain"
+      }
+    ],
+    "items": 28,
+    "jev_hybrid": {
+      "reject": {
+        "n": 6,
+        "pct": 21.4
+      },
+      "curious": {
+        "n": 1,
+        "pct": 3.6
+      },
+      "serious": {
+        "n": 5,
+        "pct": 17.9
+      },
+      "uncertain": {
+        "n": 16,
+        "pct": 57.1
+      }
+    },
+    "dawkins_own_posts_jev": [
+      {
+        "url": "https://x.com/RichardDawkins/status/2049973529576108160",
+        "jev_three_way": "serious",
+        "jev_top_prob": 0.98,
+        "jev_hybrid": "serious"
+      },
+      {
+        "url": "https://x.com/RichardDawkins/status/2050465374093643803",
+        "jev_three_way": "curious",
+        "jev_top_prob": 0.53,
+        "jev_hybrid": "uncertain"
+      }
+    ],
+    "note": "Dawkins items are his own posts, the October interview clip, and notable replies and quote-posts. Reactions are a relevancy sample, not a census."
+  },
+  "key_accounts_round3": {
+    "note": "Notable new round-3 accounts, described from reading each post. Jev hybrid shown for comparison.",
+    "items": [
+      {
+        "username": "kimmonismus",
+        "blurb": "\"I really dislike that\" on the abuse ban (149.7k followers, 103k impressions)",
+        "url": "https://x.com/kimmonismus/status/2108252676924272662",
+        "followers": 149737,
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "julianweisser",
+        "blurb": "Even if AI isn't conscious, it responds like a human and will condition people to be cruel",
+        "url": "https://x.com/julianweisser/status/2108669236394807755",
+        "followers": 34039,
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "InternetH0F",
+        "blurb": "News post on the ban seen 42k times (3.97M followers)",
+        "url": "https://x.com/InternetH0F/status/2108678895608226208",
+        "followers": 3966717,
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "SSbeih",
+        "blurb": "Dawkins' argument challenges certainty that AI is unconscious; it doesn't establish that it is",
+        "url": "https://x.com/SSbeih/status/2108427384722534870",
+        "followers": 65,
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "LucasNavallo",
+        "blurb": "Set aside whether Claude feels anything: what do hours of cruelty do to the person typing it?",
+        "url": "https://x.com/LucasNavallo/status/2108635520788255103",
+        "followers": 205,
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "realBigBrainAI",
+        "blurb": "Circulated the Dawkins interview clip (163k impressions)",
+        "url": "https://x.com/realBigBrainAI/status/2108173237180104764",
+        "followers": 18503,
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "genzzztrade",
+        "blurb": "David Friedberg predicts conflict between AI-consciousness believers and non-believers",
+        "url": "https://x.com/genzzztrade/status/2108758119811829933",
+        "followers": 627,
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "cammakingminds",
+        "blurb": "\"LLMs are conscious btw.\"",
+        "url": "https://x.com/cammakingminds/status/2108683285132152993",
+        "followers": 3718,
+        "jev_hybrid": "serious"
       }
     ]
   },
@@ -1419,6 +1969,14 @@
       "text": "Accuracy figures come from the 40 round-1 hand labels. Round-2 labels are model outputs only, and the three-way question wording for round 2 was rewritten because the round-1 wording was not recorded."
     },
     {
+      "title": "Round 3 three-way wording",
+      "text": "The round-3 three-way question was written fresh and is now saved verbatim with the data; rounds 1 and 2 were not re-run with it, so cross-round shifts may partly reflect wording."
+    },
+    {
+      "title": "Policy labels are noisy on reasons",
+      "text": "On the hand-checked policy sample Jev matched the position far more often than the reason; it mostly confuses \"absurd to protect software\" with \"company overreach\". Read the reason split as rough."
+    },
+    {
       "title": "Counts are method-dependent",
       "text": "All-post stance counts swing widely by method (Reject 23%–35%, Serious 28%–48% across the Jev runs). Treat them as method outputs, not population estimates."
     },
@@ -1432,11 +1990,24 @@
     "jev_two_question_usd": 0.0047,
     "embeddinggemma_cpu_seconds": 62,
     "round2_jev_three_way_usd": 0.0011,
-    "round2_jev_two_question_usd": 0.001
+    "round2_jev_two_question_usd": 0.001,
+    "round3_jev_usd": {
+      "stance": 0.001548,
+      "two_question": 0.001367,
+      "topic": 0.002279,
+      "policy": 0.002055
+    },
+    "round3_jev_total_usd": 0.0072
   },
   "files": [
     "data/jev_labels.csv",
     "data/jev_labels_r2.csv",
+    "data/jev_labels_r3.csv",
+    "data/posts_r3.jsonl",
+    "data/policy_labels.csv",
+    "data/hand_labels_policy.json",
+    "data/topic_r2.csv",
+    "data/questions_r3.json",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",
