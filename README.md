@@ -61,6 +61,7 @@ data/
   authors.json                  per-author model shares and hand reading
   hand_labels.json              40 hand labels (the ground truth: R 45% / C 25% / S 30%)
   jev_report.md                 full Jev write-up
+  gated_stance_r4b.md           gated stance-rule experiment (not used on the page) + gated_stance_r4b.csv, questions_r4b.json
   render-instruction.md         default render instruction
 scripts/
   build_discourse.py            box → data/ (recomputes every derivable number from the label files)
