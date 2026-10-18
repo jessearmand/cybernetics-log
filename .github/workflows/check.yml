@@ -1,0 +1,42 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same PR supersedes an in-flight run; every push to main is checked to completion.
+concurrency:
+  group: check-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          # Match package.json "engines" (24.x), which Vercel also uses.
+          node-version-file: package.json
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Typecheck (tsc) and the node:test suites, including the data and write-up consistency tests.
+      - name: Typecheck and test
+        run: npm run check
+
+      # eve build needs no secrets; runtime env vars (webhook secret, Blob token, AI Gateway) are read only at request time.
+      - name: Build
+        run: npm run build
