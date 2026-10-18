@@ -5,10 +5,10 @@ on:
   push:
     branches: [main]
 
-# A newer push to the same branch or PR supersedes an in-flight run.
+# A newer push to the same PR supersedes an in-flight run; every push to main is checked to completion.
 concurrency:
   group: check-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
