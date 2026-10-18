@@ -46,3 +46,13 @@ test("render: model and post text is escaped; only allow-listed links are emitte
   assert.match(html, /<strong>bold<\/strong>/);
   assert.equal(esc(`<"'&>`), "&lt;&quot;&#39;&amp;&gt;");
 });
+
+test("render: data committed before round 4 still renders (older deployments, replayed webhooks)", () => {
+  const old = structuredClone(discourse) as Record<string, unknown>;
+  for (const k of ["round4_framing", "politics_spotlight", "sebo", "neuroscience_sidebar", "model_comparison", "key_accounts_round4"]) delete old[k];
+  const html = renderPage(old as typeof discourse, PLACEHOLDER_EDITORIAL, meta);
+  assert.match(html, /<section id="policy"/);
+  for (const id of ["politics", "models"]) assert.ok(!html.includes(`<section id="${id}"`), id);
+  assert.ok(!html.includes('href="#politics"'));
+  assert.ok(!html.includes("undefined"));
+});

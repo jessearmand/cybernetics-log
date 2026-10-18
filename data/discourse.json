@@ -1868,6 +1868,7 @@
   },
   "model_comparison": {
     "note": "Three decision models on AI Gateway, given identical questions, scored on the same 40 stance and 20 policy hand labels. One call per post, no repeats.",
+    "hand_reject_n": 18,
     "models": [
       {
         "key": "typesafe-ai/jev-1.14.0",

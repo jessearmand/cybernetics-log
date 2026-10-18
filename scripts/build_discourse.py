@@ -412,7 +412,7 @@ def politics_block(rows4, by_id) -> dict:
 MODEL_NAMES = {"typesafe-ai/jev-1.14.0": "Jev 1.14.0 (TypeSafe)", "perplexity/pplx-decider-v1.2": "Decider v1.2 (Perplexity)", "liquid/d1-ultra": "d1-ultra (Liquid)"}
 
 
-def model_comparison_block(cmp_, tsao_off) -> dict:
+def model_comparison_block(cmp_, tsao_off, hand_reject_n: int) -> dict:
     ref = cmp_["reference_old_jev"]
     keys = ["stance_acc_pct", "stance_macro_f1", "reject_to_serious", "reject_to_curious", "serious_to_reject", "acc_at_top_ge_0_8_pct", "coverage_top_ge_0_8_pct",
             "hybrid_acc_pct", "hybrid_coverage_pct", "policy_position_acc_pct", "policy_position_macro_f1", "policy_reason_acc_pct", "policy_topic_acc_pct",
@@ -422,13 +422,14 @@ def model_comparison_block(cmp_, tsao_off) -> dict:
     j = next(m for m in models if m["key"] == "typesafe-ai/jev-1.14.0")
     return {
         "note": "Three decision models on AI Gateway, given identical questions, scored on the same 40 stance and 20 policy hand labels. One call per post, no repeats.",
+        "hand_reject_n": hand_reject_n,
         "models": models,
         "reference_old_jev": {"name": "Jev (round 1)", **{k: ref[k] for k in ["stance_acc_pct", "stance_macro_f1", "reject_to_serious", "reject_to_curious", "serious_to_reject", "confusion"]},
                               "acc_at_top_ge_0_8_pct": 75.0, "coverage_top_ge_0_8_pct": 50.0},
         "agreement": [{"pair": " vs ".join(MODEL_NAMES[x] for x in a["pair"].split(" vs ")), "stance_agree_pct": a["stance_agree_pct"], "policy_position_agree_pct": a["policy_position_agree_pct"]} for a in cmp_["agreement"]],
-        "intensity_check": (f"Jev 1.14.0 does not fix the old habit of reading intensity instead of direction: it labels {j['reject_to_serious']} of 18 hand-Reject posts Serious, against {ref['reject_to_serious']} for the round-1 Jev, mostly the same posts. "
+        "intensity_check": (f"Jev 1.14.0 does not fix the old habit of reading intensity instead of direction: it labels {j['reject_to_serious']} of {hand_reject_n} hand-Reject posts Serious, against {ref['reject_to_serious']} for the round-1 Jev, mostly the same posts. "
                             f"None of those errors reaches top probability 0.8, so the confident-or-Uncertain rule removes them; at that threshold Jev 1.14.0 is {j['acc_at_top_ge_0_8_pct']}% accurate on {j['coverage_top_ge_0_8_pct']}% of posts. "
-                            "Perplexity's Decider reads direction best (2 of 18 rejects to Serious)."),
+                            f"Perplexity's Decider reads direction best ({next(m for m in models if m['key'] == 'perplexity/pplx-decider-v1.2')['reject_to_serious']} of {hand_reject_n} rejects to Serious)."),
         "off_topic": ("Most posts on the Tsao preprint are about monkey brains, not machines. All three models flag 7 or 8 of the 11 as off-topic, but the stance question has no \"not applicable\" answer, so each still returns a stance. "
                       "Jev and d1-ultra call them Curious, sometimes confidently; Decider never labels them confidently. An on-topic filter before stance keeps them out of the counts."),
         "caveats": ["40 and 20 hand labels from one labeller: about ±15 pp on 40 posts, so gaps of 5 to 10 points between models are not meaningful.",
@@ -685,7 +686,7 @@ def main() -> None:
                                  "posts": fp4.get("tsao_gwt", 0),
                                  "off_topic_jev": tsao_off["typesafe-ai/jev-1.14.0"]["flagged_off_topic"],
                                  "note": f"{fp4.get('tsao_gwt', 0)} posts in the corpus react to the preprint; jev-1.14.0 judged {tsao_off['typesafe-ai/jev-1.14.0']['flagged_off_topic']} of them not to be about whether machines can be conscious."},
-        "model_comparison": model_comparison_block(cmp_, tsao_off),
+        "model_comparison": model_comparison_block(cmp_, tsao_off, sum(v == "R" for v in hand.values())),
         "key_accounts_round4": {
             "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",
             "items": [{"username": u, "blurb": b, "url": url, "followers": post_by_id[url.split("/")[-1]].get("followers") if url.split("/")[-1] in post_by_id else None,

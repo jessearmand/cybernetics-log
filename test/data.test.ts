@@ -153,7 +153,8 @@ test("data: Sacks spotlight carries the study note; model comparison covers thre
   assert.deepEqual(m.models.map((x) => x.key), ["typesafe-ai/jev-1.14.0", "perplexity/pplx-decider-v1.2", "liquid/d1-ultra"]);
   assert.equal(m.reference_old_jev.reject_to_serious, 8);
   assert.equal(m.reference_old_jev.stance_acc_pct, 55);
-  assert.ok(m.intensity_check.includes(`${m.models[0]!.reject_to_serious} of 18`));
+  assert.equal(m.hand_reject_n, 18);
+  assert.ok(m.intensity_check.includes(`${m.models[0]!.reject_to_serious} of ${m.hand_reject_n}`));
   assert.match(discourse.neuroscience_sidebar.summary.join(" "), /not been peer reviewed/);
   const pub = JSON.stringify([discourse.politics_spotlight, discourse.sebo, discourse.neuroscience_sidebar, discourse.model_comparison, discourse.round4_framing, discourse.key_accounts_round4]);
   for (const bad of ["jev_labels", "posts_r4", "questions_r4", ".csv", ".json", "SKILL"]) assert.ok(!pub.includes(bad), bad);
