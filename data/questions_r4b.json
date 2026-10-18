@@ -1,0 +1,17 @@
+{
+ "_note": "Round 4b gated stance rule. Both questions are asked in one call per post; step 2 is used only when step 1 is yes.",
+ "models": [
+  "liquid/d1-ultra",
+  "typesafe-ai/jev-1.14.0"
+ ],
+ "gated": {
+  "args": [
+   "--boolean",
+   "position=Does the author state a position on whether AI is or could be conscious?",
+   "--choice",
+   "direction=Which position does the author take on whether AI is or could be conscious? reject = AI is not and cannot be conscious, or the idea is dismissed; serious = AI is or could be conscious, or it deserves moral concern",
+   "--choices",
+   "direction=reject,serious"
+  ]
+ }
+}
