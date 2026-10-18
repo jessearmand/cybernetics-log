@@ -1,0 +1,4 @@
+model,stance_acc_pct,stance_macro_f1,reject_to_serious,reject_to_curious,serious_to_reject,acc_at_top_ge_0_8_pct,coverage_top_ge_0_8_pct,hybrid_acc_pct,hybrid_coverage_pct,median_on_topic_p,policy_position_acc_pct,policy_position_macro_f1,policy_reason_acc_pct,policy_topic_acc_pct,policy_position_acc_at_0_8_pct,policy_position_coverage_0_8_pct,calls,cost_usd,median_latency_s,p90_latency_s
+typesafe-ai/jev-1.14.0,52.5,0.507,9,0,1,80.0,50.0,76.2,52.5,0.94,75.0,0.75,65.0,100.0,100.0,60.0,60,0.001531,0.39,0.58
+perplexity/pplx-decider-v1.2,55.0,0.5,2,4,3,85.0,50.0,85.0,50.0,1.0,85.0,0.834,70.0,95.0,100.0,65.0,60,0.0,0.48,0.71
+liquid/d1-ultra,62.5,0.559,5,0,1,82.4,42.5,82.4,42.5,0.94,85.0,0.826,70.0,80.0,90.0,50.0,60,0.000816,0.41,0.6

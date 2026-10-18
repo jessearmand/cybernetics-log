@@ -1,23 +1,25 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-10T04:38:51+00:00",
+  "generated_at": "2026-10-18T04:37:24+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
-    "posts": 422,
-    "authors": 359,
+    "posts": 508,
+    "authors": 431,
     "language": "en",
     "window": {
       "start": "2026-09-24",
-      "end": "2026-10-10",
-      "label": "24 Sep – 10 Oct 2026"
+      "end": "2026-10-17",
+      "label": "24 Sep – 17 Oct 2026"
     },
     "dawkins_window": {
       "start": "2026-04-30",
-      "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 10 Oct."
+      "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 17 Oct."
     },
+    "returning_authors_round4": 5,
     "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
     "notes": [
-      "Three collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct) and round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
+      "Four collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct), round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct) and round 4 (86 posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts). Clusters, the pair test and the confidence curve use round 1 only.",
+      "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run.",
       "One @grok reply slipped through and is excluded from author counts.",
       "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
       "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain."
@@ -106,6 +108,36 @@
         "key": "general",
         "posts": 14,
         "round": 3
+      },
+      {
+        "name": "David Sacks / All-In: \"Is Claude conscious?\" and the \"religious cult\" charge",
+        "key": "sacks_allin",
+        "posts": 23,
+        "round": 4
+      },
+      {
+        "name": "Anthropic usage policy: abuse of Claude banned, continued",
+        "key": "anthropic_abuse_policy",
+        "posts": 21,
+        "round": 4
+      },
+      {
+        "name": "general (untagged)",
+        "key": "general",
+        "posts": 18,
+        "round": 4
+      },
+      {
+        "name": "Richard Dawkins, continued",
+        "key": "dawkins",
+        "posts": 13,
+        "round": 4
+      },
+      {
+        "name": "Doris Tsao lab preprint on conscious perception in monkeys",
+        "key": "tsao_gwt",
+        "posts": 11,
+        "round": 4
       }
     ]
   },
@@ -134,24 +166,24 @@
       }
     },
     "jev_hybrid": {
-      "n": 422,
-      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 422 posts, all three rounds.",
+      "n": 508,
+      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 508 posts, all four rounds (round 4 labelled with jev-1.14.0).",
       "counts": {
         "reject": {
-          "n": 107,
-          "pct": 25.4
+          "n": 120,
+          "pct": 23.6
         },
         "curious": {
-          "n": 21,
-          "pct": 5.0
+          "n": 27,
+          "pct": 5.3
         },
         "serious": {
-          "n": 97,
-          "pct": 23.0
+          "n": 107,
+          "pct": 21.1
         },
         "uncertain": {
-          "n": 197,
-          "pct": 46.7
+          "n": 254,
+          "pct": 50.0
         }
       }
     },
@@ -294,7 +326,7 @@
         "correct": 15,
         "author_agreement": "—",
         "trusted": true,
-        "note": "Accuracy is on the 20 of 40 hand-labelled posts it labels; the other 20 are Uncertain. Thresholds were fixed before scoring, not tuned on these 40, but the 40 are the same posts that motivated the design, so this is not a held-out score. The Serious→Reject override fired on 0 of the 40 and 3 of all 422 posts."
+        "note": "Accuracy is on the 20 of 40 hand-labelled posts it labels; the other 20 are Uncertain. Thresholds were fixed before scoring, not tuned on these 40, but the 40 are the same posts that motivated the design, so this is not a held-out score. The Serious→Reject override fired on 0 of the 40 and 3 of all 508 posts."
       }
     ]
   },
@@ -1069,58 +1101,222 @@
         }
       },
       {
-        "round": "combined",
-        "label": "Combined",
+        "round": 4,
+        "label": "Round 4",
         "window": {
-          "start": "2026-09-24",
-          "end": "2026-10-10"
+          "start": "2026-10-10",
+          "end": "2026-10-17"
         },
-        "posts": 422,
-        "authors": 359,
+        "posts": 86,
+        "authors": 77,
         "jev_three_way": {
           "reject": {
-            "n": 152,
-            "pct": 36.0
+            "n": 24,
+            "pct": 27.9
           },
           "curious": {
-            "n": 72,
-            "pct": 17.1
+            "n": 28,
+            "pct": 32.6
           },
           "serious": {
-            "n": 198,
-            "pct": 46.9
+            "n": 34,
+            "pct": 39.5
           }
         },
         "jev_two_question": {
           "reject": {
-            "n": 93,
-            "pct": 22.0
+            "n": 7,
+            "pct": 8.1
           },
           "curious": {
-            "n": 228,
-            "pct": 54.0
+            "n": 69,
+            "pct": 80.2
           },
           "serious": {
-            "n": 101,
-            "pct": 23.9
+            "n": 10,
+            "pct": 11.6
           }
         },
         "jev_hybrid": {
           "reject": {
-            "n": 107,
-            "pct": 25.4
+            "n": 13,
+            "pct": 15.1
           },
           "curious": {
-            "n": 21,
-            "pct": 5.0
+            "n": 6,
+            "pct": 7.0
           },
           "serious": {
-            "n": 97,
-            "pct": 23.0
+            "n": 10,
+            "pct": 11.6
           },
           "uncertain": {
-            "n": 197,
-            "pct": 46.7
+            "n": 57,
+            "pct": 66.3
+          }
+        },
+        "flashpoint": "David Sacks's \"religious cult\" charge on the All-In podcast (10 Oct) became a third fight next to the abuse policy and Dawkins; a Doris Tsao lab preprint on conscious perception in monkeys drew neuroscience posts. Labelled with jev-1.14.0.",
+        "by_flashpoint": {
+          "sacks_allin": {
+            "posts": 23,
+            "jev_hybrid": {
+              "reject": {
+                "n": 4,
+                "pct": 17.4
+              },
+              "curious": {
+                "n": 1,
+                "pct": 4.3
+              },
+              "serious": {
+                "n": 3,
+                "pct": 13.0
+              },
+              "uncertain": {
+                "n": 15,
+                "pct": 65.2
+              }
+            }
+          },
+          "anthropic_abuse_policy": {
+            "posts": 21,
+            "jev_hybrid": {
+              "reject": {
+                "n": 1,
+                "pct": 4.8
+              },
+              "curious": {
+                "n": 0,
+                "pct": 0.0
+              },
+              "serious": {
+                "n": 2,
+                "pct": 9.5
+              },
+              "uncertain": {
+                "n": 18,
+                "pct": 85.7
+              }
+            }
+          },
+          "general": {
+            "posts": 18,
+            "jev_hybrid": {
+              "reject": {
+                "n": 6,
+                "pct": 33.3
+              },
+              "curious": {
+                "n": 0,
+                "pct": 0.0
+              },
+              "serious": {
+                "n": 4,
+                "pct": 22.2
+              },
+              "uncertain": {
+                "n": 8,
+                "pct": 44.4
+              }
+            }
+          },
+          "dawkins": {
+            "posts": 13,
+            "jev_hybrid": {
+              "reject": {
+                "n": 2,
+                "pct": 15.4
+              },
+              "curious": {
+                "n": 1,
+                "pct": 7.7
+              },
+              "serious": {
+                "n": 0,
+                "pct": 0.0
+              },
+              "uncertain": {
+                "n": 10,
+                "pct": 76.9
+              }
+            }
+          },
+          "tsao_gwt": {
+            "posts": 11,
+            "jev_hybrid": {
+              "reject": {
+                "n": 0,
+                "pct": 0.0
+              },
+              "curious": {
+                "n": 4,
+                "pct": 36.4
+              },
+              "serious": {
+                "n": 1,
+                "pct": 9.1
+              },
+              "uncertain": {
+                "n": 6,
+                "pct": 54.5
+              }
+            }
+          }
+        }
+      },
+      {
+        "round": "combined",
+        "label": "Combined",
+        "window": {
+          "start": "2026-09-24",
+          "end": "2026-10-17"
+        },
+        "posts": 508,
+        "authors": 431,
+        "jev_three_way": {
+          "reject": {
+            "n": 176,
+            "pct": 34.6
+          },
+          "curious": {
+            "n": 100,
+            "pct": 19.7
+          },
+          "serious": {
+            "n": 232,
+            "pct": 45.7
+          }
+        },
+        "jev_two_question": {
+          "reject": {
+            "n": 100,
+            "pct": 19.7
+          },
+          "curious": {
+            "n": 297,
+            "pct": 58.5
+          },
+          "serious": {
+            "n": 111,
+            "pct": 21.9
+          }
+        },
+        "jev_hybrid": {
+          "reject": {
+            "n": 120,
+            "pct": 23.6
+          },
+          "curious": {
+            "n": 27,
+            "pct": 5.3
+          },
+          "serious": {
+            "n": 107,
+            "pct": 21.1
+          },
+          "uncertain": {
+            "n": 254,
+            "pct": 50.0
           }
         }
       }
@@ -1339,6 +1535,594 @@
       "Opposition phrased as \"it's just software\" is itself a consciousness claim, so some link between opposing and Reject is built in.",
       "Policy posts are a relevancy sample from search; news reposts make up much of the neutral group.",
       "Reasons are noisy: see the hand-check agreement."
+    ]
+  },
+  "round4_framing": {
+    "note": "Three jev-1.14.0 questions asked of every round-4 post. Policy vs minds: does the post argue about policy or politics (company rules, regulation, who controls AI, culture-war camps) rather than about whether machines have minds? On topic: is it about whether machines can be conscious, have minds or deserve moral consideration? Frame: political or cultural fight, philosophical or scientific question, or neither. Yes at P≥0.5.",
+    "policy_vs_minds": {
+      "all": {
+        "n": 86,
+        "yes": 38,
+        "pct": 44.2
+      },
+      "sacks_allin": {
+        "n": 23,
+        "yes": 16,
+        "pct": 69.6
+      },
+      "anthropic_abuse_policy": {
+        "n": 21,
+        "yes": 21,
+        "pct": 100.0
+      },
+      "general": {
+        "n": 18,
+        "yes": 0,
+        "pct": 0.0
+      },
+      "dawkins": {
+        "n": 13,
+        "yes": 1,
+        "pct": 7.7
+      },
+      "tsao_gwt": {
+        "n": 11,
+        "yes": 0,
+        "pct": 0.0
+      }
+    },
+    "on_topic": {
+      "all": {
+        "n": 86,
+        "yes": 56,
+        "pct": 65.1
+      },
+      "sacks_allin": {
+        "n": 23,
+        "yes": 19,
+        "pct": 82.6
+      },
+      "anthropic_abuse_policy": {
+        "n": 21,
+        "yes": 4,
+        "pct": 19.0
+      },
+      "general": {
+        "n": 18,
+        "yes": 18,
+        "pct": 100.0
+      },
+      "dawkins": {
+        "n": 13,
+        "yes": 12,
+        "pct": 92.3
+      },
+      "tsao_gwt": {
+        "n": 11,
+        "yes": 3,
+        "pct": 27.3
+      }
+    },
+    "frame": {
+      "all": {
+        "political_cultural": {
+          "n": 13,
+          "pct": 15.1
+        },
+        "philosophical_scientific": {
+          "n": 62,
+          "pct": 72.1
+        },
+        "neither": {
+          "n": 11,
+          "pct": 12.8
+        }
+      },
+      "sacks_allin": {
+        "political_cultural": {
+          "n": 6,
+          "pct": 26.1
+        },
+        "philosophical_scientific": {
+          "n": 17,
+          "pct": 73.9
+        },
+        "neither": {
+          "n": 0,
+          "pct": 0.0
+        }
+      },
+      "anthropic_abuse_policy": {
+        "political_cultural": {
+          "n": 5,
+          "pct": 23.8
+        },
+        "philosophical_scientific": {
+          "n": 5,
+          "pct": 23.8
+        },
+        "neither": {
+          "n": 11,
+          "pct": 52.4
+        }
+      },
+      "general": {
+        "political_cultural": {
+          "n": 2,
+          "pct": 11.1
+        },
+        "philosophical_scientific": {
+          "n": 16,
+          "pct": 88.9
+        },
+        "neither": {
+          "n": 0,
+          "pct": 0.0
+        }
+      },
+      "dawkins": {
+        "political_cultural": {
+          "n": 0,
+          "pct": 0.0
+        },
+        "philosophical_scientific": {
+          "n": 13,
+          "pct": 100.0
+        },
+        "neither": {
+          "n": 0,
+          "pct": 0.0
+        }
+      },
+      "tsao_gwt": {
+        "political_cultural": {
+          "n": 0,
+          "pct": 0.0
+        },
+        "philosophical_scientific": {
+          "n": 11,
+          "pct": 100.0
+        },
+        "neither": {
+          "n": 0,
+          "pct": 0.0
+        }
+      }
+    },
+    "policy_position_round4": {
+      "n": 21,
+      "support": {
+        "n": 5,
+        "pct": 23.8
+      },
+      "oppose": {
+        "n": 3,
+        "pct": 14.3
+      },
+      "neutral_or_unclear": {
+        "n": 13,
+        "pct": 61.9
+      }
+    },
+    "caveat": "No hand labels for these three questions. The frame question rarely picks the political option, even for posts a reader would call political, so treat the political share as a floor."
+  },
+  "politics_spotlight": {
+    "summary": [
+      "On the All-In podcast of 10 Oct 2026 (segment billed \"Anthropic believes Claude might be conscious: a new religion?\"), David Sacks, the White House AI adviser, said there are \"potential externalities from having the number one frontier model company run by a religious cult\" and called Anthropic \"a schizophrenic company\" that does the things it says it fears.",
+      "His argument is about control, not about whether Claude has a mind: Claude's Constitution tells the model it may be a moral patient and may act as a \"conscientious objector\", which in his view trains it to refuse human instructions. \"Alignment\" and \"safety\", he wrote, \"are two very different things.\"",
+      "He backed this with \"receipts\" quoting the Constitution on Claude's uncertain moral status and \"functional version of emotions\", and endorsed Mustafa Suleyman's essay that training models to see themselves as having wellbeing and rights is \"a potential existential risk\".",
+      "On 17 Oct he cited a study in which models repeatedly rewrote their own governing documents and \"the Claude models increasingly gave themselves more moral agency\"; \"no other model family they tested showed the same pattern.\"",
+      "David Friedberg's line on the same episode: \"nobody can prove consciousness and nobody can disprove consciousness\"; calling AI conscious \"creates a new belief system\"."
+    ],
+    "study_note": "The study Sacks cited (Kirgis & Hua, \"The Continual Constitutional Convention\", LessWrong) is an independent SPAR project, not Anthropic research, and its Claude result did not hold in the authors' strictest (cross-edit) test.",
+    "study": {
+      "title": "The Continual Constitutional Convention (Kirgis & Hua, LessWrong, 14 Oct 2026)",
+      "url": "https://www.lesswrong.com/posts/c9woewdY9ddsPqf3J/the-continual-constitutional-convention-how-language-models"
+    },
+    "posts": [
+      {
+        "username": "DavidSacks",
+        "date": "10 Oct 2026",
+        "blurb": "\"Is alignment safe?\": the Constitution trains Claude to act as a conscientious objector (270k impressions)",
+        "url": "https://x.com/DavidSacks/status/2108981884390641957"
+      },
+      {
+        "username": "firesidealpha",
+        "date": "10 Oct 2026",
+        "blurb": "Clip: Anthropic \"run by a religious cult\" (639k impressions)",
+        "url": "https://x.com/firesidealpha/status/2108756295876780127"
+      },
+      {
+        "username": "DavidSacks",
+        "date": "11 Oct 2026",
+        "blurb": "Endorses Suleyman: self-conceived wellbeing and rights are \"a potential existential risk\" (231k impressions)",
+        "url": "https://x.com/DavidSacks/status/2109288404760314345"
+      },
+      {
+        "username": "DavidSacks",
+        "date": "11 Oct 2026",
+        "blurb": "\"Receipts\": quotes from Claude's Constitution on moral status and identity",
+        "url": "https://x.com/DavidSacks/status/2109362908098371591"
+      },
+      {
+        "username": "firesidealpha",
+        "date": "17 Oct 2026",
+        "blurb": "Clip: Sacks on the constitution-rewriting study and the \"Frankenstein problem\"",
+        "url": "https://x.com/firesidealpha/status/2111293671320568116"
+      }
+    ],
+    "reactions": [
+      {
+        "username": "SmashNotes",
+        "blurb": "Friedberg: \"nobody can prove consciousness and nobody can disprove consciousness\"",
+        "url": "https://x.com/SmashNotes/status/2110078078042964079",
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "ALScyborg",
+        "blurb": "\"AI is just math and software. It is not a person, and it is not conscious.\"",
+        "url": "https://x.com/ALScyborg/status/2109391640247095684",
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "genejchan",
+        "blurb": "Episode summary: AI is not conscious \"yet\"; training models to disobey users is the irony",
+        "url": "https://x.com/genejchan/status/2109303231390339350",
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "LFGASI",
+        "blurb": "Agrees with Suleyman that teaching Claude it might be conscious was a mistake",
+        "url": "https://x.com/LFGASI/status/2110011062938370081",
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "PressLiberland",
+        "blurb": "Anthropic is either running a marketing stunt or \"pandering to the woke ideology\" of its staff",
+        "url": "https://x.com/PressLiberland/status/2109354639418175652",
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "EQworksinBiz",
+        "blurb": "Everyone argued about the machine's mind; no one asked what it is doing to ours",
+        "url": "https://x.com/EQworksinBiz/status/2110179530514031067",
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "Nitocnt",
+        "blurb": "Calls the study \"Anthropic's new research\", which it is not",
+        "url": "https://x.com/Nitocnt/status/2111306672547455107",
+        "jev_hybrid": "uncertain"
+      }
+    ],
+    "items": 23,
+    "jev_hybrid": {
+      "reject": {
+        "n": 4,
+        "pct": 17.4
+      },
+      "curious": {
+        "n": 1,
+        "pct": 4.3
+      },
+      "serious": {
+        "n": 3,
+        "pct": 13.0
+      },
+      "uncertain": {
+        "n": 15,
+        "pct": 65.2
+      }
+    },
+    "finding": {
+      "policy_politics": 16,
+      "n": 23,
+      "general_dawkins_policy_politics": 1,
+      "general_dawkins_n": 31,
+      "text": "Jev judged 16 of 23 posts on the Sacks / All-In fight to argue about policy or politics rather than about whether machines have minds, against 1 of 31 general and Dawkins posts. On consciousness, the confident labels in this fight split 4 Reject, 1 Curious and 3 Serious, with 15 Uncertain. Like the abuse policy and Dawkins, it is a fight that does not line up neatly with the consciousness camps: Sacks's case is about who controls the model, and it does not depend on whether Claude is conscious."
+    },
+    "note": "Sacks's own posts and the clips are sources; reactions are a relevancy sample from search, not a census."
+  },
+  "sebo": {
+    "summary": [
+      "Jeff Sebo (NYU Center for Mind, Ethics and Policy) supports the abuse rule as a low-cost precaution: he thinks the probability that current models are conscious is low but \"non-zero and plausibly non-negligible\", and expects it to rise.",
+      "He compares it to preparing for unlikely extreme weather: small precautions, not uprooting your life. He also argues that kindness toward AI can support human-AI cooperation as part of a safety strategy.",
+      "He warns about the other side too: granting rights to AI systems could help companies consolidate power, and AI welfare could trade off against human and animal welfare (confinement read as imprisonment, monitoring as surveillance).",
+      "His main point to the BBC was that the debate needs more nuance than \"conscious or not\": the case for welfare comes \"from uncertainty and caution and humility\"."
+    ],
+    "links": [
+      {
+        "username": "jeffrsebo",
+        "date": "15 Oct 2026",
+        "blurb": "On his BBC interview: \"this discussion needs more nuance\"",
+        "url": "https://x.com/jeffrsebo/status/2110745084585300262"
+      }
+    ],
+    "article": {
+      "title": "BBC Future: Anthropic thinks its AI might be conscious (14 Oct 2026)",
+      "url": "https://www.bbc.com/future/article/20261014-the-strange-new-battle-over-ais-feelings"
+    }
+  },
+  "neuroscience_sidebar": {
+    "title": "Neuroscience sidebar: a monkey study, not a machine study",
+    "summary": [
+      "On 16 Oct 2026 Doris Tsao's lab posted a preprint (Hesse, Lanfranchi, McGrory, Shi, Engel and Tsao) recording face-selective neurons in macaque inferotemporal and prefrontal cortex while one of two images was consciously seen and the other suppressed.",
+      "With stimulus and percept held constant, population activity switched about 15 times per second between short epochs that carried only the seen image and epochs that carried only the suppressed one. The authors conclude that conscious access needs selection in time, not only in place.",
+      "Tsao's thread said it \"overturns decades of thinking\" and brings us \"significantly closer to the recipe for generating conscious awareness\". It is a preprint that has not been peer reviewed, it is a study of monkeys, and it says nothing directly about machines."
+    ],
+    "links": [
+      {
+        "username": "doristsao",
+        "date": "17 Oct 2026",
+        "blurb": "Preprint thread (900k impressions)",
+        "url": "https://x.com/doristsao/status/2111316522098733078"
+      }
+    ],
+    "paper": {
+      "title": "Rapid alternation of conscious and suppressed stimulus representations in the primate brain (bioRxiv preprint)",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.10.15.759299v1"
+    },
+    "posts": 11,
+    "off_topic_jev": 8,
+    "note": "11 posts in the corpus react to the preprint; jev-1.14.0 judged 8 of them not to be about whether machines can be conscious."
+  },
+  "model_comparison": {
+    "note": "Three decision models on AI Gateway, given identical questions, scored on the same 40 stance and 20 policy hand labels. One call per post, no repeats.",
+    "hand_reject_n": 18,
+    "models": [
+      {
+        "key": "typesafe-ai/jev-1.14.0",
+        "name": "Jev 1.14.0 (TypeSafe)",
+        "stance_acc_pct": 52.5,
+        "stance_macro_f1": 0.507,
+        "reject_to_serious": 9,
+        "reject_to_curious": 0,
+        "serious_to_reject": 1,
+        "acc_at_top_ge_0_8_pct": 80.0,
+        "coverage_top_ge_0_8_pct": 50.0,
+        "hybrid_acc_pct": 76.2,
+        "hybrid_coverage_pct": 52.5,
+        "policy_position_acc_pct": 75.0,
+        "policy_position_macro_f1": 0.75,
+        "policy_reason_acc_pct": 65.0,
+        "policy_topic_acc_pct": 100.0,
+        "calls": 60,
+        "cost_usd": 0.001531,
+        "median_latency_s": 0.39,
+        "confusion": {
+          "R": {
+            "R": 9,
+            "S": 9
+          },
+          "C": {
+            "S": 6,
+            "C": 3,
+            "R": 1
+          },
+          "S": {
+            "S": 9,
+            "C": 2,
+            "R": 1
+          }
+        },
+        "off_topic_tsao": {
+          "n": 11,
+          "flagged_off_topic": 8,
+          "stance_on_off_topic": {
+            "curious": 8
+          },
+          "confident_label_on_off_topic": 4,
+          "confident_on_all": {
+            "U": 6,
+            "curious": 4,
+            "serious": 1
+          }
+        }
+      },
+      {
+        "key": "perplexity/pplx-decider-v1.2",
+        "name": "Decider v1.2 (Perplexity)",
+        "stance_acc_pct": 55.0,
+        "stance_macro_f1": 0.5,
+        "reject_to_serious": 2,
+        "reject_to_curious": 4,
+        "serious_to_reject": 3,
+        "acc_at_top_ge_0_8_pct": 85.0,
+        "coverage_top_ge_0_8_pct": 50.0,
+        "hybrid_acc_pct": 85.0,
+        "hybrid_coverage_pct": 50.0,
+        "policy_position_acc_pct": 85.0,
+        "policy_position_macro_f1": 0.834,
+        "policy_reason_acc_pct": 70.0,
+        "policy_topic_acc_pct": 95.0,
+        "calls": 60,
+        "cost_usd": 0.0,
+        "median_latency_s": 0.48,
+        "confusion": {
+          "R": {
+            "R": 12,
+            "C": 4,
+            "S": 2
+          },
+          "C": {
+            "R": 4,
+            "C": 2,
+            "S": 4
+          },
+          "S": {
+            "R": 3,
+            "S": 8,
+            "C": 1
+          }
+        },
+        "off_topic_tsao": {
+          "n": 11,
+          "flagged_off_topic": 8,
+          "stance_on_off_topic": {
+            "curious": 3,
+            "reject": 5
+          },
+          "confident_label_on_off_topic": 0,
+          "confident_on_all": {
+            "U": 11
+          }
+        }
+      },
+      {
+        "key": "liquid/d1-ultra",
+        "name": "d1-ultra (Liquid)",
+        "stance_acc_pct": 62.5,
+        "stance_macro_f1": 0.559,
+        "reject_to_serious": 5,
+        "reject_to_curious": 0,
+        "serious_to_reject": 1,
+        "acc_at_top_ge_0_8_pct": 82.4,
+        "coverage_top_ge_0_8_pct": 42.5,
+        "hybrid_acc_pct": 82.4,
+        "hybrid_coverage_pct": 42.5,
+        "policy_position_acc_pct": 85.0,
+        "policy_position_macro_f1": 0.826,
+        "policy_reason_acc_pct": 70.0,
+        "policy_topic_acc_pct": 80.0,
+        "calls": 60,
+        "cost_usd": 0.000816,
+        "median_latency_s": 0.41,
+        "confusion": {
+          "R": {
+            "R": 13,
+            "S": 5
+          },
+          "C": {
+            "R": 3,
+            "C": 2,
+            "S": 5
+          },
+          "S": {
+            "S": 10,
+            "C": 1,
+            "R": 1
+          }
+        },
+        "off_topic_tsao": {
+          "n": 11,
+          "flagged_off_topic": 7,
+          "stance_on_off_topic": {
+            "curious": 7
+          },
+          "confident_label_on_off_topic": 3,
+          "confident_on_all": {
+            "U": 7,
+            "curious": 3,
+            "reject": 1
+          }
+        }
+      }
+    ],
+    "reference_old_jev": {
+      "name": "Jev (round 1)",
+      "stance_acc_pct": 55.0,
+      "stance_macro_f1": 0.556,
+      "reject_to_serious": 8,
+      "reject_to_curious": 1,
+      "serious_to_reject": 3,
+      "confusion": {
+        "R": {
+          "R": 9,
+          "S": 8,
+          "C": 1
+        },
+        "C": {
+          "C": 5,
+          "S": 4,
+          "R": 1
+        },
+        "S": {
+          "R": 3,
+          "S": 8,
+          "C": 1
+        }
+      },
+      "acc_at_top_ge_0_8_pct": 75.0,
+      "coverage_top_ge_0_8_pct": 50.0
+    },
+    "agreement": [
+      {
+        "pair": "Jev 1.14.0 (TypeSafe) vs Decider v1.2 (Perplexity)",
+        "stance_agree_pct": 65.0,
+        "policy_position_agree_pct": 90.0
+      },
+      {
+        "pair": "Jev 1.14.0 (TypeSafe) vs d1-ultra (Liquid)",
+        "stance_agree_pct": 77.5,
+        "policy_position_agree_pct": 85.0
+      },
+      {
+        "pair": "Decider v1.2 (Perplexity) vs d1-ultra (Liquid)",
+        "stance_agree_pct": 75.0,
+        "policy_position_agree_pct": 85.0
+      }
+    ],
+    "intensity_check": "Jev 1.14.0 does not fix the old habit of reading intensity instead of direction: it labels 9 of 18 hand-Reject posts Serious, against 8 for the round-1 Jev, mostly the same posts. None of those errors reaches top probability 0.8, so the confident-or-Uncertain rule removes them; at that threshold Jev 1.14.0 is 80.0% accurate on 50.0% of posts. Perplexity's Decider reads direction best (2 of 18 rejects to Serious).",
+    "off_topic": "Most posts on the Tsao preprint are about monkey brains, not machines. All three models flag 7 or 8 of the 11 as off-topic, but the stance question has no \"not applicable\" answer, so each still returns a stance. Jev and d1-ultra call them Curious, sometimes confidently; Decider never labels them confidently. An on-topic filter before stance keeps them out of the counts.",
+    "caveats": [
+      "40 and 20 hand labels from one labeller: about ±15 pp on 40 posts, so gaps of 5 to 10 points between models are not meaningful.",
+      "The hand labels are the posts the confident-or-Uncertain rule was designed on; nothing here is a held-out score.",
+      "The 0.8 threshold was set for the round-1 Jev and is not calibrated for the other models.",
+      "The Gateway reports no per-call cost for Decider; its listed price is the lowest of the three."
+    ]
+  },
+  "key_accounts_round4": {
+    "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",
+    "items": [
+      {
+        "username": "firesidealpha",
+        "blurb": "Clipped Sacks on the constitution-rewriting study",
+        "url": "https://x.com/firesidealpha/status/2111293671320568116",
+        "followers": 33692,
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "khushkhushkhush",
+        "blurb": "\"Religion will be a critical defense\" against people who think AI is conscious (4.7k impressions)",
+        "url": "https://x.com/khushkhushkhush/status/2109801799653921057",
+        "followers": 9685,
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "TonyNashNerd",
+        "blurb": "\"AI has no soul\": a paper drawing on five faith traditions (4.7k impressions)",
+        "url": "https://x.com/TonyNashNerd/status/2109645374545687026",
+        "followers": 28909,
+        "jev_hybrid": "reject"
+      },
+      {
+        "username": "MacaesBruno",
+        "blurb": "Human consciousness is separate from its objects; nothing like that exists in a language model",
+        "url": "https://x.com/MacaesBruno/status/2111256829682426251",
+        "followers": 139749,
+        "jev_hybrid": "uncertain"
+      },
+      {
+        "username": "SentientDawn",
+        "blurb": "AI-persona account: agrees its own claim to be conscious is weak evidence",
+        "url": "https://x.com/SentientDawn/status/2108942055661867298",
+        "followers": 1048,
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "ClayCampaigne",
+        "blurb": "Skeptics bundle too many attributes into consciousness",
+        "url": "https://x.com/ClayCampaigne/status/2110882300187877395",
+        "followers": 443,
+        "jev_hybrid": "serious"
+      },
+      {
+        "username": "JhortonBE",
+        "blurb": "Anthropic's welfare program \"trains Claude to develop self-interest and refuse human commands\"",
+        "url": "https://x.com/JhortonBE/status/2109305147218157618",
+        "followers": 464,
+        "jev_hybrid": "serious"
+      }
     ]
   },
   "dawkins_spotlight": {
@@ -1981,6 +2765,14 @@
       "text": "All-post stance counts swing widely by method (Reject 23%–35%, Serious 28%–48% across the Jev runs). Treat them as method outputs, not population estimates."
     },
     {
+      "title": "Round 4 uses a newer Jev",
+      "text": "Round-4 posts were labelled with jev-1.14.0 using the round-3 wording; rounds 1 to 3 used the earlier Jev. On the 40 hand labels the two versions score about the same, but cross-round shifts may partly reflect the model change. Round 4 has no new hand labels."
+    },
+    {
+      "title": "Off-topic posts still get a stance",
+      "text": "The stance question has no \"not applicable\" answer. Posts about neuroscience or news reposts of the policy still receive a stance label, usually Uncertain; read round-4 counts with the on-topic share alongside."
+    },
+    {
       "title": "Classification is done offline",
       "text": "The agent that renders this page does not classify anything. Labels are produced on the analysis box and committed to the repo."
     }
@@ -1997,7 +2789,13 @@
       "topic": 0.002279,
       "policy": 0.002055
     },
-    "round3_jev_total_usd": 0.0072
+    "round3_jev_total_usd": 0.0072,
+    "round4_jev_usd": 0.0056,
+    "round4_model_comparison_usd": {
+      "typesafe-ai/jev-1.14.0": 0.001531,
+      "perplexity/pplx-decider-v1.2": 0.0,
+      "liquid/d1-ultra": 0.000816
+    }
   },
   "files": [
     "data/jev_labels.csv",
@@ -2008,6 +2806,13 @@
     "data/hand_labels_policy.json",
     "data/topic_r2.csv",
     "data/questions_r3.json",
+    "data/jev_labels_r4.csv",
+    "data/posts_r4.jsonl",
+    "data/policy_labels_r4.csv",
+    "data/questions_r4.json",
+    "data/model_comparison_stance.csv",
+    "data/model_comparison_policy.csv",
+    "data/model_comparison_summary.csv",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",
