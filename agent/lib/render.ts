@@ -11,7 +11,7 @@ export interface Editorial {
   readonly instructionSummary?: string;
 }
 
-export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins";
+export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins" | "politics" | "neuro" | "models";
 export const ACCENTS = ["indigo", "teal", "amber", "rose", "slate"] as const;
 export type Accent = (typeof ACCENTS)[number];
 
@@ -64,12 +64,12 @@ function prose(value: string): string {
     .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
-/** Only https links to x.com / github.com / vercel.app / unherd.com are emitted as hrefs. */
+/** Only https links to x.com / github.com / vercel.app / unherd.com / lesswrong.com / biorxiv.org / bbc.com are emitted as hrefs. */
 function safeUrl(url: unknown): string | null {
   try {
     const u = new URL(String(url));
     if (u.protocol !== "https:") return null;
-    if (!/(^|\.)x\.com$|(^|\.)twitter\.com$|(^|\.)github\.com$|\.vercel\.app$|(^|\.)unherd\.com$/.test(u.hostname)) return null;
+    if (!/(^|\.)x\.com$|(^|\.)twitter\.com$|(^|\.)github\.com$|\.vercel\.app$|(^|\.)unherd\.com$|(^|\.)lesswrong\.com$|(^|\.)biorxiv\.org$|(^|\.)bbc\.com$/.test(u.hostname)) return null;
     return u.toString();
   } catch {
     return null;
@@ -274,7 +274,8 @@ function policySection(d: Discourse, e: Editorial): string {
 <h3>Arguing about the policy, or about minds?</h3><p class="fine">${esc(ts.note)}</p>
 <div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About the policy</th><th>About minds</th></tr></thead><tbody>
 ${tRow("Round 3, all posts", ts.round3_all)}${tRow("Round 3, policy posts", ts.round3_policy_posts)}${tRow("Round 2, all posts", ts.round2_all)}${tRow("Round 2, policy posts", ts.round2_policy_posts)}</tbody></table></div>
-<ul class="caveats">${p.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
+<ul class="caveats">${p.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+${seboBlock(d)}</section>`;
 }
 
 function dawkinsSection(d: Discourse, e: Editorial): string {
@@ -286,6 +287,51 @@ function dawkinsSection(d: Discourse, e: Editorial): string {
 <h3>Reactions</h3><ul class="r3acc">${k.reactions.map((r) => `<li>${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}</li>`).join("")}</ul>
 <div class="bars">${stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), "Dawkins items: Jev hybrid", `${k.items} posts`)}</div>
 <p class="fine">Jev on his own posts: ${k.dawkins_own_posts_jev.map((x) => `${link(x.url, "post")} three-way ${esc(x.jev_three_way)} (top ${x.jev_top_prob}), hybrid ${esc(x.jev_hybrid)}`).join("; ")}. ${esc(k.note)}</p></section>`;
+}
+
+function seboBlock(d: Discourse): string {
+  const s = d.sebo;
+  return `<div id="sebo" class="sidebar"><h3>Jeff Sebo on the rule</h3><ul>${s.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<p class="fine">Sources: ${s.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")} · ${link(s.article.url, esc(s.article.title))}.</p></div>`;
+}
+
+function politicsSection(d: Discourse, e: Editorial): string {
+  const k = d.politics_spotlight;
+  const h = k.jev_hybrid as Counts;
+  return `<section id="politics" class="callout"><h2>The Sacks / All-In fight: “a religious cult”</h2>${note(e, "politics")}
+<ul>${k.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
+<p class="studynote"><b>About the study:</b> ${esc(k.study_note)} ${link(k.study.url, esc(k.study.title))}</p>
+<p>${esc(k.finding.text)}</p>
+<p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}.</p>
+<h3>Reactions</h3><ul class="r3acc">${k.reactions.map((r) => `<li>${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}</li>`).join("")}</ul>
+<div class="bars">${stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), "Sacks / All-In posts: Jev hybrid", `${k.items} posts`)}</div>
+<p class="fine">${esc(k.note)}</p></section>`;
+}
+
+function neuroSection(d: Discourse, e: Editorial): string {
+  const n = d.neuroscience_sidebar;
+  return `<aside id="neuro" class="sidebar"><h2>${esc(n.title)}</h2>${note(e, "neuro")}<ul>${n.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<p class="fine">${link(n.paper.url, esc(n.paper.title))} · ${n.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(n.note)}</p></aside>`;
+}
+
+function modelsSection(d: Discourse, e: Editorial): string {
+  const m = d.model_comparison;
+  const ref = m.reference_old_jev;
+  const pc = (v: number | null | undefined) => (v == null ? "—" : `${v}%`);
+  const rows = m.models
+    .map(
+      (x) =>
+        `<tr><th scope="row">${esc(x.name)}</th><td>${pc(x.stance_acc_pct)}</td><td>${x.stance_macro_f1}</td><td>${x.reject_to_serious} of 18</td><td>${pc(x.acc_at_top_ge_0_8_pct)} on ${pc(x.coverage_top_ge_0_8_pct)}</td><td>${pc(x.policy_position_acc_pct)}</td><td>${pc(x.policy_reason_acc_pct)}</td><td>${x.off_topic_tsao.flagged_off_topic} of ${x.off_topic_tsao.n}</td><td>${x.median_latency_s}s</td></tr>`,
+    )
+    .join("");
+  const refRow = `<tr class="baseline"><th scope="row">${esc(ref.name)}</th><td>${pc(ref.stance_acc_pct)}</td><td>${ref.stance_macro_f1}</td><td>${ref.reject_to_serious} of 18</td><td>${pc(ref.acc_at_top_ge_0_8_pct)} on ${pc(ref.coverage_top_ge_0_8_pct)}</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>`;
+  const confusions = [...m.models, ref].map((x) => `<figure><figcaption>${esc(x.name)}</figcaption>${confusionTable(x.confusion as Record<string, Record<string, number>>)}</figure>`).join("");
+  return `<section id="models"><h2>Three decision models, same questions</h2>${note(e, "models")}<p class="fine">${esc(m.note)}</p>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Stance accuracy (40)</th><th>Macro-F1</th><th>Reject → Serious</th><th>Accuracy at top ≥0.8 (coverage)</th><th>Policy position (20)</th><th>Policy reason (20)</th><th>Tsao posts flagged off-topic</th><th>Median latency</th></tr></thead><tbody>${rows}${refRow}</tbody></table></div>
+<p>${esc(m.intensity_check)}</p><p>${esc(m.off_topic)}</p>
+<div class="confusions">${confusions}</div>
+<p class="fine">Agreement on stance: ${m.agreement.map((a) => `${esc(a.pair)} ${a.stance_agree_pct}%`).join(" · ")}.</p>
+<ul class="caveats">${m.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
 }
 
 function roundsSection(d: Discourse): string {
@@ -302,6 +348,23 @@ function roundsSection(d: Discourse): string {
   const fl = r.items.map((it) => ("flashpoint" in it && it.flashpoint ? `<p class="fine"><b>${esc(it.label)}:</b> ${esc(it.flashpoint)}</p>` : "")).join("");
   const fps = d.corpus.flashpoints.filter((f) => f.round === 2).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
   const fps3 = d.corpus.flashpoints.filter((f) => f.round === 3).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  const fps4 = d.corpus.flashpoints.filter((f) => f.round === 4).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  const fr = d.round4_framing;
+  const FP4: Record<string, string> = { all: "All round 4", sacks_allin: "Sacks / All-In", anthropic_abuse_policy: "Abuse policy", general: "General", dawkins: "Dawkins", tsao_gwt: "Tsao preprint" };
+  const frRows = Object.keys(FP4)
+    .map((k) => {
+      const pv = (fr.policy_vs_minds as Record<string, { n: number; yes: number; pct: number }>)[k]!;
+      const ot = (fr.on_topic as Record<string, { n: number; yes: number; pct: number }>)[k]!;
+      const f = (fr.frame as Record<string, Record<string, { n: number; pct: number }>>)[k]!;
+      return `<tr><th scope="row">${esc(FP4[k])}</th><td>${pv.n}</td><td>${pv.yes} (${pv.pct}%)</td><td>${ot.yes} (${ot.pct}%)</td><td>${f.political_cultural!.n} (${f.political_cultural!.pct}%)</td><td>${f.philosophical_scientific!.n} (${f.philosophical_scientific!.pct}%)</td></tr>`;
+    })
+    .join("");
+  const r4frame = `<h3>Round 4: policy or minds, on topic, and framing</h3><p class="fine">${esc(fr.note)}</p>
+<div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About policy or politics</th><th>About machine minds</th><th>Framed politically</th><th>Framed philosophically</th></tr></thead><tbody>${frRows}</tbody></table></div><p class="fine">${esc(fr.caveat)}</p>`;
+  const ka4 = d.key_accounts_round4;
+  const r4list = `<h3>Round 4: notable new accounts</h3><p class="fine">${esc(ka4.note)}</p><ul class="r3acc">${ka4.items
+    .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</li>`)
+    .join("")}</ul>`;
   const ka3 = d.key_accounts_round3;
   const r3list = `<h3>Round 3: notable new accounts</h3><p class="fine">${esc(ka3.note)}</p><ul class="r3acc">${ka3.items
     .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</li>`)
@@ -313,7 +376,7 @@ function roundsSection(d: Discourse): string {
       .join("")}</ul></div>`;
   return `<section id="rounds"><h2>Rounds</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
-${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${r3list}<h3>Round 2 key accounts</h3><p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div></section>`;
+${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p><p class="fine">Round-4 flashpoints: ${fps4}.</p>${r4frame}${r4list}${r3list}<h3>Round 2 key accounts</h3><p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div></section>`;
 }
 
 function caveatsSection(d: Discourse, e: Editorial): string {
@@ -372,6 +435,8 @@ blockquote.post p{white-space:pre-line;font-size:15px}.who{font-size:14px}.role{
 .acols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media (max-width:860px){.acols{grid-template-columns:1fr}}
 .acol ul{list-style:none;padding:0;margin:0}.acol li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14px}.acol li p{margin:4px 0 6px}.fol{color:var(--muted);font-size:12px}.chips{display:flex;gap:6px;flex-wrap:wrap}.also{font-size:13px;color:var(--muted)}
 .caveats li{margin-bottom:8px;max-width:820px}
+.sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
+.studynote{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px}
 .r3acc{padding-left:18px;font-size:14px}.r3acc li{margin-bottom:6px}.xtabs{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:860px){.xtabs{grid-template-columns:1fr}}
 footer{padding:28px 0 60px;color:var(--muted);font-size:13px}footer dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}footer dt{font-weight:600}footer dd{margin:0;word-break:break-word}
 footer pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12.5px}
@@ -395,9 +460,9 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
 <h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
 <div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
-<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a><a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
+<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a><a href="#politics">Sacks / All-In</a><a href="#neuro">Neuroscience</a><a href="#models">Models</a><a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
-${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
+${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
 <footer><dl>
 <dt>Corpus</dt><dd>${esc(d.corpus.source)}. ${d.corpus.notes.map(esc).join(" ")}</dd>
 <dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>

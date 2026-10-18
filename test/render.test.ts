@@ -8,7 +8,7 @@ const meta = { renderedAt: "2026-10-09T00:00:00Z", model: "deepseek/deepseek-v4.
 
 test("render: every section is present and numbers come from the data", () => {
   const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
-  for (const id of ["stance", "methods", "confidence", "pair", "clusters", "accounts", "caveats", "rounds", "policy", "dawkins"]) assert.match(html, new RegExp(`<section id="${id}"`));
+  for (const id of ["stance", "methods", "confidence", "pair", "clusters", "accounts", "caveats", "rounds", "policy", "dawkins", "politics", "models"]) assert.match(html, new RegExp(`<section id="${id}"`));
   assert.match(html, /<b>508<\/b> English posts/);
   assert.match(html, /<b>431<\/b> authors/);
   assert.match(html, /title="Reject: 18 \(45%\)"/);
@@ -26,6 +26,12 @@ test("render: every section is present and numbers come from the data", () => {
   assert.match(html, /href="https:\/\/unherd\.com\/2026\/05\/when-claudia-met-claudius\/"/);
   assert.match(html, /x\.com\/aleksil79\/status\/2105591033228890336/);
   assert.equal((html.match(/class="card"/g) ?? []).length, 8);
+  assert.match(html, /<aside id="neuro"/);
+  assert.match(html, /<div id="sebo"/);
+  assert.match(html, /independent SPAR project, not Anthropic research/);
+  assert.match(html, /href="https:\/\/www\.lesswrong\.com\/posts\//);
+  assert.match(html, /href="https:\/\/www\.biorxiv\.org\/content\//);
+  assert.match(html, /Jev 1\.14\.0 \(TypeSafe\)/);
 });
 
 test("render: model and post text is escaped; only allow-listed links are emitted", () => {
