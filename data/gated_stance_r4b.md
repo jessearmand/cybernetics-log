@@ -53,3 +53,17 @@ These are 40 hand labels with only 10 Curious, so one post moves curious recall 
 ## Cost
 
 80 calls. d1-ultra reported $0.000428 and Jev 1.14.0 $0.000875. Per-post outputs are in `gated_stance_r4b.csv`.
+
+## Verification
+
+`test/gated-stance.test.ts` runs as part of `npm run check`. It recomputes every figure above from `gated_stance_r4b.csv` and fails if this write-up does not contain it exactly. The figures it covers:
+
+- both results tables, including the round-4 3-way rows (from the CSV's `three_way` column);
+- the confusion matrices;
+- the gate-threshold sweep;
+- the direction-step counts;
+- the confidence-threshold accuracies and post counts;
+- the hand-Curious median and the 7 + 7 posts moved to Curious;
+- the costs.
+
+One figure comes from round-4 data that is not in this CSV, so the test does not check it: the 3-way top-probability figure (82.4% at ≥ 0.8, 42.5% coverage).
