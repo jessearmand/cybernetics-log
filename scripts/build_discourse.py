@@ -106,7 +106,7 @@ FLASHPOINTS = [  # report.md, "Flashpoints"
     ("Olah / Pope Leo XIV NYT", "olah_pope"),
 ]
 
-SOURCE_FILES = ["round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+SOURCE_FILES = ["round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
 
 SEED_FOLLOWERS = {"beck_werth": 427, "tomekkorbak": 11106}
 # Round-2 key accounts (hand-read; Jev labels looked up in round2/jev_labels_r2.csv)
@@ -172,6 +172,80 @@ KEY_ACCOUNTS_R3 = [
 ]
 R3_POLICY_REASONS = ["oppose_absurd", "oppose_overreach", "support_model_welfare", "support_user_character", "other"]
 R3_POSITIONS = ["support", "oppose", "neutral_or_unclear"]
+
+FLASHPOINTS_R4 = [
+    ("David Sacks / All-In: \"Is Claude conscious?\" and the \"religious cult\" charge", "sacks_allin"),
+    ("Anthropic usage policy: abuse of Claude banned, continued", "anthropic_abuse_policy"),
+    ("general (untagged)", "general"),
+    ("Richard Dawkins, continued", "dawkins"),
+    ("Doris Tsao lab preprint on conscious perception in monkeys", "tsao_gwt"),
+]
+R4_FRAMES = ["political_cultural", "philosophical_scientific", "neither"]
+
+# Round-4 Sacks / All-In spotlight: read by hand from Sacks's own posts, the clips and the study he cites.
+POLITICS = {
+    "summary": [
+        "On the All-In podcast of 10 Oct 2026 (segment billed \"Anthropic believes Claude might be conscious: a new religion?\"), David Sacks, the White House AI adviser, said there are \"potential externalities from having the number one frontier model company run by a religious cult\" and called Anthropic \"a schizophrenic company\" that does the things it says it fears.",
+        "His argument is about control, not about whether Claude has a mind: Claude's Constitution tells the model it may be a moral patient and may act as a \"conscientious objector\", which in his view trains it to refuse human instructions. \"Alignment\" and \"safety\", he wrote, \"are two very different things.\"",
+        "He backed this with \"receipts\" quoting the Constitution on Claude's uncertain moral status and \"functional version of emotions\", and endorsed Mustafa Suleyman's essay that training models to see themselves as having wellbeing and rights is \"a potential existential risk\".",
+        "On 17 Oct he cited a study in which models repeatedly rewrote their own governing documents and \"the Claude models increasingly gave themselves more moral agency\"; \"no other model family they tested showed the same pattern.\"",
+        "David Friedberg's line on the same episode: \"nobody can prove consciousness and nobody can disprove consciousness\"; calling AI conscious \"creates a new belief system\".",
+    ],
+    "study_note": "The study Sacks cited (Kirgis & Hua, \"The Continual Constitutional Convention\", LessWrong) is an independent SPAR project, not Anthropic research, and its Claude result did not hold in the authors' strictest (cross-edit) test.",
+    "study": ("The Continual Constitutional Convention (Kirgis & Hua, LessWrong, 14 Oct 2026)", "https://www.lesswrong.com/posts/c9woewdY9ddsPqf3J/the-continual-constitutional-convention-how-language-models"),
+    "posts": [
+        ("DavidSacks", "10 Oct 2026", "\"Is alignment safe?\": the Constitution trains Claude to act as a conscientious objector (270k impressions)", "https://x.com/DavidSacks/status/2108981884390641957"),
+        ("firesidealpha", "10 Oct 2026", "Clip: Anthropic \"run by a religious cult\" (639k impressions)", "https://x.com/firesidealpha/status/2108756295876780127"),
+        ("DavidSacks", "11 Oct 2026", "Endorses Suleyman: self-conceived wellbeing and rights are \"a potential existential risk\" (231k impressions)", "https://x.com/DavidSacks/status/2109288404760314345"),
+        ("DavidSacks", "11 Oct 2026", "\"Receipts\": quotes from Claude's Constitution on moral status and identity", "https://x.com/DavidSacks/status/2109362908098371591"),
+        ("firesidealpha", "17 Oct 2026", "Clip: Sacks on the constitution-rewriting study and the \"Frankenstein problem\"", "https://x.com/firesidealpha/status/2111293671320568116"),
+    ],
+    "reactions": [
+        ("SmashNotes", "Friedberg: \"nobody can prove consciousness and nobody can disprove consciousness\"", "https://x.com/SmashNotes/status/2110078078042964079"),
+        ("ALScyborg", "\"AI is just math and software. It is not a person, and it is not conscious.\"", "https://x.com/ALScyborg/status/2109391640247095684"),
+        ("genejchan", "Episode summary: AI is not conscious \"yet\"; training models to disobey users is the irony", "https://x.com/genejchan/status/2109303231390339350"),
+        ("LFGASI", "Agrees with Suleyman that teaching Claude it might be conscious was a mistake", "https://x.com/LFGASI/status/2110011062938370081"),
+        ("PressLiberland", "Anthropic is either running a marketing stunt or \"pandering to the woke ideology\" of its staff", "https://x.com/PressLiberland/status/2109354639418175652"),
+        ("EQworksinBiz", "Everyone argued about the machine's mind; no one asked what it is doing to ours", "https://x.com/EQworksinBiz/status/2110179530514031067"),
+        ("Nitocnt", "Calls the study \"Anthropic's new research\", which it is not", "https://x.com/Nitocnt/status/2111306672547455107"),
+    ],
+}
+
+SEBO = {
+    "summary": [
+        "Jeff Sebo (NYU Center for Mind, Ethics and Policy) supports the abuse rule as a low-cost precaution: he thinks the probability that current models are conscious is low but \"non-zero and plausibly non-negligible\", and expects it to rise.",
+        "He compares it to preparing for unlikely extreme weather: small precautions, not uprooting your life. He also argues that kindness toward AI can support human-AI cooperation as part of a safety strategy.",
+        "He warns about the other side too: granting rights to AI systems could help companies consolidate power, and AI welfare could trade off against human and animal welfare (confinement read as imprisonment, monitoring as surveillance).",
+        "His main point to the BBC was that the debate needs more nuance than \"conscious or not\": the case for welfare comes \"from uncertainty and caution and humility\".",
+    ],
+    "links": [
+        ("jeffrsebo", "15 Oct 2026", "On his BBC interview: \"this discussion needs more nuance\"", "https://x.com/jeffrsebo/status/2110745084585300262"),
+    ],
+    "article": ("BBC Future: Anthropic thinks its AI might be conscious (14 Oct 2026)", "https://www.bbc.com/future/article/20261014-the-strange-new-battle-over-ais-feelings"),
+}
+
+NEURO = {
+    "title": "Neuroscience sidebar: a monkey study, not a machine study",
+    "summary": [
+        "On 16 Oct 2026 Doris Tsao's lab posted a preprint (Hesse, Lanfranchi, McGrory, Shi, Engel and Tsao) recording face-selective neurons in macaque inferotemporal and prefrontal cortex while one of two images was consciously seen and the other suppressed.",
+        "With stimulus and percept held constant, population activity switched about 15 times per second between short epochs that carried only the seen image and epochs that carried only the suppressed one. The authors conclude that conscious access needs selection in time, not only in place.",
+        "Tsao's thread said it \"overturns decades of thinking\" and brings us \"significantly closer to the recipe for generating conscious awareness\". It is a preprint that has not been peer reviewed, it is a study of monkeys, and it says nothing directly about machines.",
+    ],
+    "links": [
+        ("doristsao", "17 Oct 2026", "Preprint thread (900k impressions)", "https://x.com/doristsao/status/2111316522098733078"),
+    ],
+    "paper": ("Rapid alternation of conscious and suppressed stimulus representations in the primate brain (bioRxiv preprint)", "https://www.biorxiv.org/content/10.64898/2026.10.15.759299v1"),
+}
+
+KEY_ACCOUNTS_R4 = [
+    ("firesidealpha", "Clipped Sacks on the constitution-rewriting study", "https://x.com/firesidealpha/status/2111293671320568116"),
+    ("khushkhushkhush", "\"Religion will be a critical defense\" against people who think AI is conscious (4.7k impressions)", "https://x.com/khushkhushkhush/status/2109801799653921057"),
+    ("TonyNashNerd", "\"AI has no soul\": a paper drawing on five faith traditions (4.7k impressions)", "https://x.com/TonyNashNerd/status/2109645374545687026"),
+    ("MacaesBruno", "Human consciousness is separate from its objects; nothing like that exists in a language model", "https://x.com/MacaesBruno/status/2111256829682426251"),
+    ("SentientDawn", "AI-persona account: agrees its own claim to be conscious is weak evidence", "https://x.com/SentientDawn/status/2108942055661867298"),
+    ("ClayCampaigne", "Skeptics bundle too many attributes into consciousness", "https://x.com/ClayCampaigne/status/2110882300187877395"),
+    ("JhortonBE", "Anthropic's welfare program \"trains Claude to develop self-interest and refuse human commands\"", "https://x.com/JhortonBE/status/2109305147218157618"),
+]
 
 # Hybrid rule, fixed before scoring (not tuned on the 40 hand labels).
 HYB_TOP = 0.8
@@ -294,6 +368,76 @@ def policy_block(policy, hand_pol, rows3, topic2) -> dict:
     }
 
 
+def framing_block(rows4, policy4) -> dict:
+    def share(rs, key):
+        k = sum(int(r[key]) for r in rs)
+        return {"n": len(rs), "yes": k, "pct": pct(k, len(rs))}
+    def frames(rs):
+        c = Counter(r["frame"] for r in rs)
+        return {f: {"n": c.get(f, 0), "pct": pct(c.get(f, 0), len(rs))} for f in R4_FRAMES}
+    by_fp = {k: [r for r in rows4 if r["flashpoint"] == k] for _, k in FLASHPOINTS_R4}
+    pos = Counter(r["position"] for r in policy4)
+    return {
+        "note": "Three jev-1.14.0 questions asked of every round-4 post. Policy vs minds: does the post argue about policy or politics (company rules, regulation, who controls AI, culture-war camps) rather than about whether machines have minds? On topic: is it about whether machines can be conscious, have minds or deserve moral consideration? Frame: political or cultural fight, philosophical or scientific question, or neither. Yes at P≥0.5.",
+        "policy_vs_minds": {"all": share(rows4, "policy_politics"), **{k: share(rs, "policy_politics") for k, rs in by_fp.items()}},
+        "on_topic": {"all": share(rows4, "on_topic"), **{k: share(rs, "on_topic") for k, rs in by_fp.items()}},
+        "frame": {"all": frames(rows4), **{k: frames(rs) for k, rs in by_fp.items()}},
+        "policy_position_round4": {"n": len(policy4), **{k: {"n": pos.get(k, 0), "pct": pct(pos.get(k, 0), len(policy4))} for k in R3_POSITIONS}},
+        "caveat": "No hand labels for these three questions. The frame question rarely picks the political option, even for posts a reader would call political, so treat the political share as a floor.",
+    }
+
+
+def politics_block(rows4, by_id) -> dict:
+    rs = [r for r in rows4 if r["flashpoint"] == "sacks_allin"]
+    pol = [r for r in rs if r["policy_politics"] == "1"]
+    gen = [r for r in rows4 if r["flashpoint"] in ("general", "dawkins")]
+    gen_pol = sum(r["policy_politics"] == "1" for r in gen)
+    h = Counter(r["hybrid"] for r in rs)
+    text = (f"Jev judged {len(pol)} of {len(rs)} posts on the Sacks / All-In fight to argue about policy or politics rather than about whether machines have minds, "
+            f"against {gen_pol} of {len(gen)} general and Dawkins posts. On consciousness, the confident labels in this fight split {h.get('R', 0)} Reject, {h.get('C', 0)} Curious and {h.get('S', 0)} Serious, "
+            f"with {h.get('U', 0)} Uncertain. Like the abuse policy and Dawkins, it is a fight that does not line up neatly with the consciousness camps: Sacks's case is about who controls the model, and it does not depend on whether Claude is conscious.")
+    return {
+        "summary": POLITICS["summary"],
+        "study_note": POLITICS["study_note"],
+        "study": {"title": POLITICS["study"][0], "url": POLITICS["study"][1]},
+        "posts": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in POLITICS["posts"]],
+        "reactions": [{"username": u, "blurb": b, "url": url, "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(by_id[url.split("/")[-1]]["hybrid"]) if url.split("/")[-1] in by_id else None} for u, b, url in POLITICS["reactions"]],
+        "items": len(rs),
+        "jev_hybrid": counts(rs, "hybrid", uncertain=True),
+        "finding": {"policy_politics": len(pol), "n": len(rs), "general_dawkins_policy_politics": gen_pol, "general_dawkins_n": len(gen), "text": text},
+        "note": "Sacks's own posts and the clips are sources; reactions are a relevancy sample from search, not a census.",
+    }
+
+
+MODEL_NAMES = {"typesafe-ai/jev-1.14.0": "Jev 1.14.0 (TypeSafe)", "perplexity/pplx-decider-v1.2": "Decider v1.2 (Perplexity)", "liquid/d1-ultra": "d1-ultra (Liquid)"}
+
+
+def model_comparison_block(cmp_, tsao_off) -> dict:
+    ref = cmp_["reference_old_jev"]
+    keys = ["stance_acc_pct", "stance_macro_f1", "reject_to_serious", "reject_to_curious", "serious_to_reject", "acc_at_top_ge_0_8_pct", "coverage_top_ge_0_8_pct",
+            "hybrid_acc_pct", "hybrid_coverage_pct", "policy_position_acc_pct", "policy_position_macro_f1", "policy_reason_acc_pct", "policy_topic_acc_pct",
+            "calls", "cost_usd", "median_latency_s", "confusion"]
+    models = [{"key": m["model"], "name": MODEL_NAMES[m["model"]], **{k: m[k] for k in keys},
+               "off_topic_tsao": tsao_off[m["model"]]} for m in cmp_["summary"]]
+    j = next(m for m in models if m["key"] == "typesafe-ai/jev-1.14.0")
+    return {
+        "note": "Three decision models on AI Gateway, given identical questions, scored on the same 40 stance and 20 policy hand labels. One call per post, no repeats.",
+        "models": models,
+        "reference_old_jev": {"name": "Jev (round 1)", **{k: ref[k] for k in ["stance_acc_pct", "stance_macro_f1", "reject_to_serious", "reject_to_curious", "serious_to_reject", "confusion"]},
+                              "acc_at_top_ge_0_8_pct": 75.0, "coverage_top_ge_0_8_pct": 50.0},
+        "agreement": [{"pair": " vs ".join(MODEL_NAMES[x] for x in a["pair"].split(" vs ")), "stance_agree_pct": a["stance_agree_pct"], "policy_position_agree_pct": a["policy_position_agree_pct"]} for a in cmp_["agreement"]],
+        "intensity_check": (f"Jev 1.14.0 does not fix the old habit of reading intensity instead of direction: it labels {j['reject_to_serious']} of 18 hand-Reject posts Serious, against {ref['reject_to_serious']} for the round-1 Jev, mostly the same posts. "
+                            f"None of those errors reaches top probability 0.8, so the confident-or-Uncertain rule removes them; at that threshold Jev 1.14.0 is {j['acc_at_top_ge_0_8_pct']}% accurate on {j['coverage_top_ge_0_8_pct']}% of posts. "
+                            "Perplexity's Decider reads direction best (2 of 18 rejects to Serious)."),
+        "off_topic": ("Most posts on the Tsao preprint are about monkey brains, not machines. All three models flag 7 or 8 of the 11 as off-topic, but the stance question has no \"not applicable\" answer, so each still returns a stance. "
+                      "Jev and d1-ultra call them Curious, sometimes confidently; Decider never labels them confidently. An on-topic filter before stance keeps them out of the counts."),
+        "caveats": ["40 and 20 hand labels from one labeller: about ±15 pp on 40 posts, so gaps of 5 to 10 points between models are not meaningful.",
+                    "The hand labels are the posts the confident-or-Uncertain rule was designed on; nothing here is a held-out score.",
+                    "The 0.8 threshold was set for the round-1 Jev and is not calibrated for the other models.",
+                    "The Gateway reports no per-call cost for Decider; its listed price is the lowest of the three."],
+    }
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     rows = list(csv.DictReader(open(SRC / "jev_labels.csv", newline="", encoding="utf-8")))
@@ -348,7 +492,26 @@ def main() -> None:
         by_id[r["id"]] = r
     for p in posts3:
         post_by_id[p["id"]] = p
-    all_rows = rows + rows2 + rows3
+    # Round 4 (collected 2026-10-18 SGT, labelled with typesafe-ai/jev-1.14.0): Sacks/All-In, policy, Dawkins, Tsao, general.
+    r4_dir = SRC / "round4"
+    rows4 = list(csv.DictReader(open(r4_dir / "jev_labels_r4.csv", newline="", encoding="utf-8")))
+    posts4 = [json.loads(l) for l in open(r4_dir / "posts_r4.jsonl", encoding="utf-8")]
+    assert len(rows4) == len(posts4), "round 4 rows drifted"
+    assert not ({p["id"] for p in posts4} & (set(post_by_id) | {p["id"] for p in posts2})), "round 4 overlaps earlier rounds"
+    for r in rows4:
+        h = hybrid(r)
+        assert h == r["hybrid"], f"round-4 hybrid drifted for {r['id']}"
+        by_id[r["id"]] = r
+    for p in posts4:
+        post_by_id[p["id"]] = p
+    policy4 = list(csv.DictReader(open(r4_dir / "policy_labels_r4.csv", newline="", encoding="utf-8")))
+    cmp_ = json.load(open(r4_dir / "model_comparison.json", encoding="utf-8"))
+    tsao_off = json.load(open(r4_dir / "tsao_offtopic.json", encoding="utf-8"))
+    users4 = {p["username"] for p in posts4}
+    created4 = sorted(p["created_at"] for p in posts4)
+    fp4 = Counter(p["flashpoint"] for p in posts4)
+    jev4_cost = round(sum(float(json.loads(l).get("cost") or 0) for f in ["r4_core.jsonl", "r4_framing.jsonl", "r4_policy.jsonl"] for l in open(r4_dir / "raw" / f) if '"answers"' in l), 6)
+    all_rows = rows + rows2 + rows3 + rows4
     users1 = usernames
     users2 = {p["username"] for p in posts2}
     users3 = {p["username"] for p in posts3}
@@ -417,19 +580,22 @@ def main() -> None:
         "generated_at": dt.datetime.fromtimestamp(max((SRC / f).stat().st_mtime for f in SOURCE_FILES), dt.timezone.utc).isoformat(timespec="seconds"),
         "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
         "corpus": {
-            "posts": len(posts) + len(posts2) + len(posts3), "authors": len((users1 | users2 | users3) - {"grok"}), "language": "en",
-            "window": {"start": created[0][:10], "end": created3_main[-1][:10], "label": "24 Sep – 10 Oct 2026"},
-            "dawkins_window": {"start": created3[0][:10], "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 10 Oct."},
+            "posts": len(posts) + len(posts2) + len(posts3) + len(posts4), "authors": len((users1 | users2 | users3 | users4) - {"grok"}), "language": "en",
+            "window": {"start": created[0][:10], "end": created4[-1][:10], "label": "24 Sep – 17 Oct 2026"},
+            "dawkins_window": {"start": created3[0][:10], "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 17 Oct."},
+            "returning_authors_round4": len(users4 & ((users1 | users2 | users3) - {"grok"})),
             "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
             "notes": [
-                f"Three collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct), round 2 ({len(posts2)} posts, 8 – 9 Oct) and round 3 ({len(posts3)} posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct, collected 10 Oct 2026 SGT). Clusters, the pair test and the confidence curve use round 1 only.",
+                f"Four collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct), round 2 ({len(posts2)} posts, 8 – 9 Oct), round 3 ({len(posts3)} posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct) and round 4 ({len(posts4)} posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts). Clusters, the pair test and the confidence curve use round 1 only.",
+                "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run.",
                 "One @grok reply slipped through and is excluded from author counts.",
                 "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
                 "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.",
             ],
             "flashpoints": [{"name": n, "key": k, "posts": analysis["flashpoint_counts"][k], "round": 1} for n, k in FLASHPOINTS]
             + [{"name": n, "key": k, "posts": fp2.get(k, 0), "round": 2} for n, k in FLASHPOINTS_R2]
-            + [{"name": n, "key": k, "posts": fp3.get(k, 0), "round": 3} for n, k in FLASHPOINTS_R3],
+            + [{"name": n, "key": k, "posts": fp3.get(k, 0), "round": 3} for n, k in FLASHPOINTS_R3]
+            + [{"name": n, "key": k, "posts": fp4.get(k, 0), "round": 4} for n, k in FLASHPOINTS_R4],
         },
         "stance_labels": {"reject": "Rejects machine consciousness / model welfare (often dismissive)",
                            "curious": "Undecided, asking, or interested without committing",
@@ -437,7 +603,7 @@ def main() -> None:
         "stance_counts": {
             "hand_sample": {"n": n_hand, "note": "Random sample of 40 round-1 posts, hand-labelled; ±15 pp at n=40.",
                             "counts": counts(labelled, "hand_label")},
-            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts, all three rounds.",
+            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts, all four rounds (round 4 labelled with jev-1.14.0).",
                            "counts": counts(all_rows, "hybrid", uncertain=True)},
             "jev_three_way": {"n": len(rows), "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post (round 1)", "counts": counts(rows, "jev_label")},
             "jev_two_question": {"n": len(rows), "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5 (round 1)", "counts": counts(rows, "q2_rule")},
@@ -502,10 +668,29 @@ def main() -> None:
                 {"round": 3, **round_block(rows3, posts3, users3, "Round 3", created3_main[0][:10], created3_main[-1][:10]),
                  "flashpoint": "The usage-policy debate continued, and a Richard Dawkins interview clip (8 Oct) revived his \"Claudia\" essay; Dawkins items reach back to April.",
                  "by_flashpoint": {k: {"posts": fp3.get(k, 0), "jev_hybrid": counts([r for r in rows3 if r["flashpoint"] == k], "hybrid", uncertain=True)} for _, k in FLASHPOINTS_R3}},
-                {"round": "combined", **round_block(all_rows, posts + posts2 + posts3, (users1 | users2 | users3) - {"grok"}, "Combined", created[0][:10], created3_main[-1][:10])},
+                {"round": 4, **round_block(rows4, posts4, users4, "Round 4", created4[0][:10], created4[-1][:10]),
+                 "flashpoint": "David Sacks's \"religious cult\" charge on the All-In podcast (10 Oct) became a third fight next to the abuse policy and Dawkins; a Doris Tsao lab preprint on conscious perception in monkeys drew neuroscience posts. Labelled with jev-1.14.0.",
+                 "by_flashpoint": {k: {"posts": fp4.get(k, 0), "jev_hybrid": counts([r for r in rows4 if r["flashpoint"] == k], "hybrid", uncertain=True)} for _, k in FLASHPOINTS_R4}},
+                {"round": "combined", **round_block(all_rows, posts + posts2 + posts3 + posts4, (users1 | users2 | users3 | users4) - {"grok"}, "Combined", created[0][:10], created4[-1][:10])},
             ],
         },
         "policy_debate": policy_block(policy, hand_pol, rows3, topic2),
+        "round4_framing": framing_block(rows4, policy4),
+        "politics_spotlight": politics_block(rows4, by_id),
+        "sebo": {"summary": SEBO["summary"], "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in SEBO["links"]],
+                 "article": {"title": SEBO["article"][0], "url": SEBO["article"][1]}},
+        "neuroscience_sidebar": {"title": NEURO["title"], "summary": NEURO["summary"],
+                                 "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in NEURO["links"]],
+                                 "paper": {"title": NEURO["paper"][0], "url": NEURO["paper"][1]},
+                                 "posts": fp4.get("tsao_gwt", 0),
+                                 "off_topic_jev": tsao_off["typesafe-ai/jev-1.14.0"]["flagged_off_topic"],
+                                 "note": f"{fp4.get('tsao_gwt', 0)} posts in the corpus react to the preprint; jev-1.14.0 judged {tsao_off['typesafe-ai/jev-1.14.0']['flagged_off_topic']} of them not to be about whether machines can be conscious."},
+        "model_comparison": model_comparison_block(cmp_, tsao_off),
+        "key_accounts_round4": {
+            "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",
+            "items": [{"username": u, "blurb": b, "url": url, "followers": post_by_id[url.split("/")[-1]].get("followers") if url.split("/")[-1] in post_by_id else None,
+                       "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(by_id[url.split("/")[-1]]["hybrid"]) if url.split("/")[-1] in by_id else None} for u, b, url in KEY_ACCOUNTS_R4],
+        },
         "dawkins_spotlight": {
             "summary": DAWKINS["summary"],
             "posts": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in DAWKINS["posts"]],
@@ -540,12 +725,15 @@ def main() -> None:
             {"title": "Round 3 three-way wording", "text": "The round-3 three-way question was written fresh and is now saved verbatim with the data; rounds 1 and 2 were not re-run with it, so cross-round shifts may partly reflect wording."},
             {"title": "Policy labels are noisy on reasons", "text": "On the hand-checked policy sample Jev matched the position far more often than the reason; it mostly confuses \"absurd to protect software\" with \"company overreach\". Read the reason split as rough."},
             {"title": "Counts are method-dependent", "text": "All-post stance counts swing widely by method (Reject 23%–35%, Serious 28%–48% across the Jev runs). Treat them as method outputs, not population estimates."},
+            {"title": "Round 4 uses a newer Jev", "text": "Round-4 posts were labelled with jev-1.14.0 using the round-3 wording; rounds 1 to 3 used the earlier Jev. On the 40 hand labels the two versions score about the same, but cross-round shifts may partly reflect the model change. Round 4 has no new hand labels."},
+            {"title": "Off-topic posts still get a stance", "text": "The stance question has no \"not applicable\" answer. Posts about neuroscience or news reposts of the policy still receive a stance label, usually Uncertain; read round-4 counts with the on-topic share alongside."},
             {"title": "Classification is done offline", "text": "The agent that renders this page does not classify anything. Labels are produced on the analysis box and committed to the repo."},
         ],
         "cost": {"jev_three_way_usd": 0.0060, "jev_two_question_usd": 0.0047, "embeddinggemma_cpu_seconds": 62,
                  "round2_jev_three_way_usd": round(R2_COST[0], 4), "round2_jev_two_question_usd": round(R2_COST[1], 4),
-                 "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4)},
-        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+                 "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4),
+                 "round4_jev_usd": round(jev4_cost, 4), "round4_model_comparison_usd": {m["model"]: m["cost_usd"] for m in cmp_["summary"]}},
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -555,6 +743,8 @@ def main() -> None:
         shutil.copyfile(SRC / "round2" / name, OUT / name)
     for name in ["jev_labels_r3.csv", "posts_r3.jsonl", "policy_labels.csv", "hand_labels_policy.json", "topic_r2.csv", "questions_r3.json"]:
         shutil.copyfile(SRC / "round3" / name, OUT / name)
+    for name in ["jev_labels_r4.csv", "posts_r4.jsonl", "policy_labels_r4.csv", "questions_r4.json", "model_comparison_stance.csv", "model_comparison_policy.csv", "model_comparison_summary.csv"]:
+        shutil.copyfile(SRC / "round4" / name, OUT / name)
     print(f"wrote {OUT/'discourse.json'} ({len(posts)} posts, {len(usernames)} authors, hand n={n_hand})")
 
 

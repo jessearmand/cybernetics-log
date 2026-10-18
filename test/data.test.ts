@@ -13,15 +13,16 @@ const count = (key: string) => rows.reduce<Record<string, number>>((acc, r) => (
 
 test("data: corpus matches the brief", () => {
   assert.equal(rows.length, 268);
-  assert.equal(discourse.corpus.posts, 422);
-  assert.equal(discourse.corpus.authors, 359);
+  assert.equal(discourse.corpus.posts, 508);
+  assert.equal(discourse.corpus.authors, 431);
   assert.equal(discourse.corpus.window.start, "2026-09-24");
-  assert.equal(discourse.corpus.window.end, "2026-10-10");
-  const [r1, r2, r3, all] = discourse.rounds.items;
+  assert.equal(discourse.corpus.window.end, "2026-10-17");
+  const [r1, r2, r3, r4, all] = discourse.rounds.items;
   assert.equal(r1!.posts, 268);
   assert.equal(r2!.posts, 64);
   assert.equal(r3!.posts, 90);
-  assert.equal(all!.posts, 422);
+  assert.equal(r4!.posts, 86);
+  assert.equal(all!.posts, 508);
   const hyb = discourse.accuracy.methods.find((m) => m.key === "jev_hybrid") as { coverage_pct: number; accuracy_pct: number };
   assert.equal(hyb.coverage_pct, 50);
   assert.equal(hyb.accuracy_pct, 75);
@@ -122,4 +123,38 @@ test("data: Dawkins spotlight links are real status URLs and the summary avoids 
   const json = JSON.stringify(discourse);
   for (const bad of ["report.md", "jev_labels", "posts_r3"]) assert.ok(!JSON.stringify([discourse.policy_debate, discourse.dawkins_spotlight, discourse.key_accounts_round3]).includes(bad), bad);
   assert.ok(json.length > 0);
+});
+
+const csv4 = readFileSync(new URL("../data/jev_labels_r4.csv", import.meta.url), "utf8").trim().split("\n");
+const h4 = csv4[0]!.split(",");
+const rows4 = csv4.slice(1).map((line) => Object.fromEntries(line.split(",").map((v, i) => [h4[i], v])) as Record<string, string>);
+
+test("data: round 4 counts match jev_labels_r4.csv (86 posts across five flashpoints)", () => {
+  assert.equal(rows4.length, 86);
+  assert.deepEqual(tally(rows4, "flashpoint"), { sacks_allin: 23, anthropic_abuse_policy: 21, general: 18, dawkins: 13, tsao_gwt: 11 });
+  const r4 = discourse.rounds.items[3]!;
+  assert.equal(r4.round, 4);
+  const h = tally(rows4, "hybrid");
+  const hy = r4.jev_hybrid as Record<string, { n: number }>;
+  assert.deepEqual([hy.reject!.n, hy.curious!.n, hy.serious!.n, hy.uncertain!.n], [h.R ?? 0, h.C ?? 0, h.S ?? 0, h.U ?? 0]);
+  const pv = discourse.round4_framing.policy_vs_minds;
+  assert.equal(pv.all.yes, rows4.filter((r) => r.policy_politics === "1").length);
+  assert.equal(pv.sacks_allin.yes, discourse.politics_spotlight.finding.policy_politics);
+  for (const r of rows4) assert.match(r.url!, /^https:\/\/x\.com\/[^/]+\/status\/\d+$/);
+});
+
+test("data: Sacks spotlight carries the study note; model comparison covers three models plus the old Jev", () => {
+  const k = discourse.politics_spotlight;
+  assert.match(k.study_note, /independent SPAR project, not Anthropic research/);
+  assert.match(k.study_note, /cross-edit/);
+  assert.match(k.study.url, /^https:\/\/www\.lesswrong\.com\//);
+  for (const x of [...k.posts, ...k.reactions]) assert.match(x.url, /^https:\/\/x\.com\/[^/]+\/status\/\d+$/);
+  const m = discourse.model_comparison;
+  assert.deepEqual(m.models.map((x) => x.key), ["typesafe-ai/jev-1.14.0", "perplexity/pplx-decider-v1.2", "liquid/d1-ultra"]);
+  assert.equal(m.reference_old_jev.reject_to_serious, 8);
+  assert.equal(m.reference_old_jev.stance_acc_pct, 55);
+  assert.ok(m.intensity_check.includes(`${m.models[0]!.reject_to_serious} of 18`));
+  assert.match(discourse.neuroscience_sidebar.summary.join(" "), /not been peer reviewed/);
+  const pub = JSON.stringify([discourse.politics_spotlight, discourse.sebo, discourse.neuroscience_sidebar, discourse.model_comparison, discourse.round4_framing, discourse.key_accounts_round4]);
+  for (const bad of ["jev_labels", "posts_r4", "questions_r4", ".csv", ".json", "SKILL"]) assert.ok(!pub.includes(bad), bad);
 });
