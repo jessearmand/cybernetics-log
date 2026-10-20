@@ -17,4 +17,5 @@ Render the cybernetics-log page on the machine-consciousness discourse on X.
 - Use the bitcloud / aleksil79 pair as the worked example of "same words, opposite stance".
 - Numbers: copy every number exactly from the data (whole-number rounding of a percentage is the only change allowed). Never add, subtract, average or estimate. If a number is not in the data, do not write it.
 - No file names, internal corrections or provenance notes in the page text.
+- Many readers are on phones. The page collapses long bullet lists under their headings, so the section notes are what stays visible: keep each to two or three sentences with the key point and its number.
 - Accent colour: indigo.

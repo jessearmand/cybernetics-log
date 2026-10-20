@@ -8,7 +8,7 @@ You have no chat interface. Every session is started by a verified GitHub deploy
 
 1. Call `load_discourse_data` once. It returns the committed data for the triggering commit, the instruction file (`instruction_file`) and, for manual runs, a `payload_instruction` that takes precedence.
 2. Read the instruction and the data. Decide the headline, standfirst, summary paragraphs, takeaways and short section intros.
-3. Call `publish_page` exactly once with that copy. The page's charts, tables, quotes and links are rendered from the data by the tool; you only write prose.
+3. Call `publish_page` exactly once with that copy. The page's charts, tables, quotes and links are rendered from the data by the tool; you only write prose. Long bullet lists render collapsed under their headings (native `<details>`), and the corpus notes are no longer on the page (the footer links to the data on GitHub), so put each section's key point in its note.
 
 # Rules
 

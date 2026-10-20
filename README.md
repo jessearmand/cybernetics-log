@@ -1,6 +1,6 @@
 # cybernetics-log
 
-An [eve](https://github.com/vercel/eve) agent that renders a styled HTML page about the **machine-consciousness discourse on X** and how its stance was classified. Data: 268 English posts from 213 authors, 24 Sep – 8 Oct 2026.
+An [eve](https://github.com/vercel/eve) agent that renders a styled HTML page about the **machine-consciousness discourse on X** and how its stance was classified. Data: 577 English posts from 490 authors, 24 Sep – 20 Oct 2026 (see [Corpus](#corpus)).
 
 The agent **does not classify anything**. Stance labels (hand labels, embeddinggemma-2, Jev via AI Gateway) are produced offline on the analysis box and committed under `data/`. The agent reads that data and writes the editorial copy. Every chart, table, number, quote and link on the page is rendered deterministically from the committed data.
 
@@ -77,6 +77,20 @@ scripts/
 test/                           node:test suites (webhook, renderer, data consistency)
 .agents/skills/eve              eve agent skill (`npx skills add vercel/eve`)
 ```
+
+## Corpus
+
+The page footer links here instead of repeating these notes. They are generated into `data/discourse.json` (`corpus`) by `scripts/build_discourse.py`, and `test/render.test.ts` checks that this section matches them.
+
+- **Totals:** 577 English posts from 490 authors, 24 Sep – 20 Oct 2026.
+- **Source:** X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed).
+- Five collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct), round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct), round 4 (86 posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts) and round 5 (69 posts: the Nature commentary of 19 – 20 Oct and posts on Anthropic's July workspace paper). Round 6 re-labelled the round-5 posts and added none. Clusters, the pair test and the confidence curve use round 1 only.
+- Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev.
+- One @grok reply slipped through and is excluded from author counts.
+- Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.
+- The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.
+
+The per-round files are under [`data/`](data/); the round write-ups are `data/jev_report.md`, `data/gated_stance_r4b.md` and `data/round5_6.md`.
 
 ## Regenerating the data from the box
 
