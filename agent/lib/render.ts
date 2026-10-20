@@ -321,10 +321,11 @@ ${fold("Reactions", k.reactions.map((r) => `${link(r.url, `<b>@${esc(r.username)
 /**
  * A long bulleted explanation, collapsed by default so a phone shows the heading only.
  * Native <details>: no JavaScript, keyboard-operable, and find-in-page opens it in current browsers.
+ * The label is an <h3> inside <summary>, so heading navigation still lists it. Folds are never nested.
  */
 function fold(label: string, items: readonly string[], opts: { list?: string; plain?: boolean } = {}): string {
   const lis = items.map((x) => `<li>${opts.plain ? x : esc(x)}</li>`).join("");
-  return `<details class="fold"><summary><span class="flabel">${esc(label)}</span><span class="fcount">${items.length} ${items.length === 1 ? "point" : "points"}</span></summary><ul${opts.list ? ` class="${opts.list}"` : ""}>${lis}</ul></details>`;
+  return `<details class="fold"><summary><h3 class="flabel">${esc(label)}</h3><span class="fcount">${items.length} ${items.length === 1 ? "point" : "points"}</span></summary><ul${opts.list ? ` class="${opts.list}"` : ""}>${lis}</ul></details>`;
 }
 
 type Paper = { authors: string; title: string; venue: string; url: string; doi?: string };
@@ -470,7 +471,7 @@ function roundsSection(d: Discourse): string {
       .join("")}</ul></div>`;
   return `<section id="rounds"><h2>Rounds</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
-${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${fps4 ? `<p class="fine">Round-4 flashpoints: ${fps4}.</p>` : ""}${r4frame}${r4list}${r3list}<p class="fine">${esc(ka.note)}</p><details class="fold"><summary><span class="flabel">Round 2 key accounts</span><span class="fcount">${STANCES.reduce((s, x) => s + ka[x].length, 0)} accounts</span></summary><div class="acols">${STANCES.map(col).join("")}</div></details></section>`;
+${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${fps4 ? `<p class="fine">Round-4 flashpoints: ${fps4}.</p>` : ""}${r4frame}${r4list}${r3list}<p class="fine">${esc(ka.note)}</p><details class="fold"><summary><h3 class="flabel">Round 2 key accounts</h3><span class="fcount">${STANCES.reduce((s, x) => s + ka[x].length, 0)} accounts</span></summary><div class="acols">${STANCES.map(col).join("")}</div></details></section>`;
 }
 
 function caveatsSection(d: Discourse, e: Editorial): string {
@@ -535,7 +536,7 @@ details.fold>summary::-webkit-details-marker{display:none}
 details.fold>summary::before{content:"";flex:none;width:8px;height:8px;margin:0 2px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);transition:transform .15s}
 details.fold[open]>summary::before{transform:rotate(45deg)}
 details.fold>summary:hover .flabel{color:var(--accent)}details.fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
-details.fold .fcount{margin-left:auto;flex:none;color:var(--muted);font-size:12.5px;font-weight:400}
+details.fold .flabel{margin:0;font-size:inherit;font-weight:inherit;line-height:inherit;color:inherit}details.fold .fcount{margin-left:auto;flex:none;color:var(--muted);font-size:12.5px;font-weight:400}
 details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}
 @media (prefers-reduced-motion:reduce){details.fold>summary::before{transition:none}}
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}

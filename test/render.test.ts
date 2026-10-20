@@ -86,7 +86,7 @@ test("round 6 hand check renders with the e_philalethes caveat", () => {
   assert.match(html, /16 of 26/);
 });
 
-/** The HTML of one section (sections are never nested). */
+/** The HTML of one section. The lazy regexes here rely on sections and folds never being nested, which render.ts guarantees. */
 const sectionHtml = (html: string, id: string) => {
   const m = html.match(new RegExp(`<section id="${id}"[\\s\\S]*?</section>`));
   assert.ok(m, `section ${id}`);
@@ -109,7 +109,7 @@ test("mobile: long bulleted explanations are collapsed by default behind native 
   };
   for (const [id, labels] of Object.entries(want)) {
     const s = sectionHtml(html, id);
-    for (const l of labels) assert.ok(s.includes(`<summary><span class="flabel">${esc(l)}</span>`), `${id}: "${l}" is a collapsible summary`);
+    for (const l of labels) assert.ok(s.includes(`<summary><h3 class="flabel">${esc(l)}</h3>`), `${id}: "${l}" is a collapsible summary`);
     assert.ok(!/<details class="fold" open/.test(s), `${id}: collapsed by default`);
     // Every bullet in these sections sits inside a fold; nothing long is left expanded.
     assert.ok(!/<li[ >]/.test(withoutFolds(s)), `${id}: no bullet outside a fold`);
@@ -140,7 +140,10 @@ test("mobile: the footer drops the Corpus block and links to the complete data o
 
 test("mobile: the corpus notes moved off the page live in the README", () => {
   const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
-  const sec = readme.slice(readme.indexOf("## Corpus\n"), readme.indexOf("## Regenerating"));
+  const start = readme.indexOf("## Corpus\n");
+  const end = readme.indexOf("\n## ", start + 1);
+  assert.ok(start >= 0 && end > start, "README has a Corpus section followed by another section");
+  const sec = readme.slice(start, end);
   assert.ok(sec.length > 100, "README has a Corpus section");
   const c = discourse.corpus;
   assert.ok(sec.includes(`${c.posts} English posts from ${c.authors} authors, ${c.window.label}`));
