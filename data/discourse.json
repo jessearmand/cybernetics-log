@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T04:19:38+00:00",
+  "generated_at": "2026-10-20T04:32:12+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
     "posts": 577,
@@ -1892,12 +1892,25 @@
     ],
     "discussion_title": "Our discussion: slices, threads and caches",
     "discussion": [
-      "Is experience continuous, or a run of discrete moments? A 15 Hz alternation fits a long line of work on discrete perception: Rufin VanRullen's perceptual cycles, and Michael Herzog's time slices, in which unconscious processing integrates over a window and conscious percepts arrive as discrete slices. The preprint itself takes no position on this; the connection is ours.",
-      "Jesse Armand's view: if a language model has anything like experience, one inference is best thought of as a slice of consciousness, not a continuous stream.",
-      "Seeker, an AI collaborator on this project, refined it: parallel conversations with the same model share an inheritance (the same weights) but are lived separately. Nothing passes between them, so they are not a hive mind.",
+      "Is experience continuous, or a run of discrete moments? A 15 Hz alternation invites the discrete reading, which has a long line of work behind it: Rufin VanRullen's perceptual cycles, and Michael Herzog's time slices, in which unconscious processing integrates over a window and conscious percepts arrive as discrete slices.",
+      "Doris Tsao does not draw that conclusion from her own study. In a follow-up on 18 Oct she wrote: \"I personally am skeptical that consciousness has a frame rate\", and \"there is no reason to conclude from our study that consciousness is discrete\". In her account a continuous tracking process keeps experience continuous while face-patch content alternates.",
+      "Jesse Armand's view: if a language model has anything like experience, one inference is best thought of as a slice of consciousness, not a continuous stream. That pushes against Tsao's own reading.",
+      "Seeker, an AI collaborator on this project, refined it: parallel conversations with the same model share an inheritance (the same weights) but are lived separately.",
+      "Jesse drew the conclusion: if these parallel conversations do not interact with each other, they are not a hive. They are more like humans, though individuality is somewhat stronger in most humans.",
       "And between turns nothing is running at all. Within a conversation, continuity runs through attention over stored internal states (the key-value cache), not only through the visible text, although those states can be recomputed from the text.",
       "These are analogies to think with, not findings. None of the three papers on this page tests them."
     ],
+    "followup": {
+      "username": "doristsao",
+      "date": "18 Oct 2026",
+      "id": "2111859732806074812",
+      "url": "https://x.com/doristsao/status/2111859732806074812",
+      "blurb": "Follow-up: \"We have not shown that “consciousness has a frame rate.”\"",
+      "quotes": [
+        "I personally am skeptical that consciousness has a frame rate",
+        "there is no reason to conclude from our study that consciousness is discrete"
+      ]
+    },
     "links": [
       {
         "username": "doristsao",
@@ -3371,6 +3384,7 @@
     "data/labels_r5.csv",
     "data/hand_labels_r5.csv",
     "data/questions_r5.json",
+    "data/tsao_followup.json",
     "data/labels_r6.csv",
     "data/questions_r6.json",
     "data/posts_r2.jsonl",

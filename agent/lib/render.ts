@@ -327,7 +327,7 @@ function leadSection(d: Discourse, e: Editorial): string {
   return `<section id="lead" class="callout"><h2>${esc(l.title)}</h2>${note(e, "lead")}${cite(l.paper)}
 <ul>${l.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
 <h3>${esc(l.discussion_title)}</h3><ul>${l.discussion.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-<p class="fine">${l.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(l.note)}</p></section>`;
+<p class="fine">${[...l.links, l.followup].map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(l.note)}</p></section>`;
 }
 
 function workspaceSection(d: Discourse, e: Editorial): string {

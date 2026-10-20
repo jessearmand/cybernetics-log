@@ -172,3 +172,20 @@ test("Dawkins: every quote on the page appears in his own posts or the clip in t
   assert.equal(discourse.dawkins_spotlight.summary.length, 2);
   assert.ok(!/fluency/i.test(own), "Nature does not use Dawkins as an example of mistaking fluency for experience");
 });
+
+test("lead: Tsao's discreteness quotes are verbatim from her follow-up post; the hive conclusion is Jesse's", () => {
+  const src = JSON.parse(read("tsao_followup.json")) as { id: string; username: string; text: string; url: string };
+  const l = discourse.lead_tsao;
+  assert.equal(l.followup.id, src.id);
+  assert.equal(l.followup.url, `https://x.com/doristsao/status/${src.id}`);
+  assert.equal(src.username, "doristsao");
+  const page = [...l.discussion, l.followup.blurb].join("\n");
+  const quotes = [...page.matchAll(/"([^"]+)"/g)].map((m) => m[1]!).filter((q) => /frame rate|discrete/.test(q));
+  assert.ok(quotes.length >= 3);
+  for (const q of [...quotes, ...l.followup.quotes]) assert.ok(src.text.includes(q), `not in her post: ${q}`);
+  assert.ok(!/takes no position on this/.test(page));
+  const seeker = l.discussion.find((x) => x.startsWith("Seeker"))!;
+  assert.ok(!/hive/.test(seeker), "the not-a-hive conclusion is credited to Jesse, not Seeker");
+  assert.match(l.discussion.find((x) => /hive/.test(x))!, /^Jesse/);
+  assert.match(l.discussion.join(" "), /pushes against Tsao's own reading/);
+});

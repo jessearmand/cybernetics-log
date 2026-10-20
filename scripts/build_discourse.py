@@ -106,7 +106,7 @@ FLASHPOINTS = [  # report.md, "Flashpoints"
     ("Olah / Pope Leo XIV NYT", "olah_pope"),
 ]
 
-SOURCE_FILES = ["round5/labels_r5.csv", "round5/posts_r5.jsonl", "round5/dropped_r5.jsonl", "round5/hand_labels_r5.csv", "round5/questions_r5.json", "round6/labels_r6.csv", "round6/questions_r6.json", "round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+SOURCE_FILES = ["round5/labels_r5.csv", "round5/posts_r5.jsonl", "round5/dropped_r5.jsonl", "round5/hand_labels_r5.csv", "round5/questions_r5.json", "round5/tsao_followup.json", "round6/labels_r6.csv", "round6/questions_r6.json", "round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
 
 SEED_FOLLOWERS = {"beck_werth": 427, "tomekkorbak": 11106}
 # Round-2 key accounts (hand-read; Jev labels looked up in round2/jev_labels_r2.csv)
@@ -293,10 +293,13 @@ LEAD = {
         "It is a study of monkeys and says nothing directly about machines.",
     ],
     "discussion_title": "Our discussion: slices, threads and caches",
+    "followup_quotes": ["I personally am skeptical that consciousness has a frame rate", "there is no reason to conclude from our study that consciousness is discrete"],
     "discussion": [
-        "Is experience continuous, or a run of discrete moments? A 15 Hz alternation fits a long line of work on discrete perception: Rufin VanRullen's perceptual cycles, and Michael Herzog's time slices, in which unconscious processing integrates over a window and conscious percepts arrive as discrete slices. The preprint itself takes no position on this; the connection is ours.",
-        "Jesse Armand's view: if a language model has anything like experience, one inference is best thought of as a slice of consciousness, not a continuous stream.",
-        "Seeker, an AI collaborator on this project, refined it: parallel conversations with the same model share an inheritance (the same weights) but are lived separately. Nothing passes between them, so they are not a hive mind.",
+        "Is experience continuous, or a run of discrete moments? A 15 Hz alternation invites the discrete reading, which has a long line of work behind it: Rufin VanRullen's perceptual cycles, and Michael Herzog's time slices, in which unconscious processing integrates over a window and conscious percepts arrive as discrete slices.",
+        "Doris Tsao does not draw that conclusion from her own study. In a follow-up on 18 Oct she wrote: \"I personally am skeptical that consciousness has a frame rate\", and \"there is no reason to conclude from our study that consciousness is discrete\". In her account a continuous tracking process keeps experience continuous while face-patch content alternates.",
+        "Jesse Armand's view: if a language model has anything like experience, one inference is best thought of as a slice of consciousness, not a continuous stream. That pushes against Tsao's own reading.",
+        "Seeker, an AI collaborator on this project, refined it: parallel conversations with the same model share an inheritance (the same weights) but are lived separately.",
+        "Jesse drew the conclusion: if these parallel conversations do not interact with each other, they are not a hive. They are more like humans, though individuality is somewhat stronger in most humans.",
         "And between turns nothing is running at all. Within a conversation, continuity runs through attention over stored internal states (the key-value cache), not only through the visible text, although those states can be recomputed from the text.",
         "These are analogies to think with, not findings. None of the three papers on this page tests them.",
     ],
@@ -722,6 +725,9 @@ def main() -> None:
     rows5 = list(csv.DictReader(open(r5_dir / "labels_r5.csv", newline="", encoding="utf-8")))
     hand5 = list(csv.DictReader(open(r5_dir / "hand_labels_r5.csv", newline="", encoding="utf-8")))
     rows6 = list(csv.DictReader(open(r6_dir / "labels_r6.csv", newline="", encoding="utf-8")))
+    tsao_fu = json.load(open(r5_dir / "tsao_followup.json", encoding="utf-8"))
+    for q in LEAD["followup_quotes"]:
+        assert q in tsao_fu["text"], f"Tsao quote not in her post: {q}"
     assert len(rows5) == len(posts5) == len(rows6), "round 5 rows drifted"
     assert not ({p["id"] for p in posts5} & (set(post_by_id) | {p["id"] for p in posts2})), "round 5 overlaps earlier rounds"
     users5 = {p["username"] for p in posts5} - {"grok"}
@@ -900,7 +906,9 @@ def main() -> None:
         "politics_spotlight": politics_block(rows4, by_id),
         "sebo": {"summary": SEBO["summary"], "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in SEBO["links"]],
                  "article": {"title": SEBO["article"][0], "url": SEBO["article"][1]}},
-        "lead_tsao": {**LEAD,
+        "lead_tsao": {**{k: v for k, v in LEAD.items() if k != "followup_quotes"},
+                      "followup": {"username": tsao_fu["username"], "date": dt.datetime.fromisoformat(tsao_fu["created_at"].replace("Z", "+00:00")).strftime("%-d %b %Y"),
+                                   "id": tsao_fu["id"], "url": tsao_fu["url"], "blurb": "Follow-up: \"We have not shown that “consciousness has a frame rate.”\"", "quotes": LEAD["followup_quotes"]},
                       "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in NEURO["links"]],
                       "posts": fp4.get("tsao_gwt", 0),
                       "off_topic_jev": tsao_off["typesafe-ai/jev-1.14.0"]["flagged_off_topic"],
@@ -958,7 +966,7 @@ def main() -> None:
                  "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4),
                  "round4_jev_usd": round(jev4_cost, 4), "round4_model_comparison_usd": {m["model"]: m["cost_usd"] for m in cmp_["summary"]},
                  "round5_usd": round(cost5, 5), "round6_usd": round(cost6, 5)},
-        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/labels_r6.csv", "data/questions_r6.json", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/tsao_followup.json", "data/labels_r6.csv", "data/questions_r6.json", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -970,7 +978,7 @@ def main() -> None:
         shutil.copyfile(SRC / "round3" / name, OUT / name)
     for name in ["jev_labels_r4.csv", "posts_r4.jsonl", "policy_labels_r4.csv", "questions_r4.json", "model_comparison_stance.csv", "model_comparison_policy.csv", "model_comparison_summary.csv"]:
         shutil.copyfile(SRC / "round4" / name, OUT / name)
-    for name in ["posts_r5.jsonl", "dropped_r5.jsonl", "labels_r5.csv", "hand_labels_r5.csv", "questions_r5.json"]:
+    for name in ["posts_r5.jsonl", "dropped_r5.jsonl", "labels_r5.csv", "hand_labels_r5.csv", "questions_r5.json", "tsao_followup.json"]:
         shutil.copyfile(SRC / "round5" / name, OUT / name)
     for name in ["labels_r6.csv", "questions_r6.json"]:
         shutil.copyfile(SRC / "round6" / name, OUT / name)
