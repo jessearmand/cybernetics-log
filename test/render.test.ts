@@ -68,3 +68,11 @@ test("render: the Dawkins section is compressed to two lines once round 5 is pre
   assert.ok(!sec.includes("<h3>Reactions</h3>"));
   assert.match(sec, /I spent three days trying to persuade myself that Claudia is not conscious\. I failed\./);
 });
+
+test("round-5 stance bars treat a missing stance key as zero", () => {
+  const d = structuredClone(discourse);
+  delete (d.round5.models[0]!.round6.stance as Record<string, unknown>).reporting;
+  const html = renderPage(d, PLACEHOLDER_EDITORIAL, meta);
+  assert.match(html, /with reporting/);
+  assert.match(html, /Reporting: 0 \(0%\)/);
+});

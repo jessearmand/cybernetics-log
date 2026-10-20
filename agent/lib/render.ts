@@ -350,9 +350,11 @@ function natureSection(d: Discourse, e: Editorial): string {
 }
 
 const R5_STANCE_COLOR: Record<string, string> = { ...STANCE_COLOR, reporting: "#64748b" };
+/** Stance bar for round 5/6. A stance key missing from the data counts as zero instead of throwing. */
 function countBar(c: Counts, keys: string[], label: string, sub: string): string {
-  const segs = keys.map((k) => `<span class="seg" style="width:${Math.max(c[k]!.pct, 0)}%;background:${R5_STANCE_COLOR[k]}" title="${esc(CAP(k))}: ${c[k]!.n} (${c[k]!.pct}%)">${c[k]!.pct >= 9 ? `${c[k]!.pct.toFixed(0)}%` : ""}</span>`).join("");
-  return `<div class="barrow"><div class="barlabel"><strong>${esc(label)}</strong><span>${esc(sub)}</span></div><div class="bar" role="img" aria-label="${esc(`${label}: ${keys.map((k) => `${CAP(k)} ${c[k]!.pct}%`).join(", ")}`)}">${segs}</div><div class="barcounts">${keys.map((k) => `<span>${c[k]!.n}</span>`).join("")}</div></div>`;
+  const v = (k: string) => c[k] ?? { n: 0, pct: 0 };
+  const segs = keys.map((k) => `<span class="seg" style="width:${Math.max(v(k).pct, 0)}%;background:${R5_STANCE_COLOR[k] ?? STANCE_COLOR.uncertain}" title="${esc(CAP(k))}: ${v(k).n} (${v(k).pct}%)">${v(k).pct >= 9 ? `${v(k).pct.toFixed(0)}%` : ""}</span>`).join("");
+  return `<div class="barrow"><div class="barlabel"><strong>${esc(label)}</strong><span>${esc(sub)}</span></div><div class="bar" role="img" aria-label="${esc(`${label}: ${keys.map((k) => `${CAP(k)} ${v(k).pct}%`).join(", ")}`)}">${segs}</div><div class="barcounts">${keys.map((k) => `<span>${v(k).n}</span>`).join("")}</div></div>`;
 }
 
 function round5Section(d: Discourse, e: Editorial): string {
@@ -379,9 +381,8 @@ function round5Section(d: Discourse, e: Editorial): string {
 
 function neuroSection(d: Discourse, e: Editorial): string {
   // The round-5 lead section replaces the round-4 aside; older data still renders it.
-  if (!has(d, "neuroscience_sidebar") || has(d, "lead_tsao")) return "";
-  type Link = { username: string; date: string; blurb: string; url: string };
-  const n = (d as unknown as { neuroscience_sidebar: { title: string; summary: string[]; links: Link[]; paper: { title: string; url: string }; note: string } }).neuroscience_sidebar;
+  const n = d.neuroscience_sidebar;
+  if (!n || has(d, "lead_tsao")) return "";
   return `<aside id="neuro" class="sidebar"><h2>${esc(n.title)}</h2>${note(e, "neuro")}<ul>${n.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
 <p class="fine">${link(n.paper.url, esc(n.paper.title))} · ${n.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(n.note)}</p></aside>`;
 }
@@ -533,7 +534,7 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <body>${meta.banner ? `<div class="banner">${esc(meta.banner)}</div>` : ""}
 <header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
 <h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
-<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${(d.corpus as { collection_rounds?: number }).collection_rounds ?? d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
+<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.corpus.collection_rounds ?? d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
 <div class="wrap"><nav class="toc">${has(d, "lead_tsao") ? `<a href="#lead">Time slices</a>` : ""}${has(d, "workspace_paper") ? `<a href="#workspace">Workspace paper</a>` : ""}${has(d, "nature_comment") ? `<a href="#nature">Nature</a>` : ""}${has(d, "round5") ? `<a href="#round5">Round 5</a>` : ""}<a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a>${has(d, "politics_spotlight") ? `<a href="#politics">Sacks / All-In</a>` : ""}${has(d, "neuroscience_sidebar") && !has(d, "lead_tsao") ? `<a href="#neuro">Neuroscience</a>` : ""}${has(d, "model_comparison") ? `<a href="#models">Models</a>` : ""}<a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
 ${leadSection(d, e)}${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
