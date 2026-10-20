@@ -11,7 +11,7 @@ export interface Editorial {
   readonly instructionSummary?: string;
 }
 
-export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins" | "politics" | "neuro" | "models";
+export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins" | "politics" | "neuro" | "models" | "lead" | "workspace" | "nature" | "round5";
 export const ACCENTS = ["indigo", "teal", "amber", "rose", "slate"] as const;
 export type Accent = (typeof ACCENTS)[number];
 
@@ -64,12 +64,12 @@ function prose(value: string): string {
     .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
-/** Only https links to x.com / github.com / vercel.app / unherd.com / lesswrong.com / biorxiv.org / bbc.com are emitted as hrefs. */
+/** Only https links to x.com / github.com / vercel.app / unherd.com / lesswrong.com / biorxiv.org / bbc.com / nature.com / arxiv.org are emitted as hrefs. */
 function safeUrl(url: unknown): string | null {
   try {
     const u = new URL(String(url));
     if (u.protocol !== "https:") return null;
-    if (!/(^|\.)x\.com$|(^|\.)twitter\.com$|(^|\.)github\.com$|\.vercel\.app$|(^|\.)unherd\.com$|(^|\.)lesswrong\.com$|(^|\.)biorxiv\.org$|(^|\.)bbc\.com$/.test(u.hostname)) return null;
+    if (!/(^|\.)x\.com$|(^|\.)twitter\.com$|(^|\.)github\.com$|\.vercel\.app$|(^|\.)unherd\.com$|(^|\.)lesswrong\.com$|(^|\.)biorxiv\.org$|(^|\.)bbc\.com$|(^|\.)nature\.com$|(^|\.)arxiv\.org$/.test(u.hostname)) return null;
     return u.toString();
   } catch {
     return null;
@@ -281,6 +281,11 @@ ${seboBlock(d)}</section>`;
 function dawkinsSection(d: Discourse, e: Editorial): string {
   const k = d.dawkins_spotlight;
   const h = k.jev_hybrid as Counts;
+  // From round 5 the spotlight is compressed to a two-line summary plus sources.
+  if (has(d, "round5")) {
+    return `<section id="dawkins"><h2>Richard Dawkins and “Claudia”</h2>${note(e, "dawkins")}${k.summary.map((s) => `<p>${esc(s)}</p>`).join("")}
+<p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)})`).join(" · ")} · ${k.essays.map((x) => link(x.url, esc(x.title))).join(" · ")}.</p></section>`;
+  }
   return `<section id="dawkins" class="callout"><h2>Spotlight: Richard Dawkins and “Claudia”</h2>${note(e, "dawkins")}
 <ul>${k.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
 <p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. Essays: ${k.essays.map((x) => link(x.url, esc(x.title))).join(" · ")}.</p>
@@ -313,9 +318,70 @@ function politicsSection(d: Discourse, e: Editorial): string {
 <p class="fine">${esc(k.note)}</p></section>`;
 }
 
+type Paper = { authors: string; title: string; venue: string; url: string; doi?: string };
+const cite = (p: Paper) => `<p class="cite">${esc(p.authors)}, ${link(p.url, `“${esc(p.title)}”`)}. ${esc(p.venue)}${p.doi ? ` · doi ${esc(p.doi)}` : ""}.</p>`;
+
+function leadSection(d: Discourse, e: Editorial): string {
+  if (!has(d, "lead_tsao")) return "";
+  const l = d.lead_tsao;
+  return `<section id="lead" class="callout"><h2>${esc(l.title)}</h2>${note(e, "lead")}${cite(l.paper)}
+<ul>${l.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<h3>${esc(l.discussion_title)}</h3><ul>${l.discussion.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<p class="fine">${l.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(l.note)}</p></section>`;
+}
+
+function workspaceSection(d: Discourse, e: Editorial): string {
+  if (!has(d, "workspace_paper")) return "";
+  const w = d.workspace_paper;
+  return `<section id="workspace"><h2>${esc(w.title)}</h2>${note(e, "workspace")}${cite(w.paper)}
+<ul>${w.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<h3>What it does not claim</h3><ul>${w.limits.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<p class="fine">${w.posts} posts in round 5 react to the paper.</p></section>`;
+}
+
+function natureSection(d: Discourse, e: Editorial): string {
+  if (!has(d, "nature_comment")) return "";
+  const n = d.nature_comment;
+  return `<section id="nature"><h2>${esc(n.title)}</h2>${note(e, "nature")}${cite(n.paper)}
+<ul>${n.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+<p class="studynote"><b>On the Anthropic paper:</b> ${esc(n.anthropic_note)}</p>
+<p>${esc(n.framing)}</p>
+<p class="fine">${esc(n.dawkins_note)} ${esc(n.competing_interests)} ${n.posts} posts in round 5 react to the commentary.</p></section>`;
+}
+
+const R5_STANCE_COLOR: Record<string, string> = { ...STANCE_COLOR, reporting: "#64748b" };
+function countBar(c: Counts, keys: string[], label: string, sub: string): string {
+  const segs = keys.map((k) => `<span class="seg" style="width:${Math.max(c[k]!.pct, 0)}%;background:${R5_STANCE_COLOR[k]}" title="${esc(CAP(k))}: ${c[k]!.n} (${c[k]!.pct}%)">${c[k]!.pct >= 9 ? `${c[k]!.pct.toFixed(0)}%` : ""}</span>`).join("");
+  return `<div class="barrow"><div class="barlabel"><strong>${esc(label)}</strong><span>${esc(sub)}</span></div><div class="bar" role="img" aria-label="${esc(`${label}: ${keys.map((k) => `${CAP(k)} ${c[k]!.pct}%`).join(", ")}`)}">${segs}</div><div class="barcounts">${keys.map((k) => `<span>${c[k]!.n}</span>`).join("")}</div></div>`;
+}
+
+function round5Section(d: Discourse, e: Editorial): string {
+  if (!has(d, "round5")) return "";
+  const r = d.round5;
+  const S3 = ["reject", "curious", "serious"];
+  const S4 = [...S3, "reporting"];
+  const bars = r.models.map((m) => countBar(m.stance as Counts, S3, `${m.name}: three-way`, `${r.posts} posts`)).join("")
+    + r.models.map((m) => countBar(m.round6.stance as Counts, S4, `${m.name}: with reporting`, `${r.posts} posts · round 6`)).join("");
+  const rows = r.models
+    .map((m) => `<tr><th scope="row">${esc(m.name)}</th><td>${m.hand_correct} of ${r.hand_check.labelled}</td><td>${m.round6.hand_correct_all} of ${r.hand_check.n}</td><td>${m.round6.reporting_caught} of ${r.hand_check.skipped}</td><td>${m.round6.curious_before} → ${m.round6.curious_after}</td><td>${m.on_topic.yes} (${m.on_topic.pct}%)</td><td>${m.claims_found.length}</td></tr>`)
+    .join("");
+  return `<section id="round5"><h2>Round 5: two models on the Nature and Anthropic posts</h2>${note(e, "round5")}<p class="fine">${esc(r.note)}</p>
+<div class="legend">${S4.map((s) => `<span><i style="background:${R5_STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
+<div class="bars">${bars}</div>
+<p>The two models agree on stance for <b>${r.agreement.agree}</b> of ${r.agreement.n} posts (${r.agreement.pct}%). ${esc(r.hand_check.note)}</p>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on labelled disagreements</th><th>Matches with reporting (round 6)</th><th>Skipped posts called reporting</th><th>Curious, three-way → four-way</th><th>On topic</th><th>Misattribution flags</th></tr></thead><tbody>${rows}</tbody></table></div>
+<p>${esc(r.hand_check.text)}</p><p>${esc(r.round6.text)}</p><p>${esc(r.round6.caveat)}</p>
+<h3>Who says Anthropic found consciousness?</h3><p class="fine">${esc(r.claims_found.question)}</p><p>${esc(r.claims_found.text)}</p>
+<h3>Round 5: notable accounts</h3><ul class="r3acc">${r.key_accounts.map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span></li>`).join("")}</ul>
+<p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5, $${r.cost_usd.round6} for round 6.</p>
+<ul class="caveats">${r.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
+}
+
 function neuroSection(d: Discourse, e: Editorial): string {
-  if (!has(d, "neuroscience_sidebar")) return "";
-  const n = d.neuroscience_sidebar;
+  // The round-5 lead section replaces the round-4 aside; older data still renders it.
+  if (!has(d, "neuroscience_sidebar") || has(d, "lead_tsao")) return "";
+  type Link = { username: string; date: string; blurb: string; url: string };
+  const n = (d as unknown as { neuroscience_sidebar: { title: string; summary: string[]; links: Link[]; paper: { title: string; url: string }; note: string } }).neuroscience_sidebar;
   return `<aside id="neuro" class="sidebar"><h2>${esc(n.title)}</h2>${note(e, "neuro")}<ul>${n.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
 <p class="fine">${link(n.paper.url, esc(n.paper.title))} · ${n.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(n.note)}</p></aside>`;
 }
@@ -443,6 +509,7 @@ blockquote.post p{white-space:pre-line;font-size:15px}.who{font-size:14px}.role{
 .acol ul{list-style:none;padding:0;margin:0}.acol li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14px}.acol li p{margin:4px 0 6px}.fol{color:var(--muted);font-size:12px}.chips{display:flex;gap:6px;flex-wrap:wrap}.also{font-size:13px;color:var(--muted)}
 .caveats li{margin-bottom:8px;max-width:820px}
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
+.cite{font-size:14px;color:var(--muted)}
 .studynote{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px}
 .r3acc{padding-left:18px;font-size:14px}.r3acc li{margin-bottom:6px}.xtabs{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:860px){.xtabs{grid-template-columns:1fr}}
 footer{padding:28px 0 60px;color:var(--muted);font-size:13px}footer dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}footer dt{font-weight:600}footer dd{margin:0;word-break:break-word}
@@ -466,13 +533,13 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <body>${meta.banner ? `<div class="banner">${esc(meta.banner)}</div>` : ""}
 <header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
 <h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
-<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
-<div class="wrap"><nav class="toc"><a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a>${has(d, "politics_spotlight") ? `<a href="#politics">Sacks / All-In</a>` : ""}${has(d, "neuroscience_sidebar") ? `<a href="#neuro">Neuroscience</a>` : ""}${has(d, "model_comparison") ? `<a href="#models">Models</a>` : ""}<a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
+<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${(d.corpus as { collection_rounds?: number }).collection_rounds ?? d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
+<div class="wrap"><nav class="toc">${has(d, "lead_tsao") ? `<a href="#lead">Time slices</a>` : ""}${has(d, "workspace_paper") ? `<a href="#workspace">Workspace paper</a>` : ""}${has(d, "nature_comment") ? `<a href="#nature">Nature</a>` : ""}${has(d, "round5") ? `<a href="#round5">Round 5</a>` : ""}<a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a>${has(d, "politics_spotlight") ? `<a href="#politics">Sacks / All-In</a>` : ""}${has(d, "neuroscience_sidebar") && !has(d, "lead_tsao") ? `<a href="#neuro">Neuroscience</a>` : ""}${has(d, "model_comparison") ? `<a href="#models">Models</a>` : ""}<a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
-${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
+${leadSection(d, e)}${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
 <footer><dl>
 <dt>Corpus</dt><dd>${esc(d.corpus.source)}. ${d.corpus.notes.map(esc).join(" ")}</dd>
-<dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>
+<dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev, d1-ultra and Decider via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>
 <dt>Rendered</dt><dd>${esc(meta.renderedAt)} by ${esc(meta.model)} · data ${esc(meta.dataSource)}</dd>
 ${dep ? `<dt>Triggered by</dt><dd>GitHub deployment ${esc(dep.id)} (${esc(dep.environment)}) · commit ${link(commitUrl, `<code>${esc(dep.sha.slice(0, 7))}</code>`)}${dep.targetUrl ? ` · ${link(dep.targetUrl, "deployment")}` : ""}</dd>` : ""}
 ${e.instructionSummary ? `<dt>How the instruction was applied</dt><dd>${prose(e.instructionSummary)}</dd>` : ""}

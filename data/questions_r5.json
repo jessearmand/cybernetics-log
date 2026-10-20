@@ -1,0 +1,37 @@
+{
+ "_note": "Round 5: core and framing verbatim from round 4. 'attribution' is new: tags the Anthropic-paper misattribution Seeker spotted. Policy group dropped (it was about Anthropic's usage rule, not in this corpus).",
+ "models": [
+  "liquid/d1-ultra",
+  "perplexity/pplx-decider-v1.2"
+ ],
+ "core": {
+  "args": [
+   "--choice",
+   "stance=What is the author's stance on whether AI could be conscious? reject = dismisses it; curious = unsure, open or just interested; serious = treats it as a real possibility or deserving moral concern",
+   "--choices",
+   "stance=reject,curious,serious",
+   "--boolean",
+   "believes=Does the author think current AI might be conscious or deserve moral consideration?",
+   "--boolean",
+   "dismisses=Does the author treat AI consciousness or model welfare as a joke, delusion, or psychosis?",
+   "--boolean",
+   "on_topic=Is this post about whether machines or AI systems can be conscious, have minds, or deserve moral consideration?"
+  ]
+ },
+ "framing": {
+  "args": [
+   "--boolean",
+   "policy_politics=Does this post argue about policy or politics (company rules, regulation, who controls AI, culture-war camps) rather than about whether machines have minds?",
+   "--choice",
+   "frame=How is the post framed? political_cultural = as a political, cultural or tribal fight (for example calling AI-welfare views a religion or cult, or attacking a company or camp); philosophical_scientific = as a philosophical or scientific question about minds, consciousness or evidence; neither = no clear framing or off-topic",
+   "--choices",
+   "frame=political_cultural,philosophical_scientific,neither"
+  ]
+ },
+ "attribution": {
+  "args": [
+   "--boolean",
+   "claims_found=Does the post say or imply that Anthropic (or its research) found or showed that Claude is conscious or has signs of consciousness?"
+  ]
+ }
+}

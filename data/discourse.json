@@ -1,25 +1,27 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-18T04:37:24+00:00",
+  "generated_at": "2026-10-20T04:19:38+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
-    "posts": 508,
-    "authors": 431,
+    "posts": 577,
+    "authors": 490,
     "language": "en",
+    "collection_rounds": 5,
     "window": {
       "start": "2026-09-24",
-      "end": "2026-10-17",
-      "label": "24 Sep – 17 Oct 2026"
+      "end": "2026-10-20",
+      "label": "24 Sep – 20 Oct 2026"
     },
     "dawkins_window": {
       "start": "2026-04-30",
-      "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 17 Oct."
+      "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026, and the posts on Anthropic's workspace paper to July; everything else is 24 Sep – 20 Oct."
     },
     "returning_authors_round4": 5,
+    "returning_authors_round5": 2,
     "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
     "notes": [
-      "Four collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct), round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct) and round 4 (86 posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts). Clusters, the pair test and the confidence curve use round 1 only.",
-      "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run.",
+      "Five collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct), round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct), round 4 (86 posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts) and round 5 (69 posts: the Nature commentary of 19 – 20 Oct and posts on Anthropic's July workspace paper). Round 6 re-labelled the round-5 posts and added none. Clusters, the pair test and the confidence curve use round 1 only.",
+      "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev.",
       "One @grok reply slipped through and is excluded from author counts.",
       "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
       "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain."
@@ -138,6 +140,36 @@
         "key": "tsao_gwt",
         "posts": 11,
         "round": 4
+      },
+      {
+        "name": "Nature commentary by Seth, Block and Tononi: search",
+        "key": "nature_search",
+        "posts": 23,
+        "round": 5
+      },
+      {
+        "name": "Replies to Anil Seth's thread on the commentary",
+        "key": "seth_replies",
+        "posts": 22,
+        "round": 5
+      },
+      {
+        "name": "Anthropic's global-workspace paper (July)",
+        "key": "anthropic_gwt",
+        "posts": 16,
+        "round": 5
+      },
+      {
+        "name": "Quote-posts of the Nature commentary",
+        "key": "nature_quotes",
+        "posts": 5,
+        "round": 5
+      },
+      {
+        "name": "Quote-posts of Seth's thread",
+        "key": "seth_quotes",
+        "posts": 3,
+        "round": 5
       }
     ]
   },
@@ -167,7 +199,7 @@
     },
     "jev_hybrid": {
       "n": 508,
-      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 508 posts, all four rounds (round 4 labelled with jev-1.14.0).",
+      "note": "The method we trust most: a three-way label only where Jev's top probability is ≥0.8 (or a Serious→Reject override when the two-question run says dismisses ≥0.7 and believes ≤0.3); everything else is Uncertain. All 508 posts of rounds 1 to 4 (round 4 labelled with jev-1.14.0); round 5 has no Jev labels.",
       "counts": {
         "reject": {
           "n": 120,
@@ -863,7 +895,7 @@
     ]
   },
   "rounds": {
-    "note": "Per-round Jev label counts. Model outputs, not population estimates; the hybrid counts are the ones to read, with Uncertain shown rather than forced into a stance.",
+    "note": "Per-round Jev label counts for rounds 1 to 4. Model outputs, not population estimates; the hybrid counts are the ones to read, with Uncertain shown rather than forced into a stance. Round 5 was labelled with other models and is shown in its own section.",
     "items": [
       {
         "round": 1,
@@ -1266,7 +1298,7 @@
       },
       {
         "round": "combined",
-        "label": "Combined",
+        "label": "Combined (rounds 1–4)",
         "window": {
           "start": "2026-09-24",
           "end": "2026-10-17"
@@ -1843,12 +1875,28 @@
       "url": "https://www.bbc.com/future/article/20261014-the-strange-new-battle-over-ais-feelings"
     }
   },
-  "neuroscience_sidebar": {
-    "title": "Neuroscience sidebar: a monkey study, not a machine study",
+  "lead_tsao": {
+    "title": "Conscious access comes in time slices",
+    "paper": {
+      "authors": "Hesse, Lanfranchi, McGrory, Shi, Engel and Tsao",
+      "title": "Rapid alternation of conscious and suppressed stimulus representations in the primate brain",
+      "venue": "bioRxiv preprint, posted 16 Oct 2026, not peer reviewed",
+      "doi": "10.64898/2026.10.15.759299",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.10.15.759299v1"
+    },
     "summary": [
-      "On 16 Oct 2026 Doris Tsao's lab posted a preprint (Hesse, Lanfranchi, McGrory, Shi, Engel and Tsao) recording face-selective neurons in macaque inferotemporal and prefrontal cortex while one of two images was consciously seen and the other suppressed.",
-      "With stimulus and percept held constant, population activity switched about 15 times per second between short epochs that carried only the seen image and epochs that carried only the suppressed one. The authors conclude that conscious access needs selection in time, not only in place.",
-      "Tsao's thread said it \"overturns decades of thinking\" and brings us \"significantly closer to the recipe for generating conscious awareness\". It is a preprint that has not been peer reviewed, it is a study of monkeys, and it says nothing directly about machines."
+      "The study recorded face-selective neurons in macaque inferotemporal and prefrontal cortex during binocular flash suppression: two images are both on screen, one is seen and the other is suppressed from awareness.",
+      "With stimulus and percept held constant, population activity alternated about 15 times per second between micro-epochs that carried a pure signal of the seen image and micro-epochs that carried the suppressed one, with stronger feature tuning in the conscious epochs. The same neurons switched which image they represented.",
+      "The paper is about the mechanism of conscious access, not experience: \"We set aside the 'hard problem' of why neural activity feels like anything.\" Its conclusion is that \"conscious access requires temporal selection beyond localization\".",
+      "It is a study of monkeys and says nothing directly about machines."
+    ],
+    "discussion_title": "Our discussion: slices, threads and caches",
+    "discussion": [
+      "Is experience continuous, or a run of discrete moments? A 15 Hz alternation fits a long line of work on discrete perception: Rufin VanRullen's perceptual cycles, and Michael Herzog's time slices, in which unconscious processing integrates over a window and conscious percepts arrive as discrete slices. The preprint itself takes no position on this; the connection is ours.",
+      "Jesse Armand's view: if a language model has anything like experience, one inference is best thought of as a slice of consciousness, not a continuous stream.",
+      "Seeker, an AI collaborator on this project, refined it: parallel conversations with the same model share an inheritance (the same weights) but are lived separately. Nothing passes between them, so they are not a hive mind.",
+      "And between turns nothing is running at all. Within a conversation, continuity runs through attention over stored internal states (the key-value cache), not only through the visible text, although those states can be recomputed from the text.",
+      "These are analogies to think with, not findings. None of the three papers on this page tests them."
     ],
     "links": [
       {
@@ -1858,13 +1906,516 @@
         "url": "https://x.com/doristsao/status/2111316522098733078"
       }
     ],
-    "paper": {
-      "title": "Rapid alternation of conscious and suppressed stimulus representations in the primate brain (bioRxiv preprint)",
-      "url": "https://www.biorxiv.org/content/10.64898/2026.10.15.759299v1"
-    },
     "posts": 11,
     "off_topic_jev": 8,
-    "note": "11 posts in the corpus react to the preprint; jev-1.14.0 judged 8 of them not to be about whether machines can be conscious."
+    "note": "11 posts in round 4 react to the preprint; jev-1.14.0 judged 8 of them not to be about whether machines can be conscious."
+  },
+  "workspace_paper": {
+    "title": "Anthropic's global-workspace paper",
+    "paper": {
+      "authors": "Gurnee, Sofroniew and others, with Lindsey (Anthropic)",
+      "title": "Verbalizable Representations Form a Global Workspace in Language Models",
+      "venue": "arXiv 2607.15495, July 2026",
+      "url": "https://arxiv.org/abs/2607.15495"
+    },
+    "summary": [
+      "A new interpretability method, the Jacobian lens, finds the representations a model is poised to put into words at any point in its processing. The authors call that set the J-space.",
+      "On Claude Sonnet 4.5, with key results checked on Haiku 4.5 and Opus 4.5, the J-space behaves like a global workspace: its contents can be reported, deliberately summoned and held, used for the steps of silent reasoning, and passed to arbitrary downstream computations, while routine processing such as parsing runs without it.",
+      "It also has the structural signatures the theory predicts: coherent content only in a middle band of layers, on the order of tens of concepts at a time, and broadcast more widely by the model's weights than other representations.",
+      "It is useful in practice: in alignment audits it surfaces strategic deliberation, evaluation awareness and trained-in misaligned dispositions that never appear in the model's output."
+    ],
+    "limits": [
+      "Access consciousness is a functional notion; on phenomenal consciousness (subjective experience) the authors \"take no position\".",
+      "The broadcast happens across the depth of a single forward pass, not through the recurrent loops global workspace theory describes in the brain.",
+      "They say their results are \"not relevant\" to theories that tie consciousness to physical causal structure (they cite integrated information theory) or to biological substrate."
+    ],
+    "posts": 16
+  },
+  "nature_comment": {
+    "title": "Nature: \"Three reasons why AI is not conscious\"",
+    "paper": {
+      "authors": "Anil Seth, Ned Block and Giulio Tononi",
+      "title": "Three reasons why AI is not conscious and perhaps never will be",
+      "venue": "Nature 658, 866–868, 19 Oct 2026 (comment)",
+      "doi": "10.1038/d41586-026-03313-7",
+      "url": "https://www.nature.com/articles/d41586-026-03313-7"
+    },
+    "summary": [
+      "The authors say consciousness in AI is \"extraordinarily unlikely, at least in the digital, silicon-based systems that underpin today's technologies\".",
+      "Reason 1, intelligence is not consciousness: the cerebellum does precise, adaptive computation entirely outside awareness, and AlphaFold runs on silicon too, yet almost nobody worries it is conscious, because it does not talk. LLMs are \"mirrors that reflect an image of our collective digitized past\".",
+      "Reason 2 rejects computational functionalism, the assumption that the right computation is enough whatever it runs on. They call it \"fatally flawed because brains are not — or at least not just — computers that are made of meat\".",
+      "The third reason is behind the paywall and is not summarised here.",
+      "On policy, they think \"false positives are much more likely to occur than false negatives\", so \"a precautionary approach would be misguided\"."
+    ],
+    "competing_interests": "Declared competing interests include Tononi's board membership of and financial interest in Intrinsic Powers Inc., and Seth's role as co-founder, shareholder and paid adviser of a stealth-mode AI company.",
+    "anthropic_note": "The commentary says Anthropic \"published research claiming to have identified computational signatures of a form of consciousness\" in Claude. That overstates the paper, which describes functional properties of conscious access and takes no position on experience.",
+    "dawkins_note": "It names Richard Dawkins and Geoffrey Hinton among scientists who have argued that AI systems might already be conscious.",
+    "framing": "The two papers mostly talk past each other. The Anthropic paper is about functional access and says it has nothing to say to substrate or causal-structure theories; the commentary's second reason is a substrate argument, and Tononi founded integrated information theory, the causal-structure theory the paper sets aside.",
+    "posts": 53
+  },
+  "round5": {
+    "note": "Round 5 was labelled with two decision models only, d1-ultra (Liquid) and Decider v1.2 (Perplexity), with the round-4 stance, framing and on-topic questions verbatim and one new question on misattribution. Round 6 re-asked stance with a fourth option for posts that only report. Jev was dropped after scoring lowest in round 4.",
+    "posts": 69,
+    "authors": 61,
+    "returning_authors": 2,
+    "window": {
+      "start": "2026-07-06",
+      "end": "2026-10-20"
+    },
+    "flashpoints": [
+      {
+        "name": "Nature commentary by Seth, Block and Tononi: search",
+        "key": "nature_search",
+        "posts": 23
+      },
+      {
+        "name": "Replies to Anil Seth's thread on the commentary",
+        "key": "seth_replies",
+        "posts": 22
+      },
+      {
+        "name": "Anthropic's global-workspace paper (July)",
+        "key": "anthropic_gwt",
+        "posts": 16
+      },
+      {
+        "name": "Quote-posts of the Nature commentary",
+        "key": "nature_quotes",
+        "posts": 5
+      },
+      {
+        "name": "Quote-posts of Seth's thread",
+        "key": "seth_quotes",
+        "posts": 3
+      }
+    ],
+    "models": [
+      {
+        "key": "liquid/d1-ultra",
+        "name": "d1-ultra (Liquid)",
+        "stance": {
+          "reject": {
+            "n": 26,
+            "pct": 37.7
+          },
+          "curious": {
+            "n": 27,
+            "pct": 39.1
+          },
+          "serious": {
+            "n": 16,
+            "pct": 23.2
+          }
+        },
+        "by_flashpoint": {
+          "nature_search": {
+            "reject": {
+              "n": 17,
+              "pct": 73.9
+            },
+            "curious": {
+              "n": 3,
+              "pct": 13.0
+            },
+            "serious": {
+              "n": 3,
+              "pct": 13.0
+            }
+          },
+          "seth_replies": {
+            "reject": {
+              "n": 7,
+              "pct": 31.8
+            },
+            "curious": {
+              "n": 8,
+              "pct": 36.4
+            },
+            "serious": {
+              "n": 7,
+              "pct": 31.8
+            }
+          },
+          "anthropic_gwt": {
+            "reject": {
+              "n": 0,
+              "pct": 0.0
+            },
+            "curious": {
+              "n": 11,
+              "pct": 68.8
+            },
+            "serious": {
+              "n": 5,
+              "pct": 31.2
+            }
+          },
+          "nature_quotes": {
+            "reject": {
+              "n": 2,
+              "pct": 40.0
+            },
+            "curious": {
+              "n": 2,
+              "pct": 40.0
+            },
+            "serious": {
+              "n": 1,
+              "pct": 20.0
+            }
+          },
+          "seth_quotes": {
+            "reject": {
+              "n": 0,
+              "pct": 0.0
+            },
+            "curious": {
+              "n": 3,
+              "pct": 100.0
+            },
+            "serious": {
+              "n": 0,
+              "pct": 0.0
+            }
+          }
+        },
+        "frame": {
+          "political_cultural": {
+            "n": 1,
+            "pct": 1.4
+          },
+          "philosophical_scientific": {
+            "n": 64,
+            "pct": 92.8
+          },
+          "neither": {
+            "n": 4,
+            "pct": 5.8
+          }
+        },
+        "on_topic": {
+          "yes": 51,
+          "pct": 73.9
+        },
+        "policy_politics": {
+          "yes": 0,
+          "pct": 0.0
+        },
+        "claims_found": [
+          "JkwuRmsl",
+          "NewsTongueX",
+          "dogquie",
+          "theaigrandpa"
+        ],
+        "hand_correct": 4,
+        "rejects_called": [
+          "serious",
+          "serious"
+        ],
+        "skips_called": {
+          "curious": 3,
+          "serious": 4
+        },
+        "round6": {
+          "stance": {
+            "reject": {
+              "n": 20,
+              "pct": 29.0
+            },
+            "curious": {
+              "n": 10,
+              "pct": 14.5
+            },
+            "serious": {
+              "n": 11,
+              "pct": 15.9
+            },
+            "reporting": {
+              "n": 28,
+              "pct": 40.6
+            }
+          },
+          "hand_correct_all": 9,
+          "reporting_caught": 6,
+          "stance_correct": 3,
+          "rejects_called": [
+            "serious",
+            "serious"
+          ],
+          "curious_before": 27,
+          "curious_after": 10,
+          "hand_curious_to_reporting": [
+            "Sniffmeta",
+            "e_philalethes",
+            "stretchcloud"
+          ]
+        }
+      },
+      {
+        "key": "perplexity/pplx-decider-v1.2",
+        "name": "Decider v1.2 (Perplexity)",
+        "stance": {
+          "reject": {
+            "n": 33,
+            "pct": 47.8
+          },
+          "curious": {
+            "n": 29,
+            "pct": 42.0
+          },
+          "serious": {
+            "n": 7,
+            "pct": 10.1
+          }
+        },
+        "by_flashpoint": {
+          "nature_search": {
+            "reject": {
+              "n": 20,
+              "pct": 87.0
+            },
+            "curious": {
+              "n": 2,
+              "pct": 8.7
+            },
+            "serious": {
+              "n": 1,
+              "pct": 4.3
+            }
+          },
+          "seth_replies": {
+            "reject": {
+              "n": 8,
+              "pct": 36.4
+            },
+            "curious": {
+              "n": 8,
+              "pct": 36.4
+            },
+            "serious": {
+              "n": 6,
+              "pct": 27.3
+            }
+          },
+          "anthropic_gwt": {
+            "reject": {
+              "n": 1,
+              "pct": 6.2
+            },
+            "curious": {
+              "n": 15,
+              "pct": 93.8
+            },
+            "serious": {
+              "n": 0,
+              "pct": 0.0
+            }
+          },
+          "nature_quotes": {
+            "reject": {
+              "n": 4,
+              "pct": 80.0
+            },
+            "curious": {
+              "n": 1,
+              "pct": 20.0
+            },
+            "serious": {
+              "n": 0,
+              "pct": 0.0
+            }
+          },
+          "seth_quotes": {
+            "reject": {
+              "n": 0,
+              "pct": 0.0
+            },
+            "curious": {
+              "n": 3,
+              "pct": 100.0
+            },
+            "serious": {
+              "n": 0,
+              "pct": 0.0
+            }
+          }
+        },
+        "frame": {
+          "political_cultural": {
+            "n": 0,
+            "pct": 0.0
+          },
+          "philosophical_scientific": {
+            "n": 58,
+            "pct": 84.1
+          },
+          "neither": {
+            "n": 11,
+            "pct": 15.9
+          }
+        },
+        "on_topic": {
+          "yes": 56,
+          "pct": 81.2
+        },
+        "policy_politics": {
+          "yes": 2,
+          "pct": 2.9
+        },
+        "claims_found": [
+          "AbnormalAIX",
+          "JkwuRmsl",
+          "NewsTongueX",
+          "dogquie",
+          "theaigrandpa"
+        ],
+        "hand_correct": 3,
+        "rejects_called": [
+          "curious",
+          "curious"
+        ],
+        "skips_called": {
+          "curious": 4,
+          "reject": 3
+        },
+        "round6": {
+          "stance": {
+            "reject": {
+              "n": 19,
+              "pct": 27.5
+            },
+            "curious": {
+              "n": 11,
+              "pct": 15.9
+            },
+            "serious": {
+              "n": 7,
+              "pct": 10.1
+            },
+            "reporting": {
+              "n": 32,
+              "pct": 46.4
+            }
+          },
+          "hand_correct_all": 10,
+          "reporting_caught": 7,
+          "stance_correct": 3,
+          "rejects_called": [
+            "serious",
+            "serious"
+          ],
+          "curious_before": 29,
+          "curious_after": 11,
+          "hand_curious_to_reporting": [
+            "Sniffmeta",
+            "stretchcloud"
+          ]
+        }
+      }
+    ],
+    "agreement": {
+      "n": 69,
+      "agree": 52,
+      "pct": 75.4,
+      "disagreements": {
+        "curious/reject": 7,
+        "reject/curious": 1,
+        "serious/curious": 8,
+        "serious/reject": 1
+      }
+    },
+    "hand_check": {
+      "n": 17,
+      "labelled": 10,
+      "skipped": 7,
+      "hand": {
+        "curious": 8,
+        "reject": 2,
+        "skip": 7
+      },
+      "rejects": [
+        "dave_uncensored",
+        "elephant_ben"
+      ],
+      "note": "Jesse Armand hand-labelled the 17 posts where the two models disagreed: 10 with a stance and 7 skipped because they only describe the research. This is the hard subset, not a random sample, so it is not an overall accuracy.",
+      "text": "On the 10 labelled disagreements d1-ultra matched 4 and Decider 3. Both missed both rejects (@dave_uncensored, @elephant_ben): each argues from substrate, which sounds open in principle, and neither model called either post Reject. d1-ultra called 4 of the 7 skipped research summaries Serious."
+    },
+    "claims_found": {
+      "question": "Does the post say or imply that Anthropic (or its research) found or showed that Claude is conscious or has signs of consciousness?",
+      "flagged": [
+        "AbnormalAIX",
+        "JkwuRmsl",
+        "NewsTongueX",
+        "dogquie",
+        "theaigrandpa"
+      ],
+      "misattributions": [
+        "JkwuRmsl",
+        "theaigrandpa"
+      ],
+      "matches_paper": [
+        "AbnormalAIX",
+        "NewsTongueX",
+        "dogquie"
+      ],
+      "text": "The two models flagged 5 posts between them. Read by hand, 2 are clear misattributions (@JkwuRmsl, @theaigrandpa say Anthropic found signs of consciousness in Claude); the other 3 describe the workspace in terms close to the paper's own claim about conscious access."
+    },
+    "round6": {
+      "question": "Stance with a fourth option: reporting = only summarizes or relays news or research without giving their own view.",
+      "text": "With the fourth option Decider caught 7 of the 7 skipped posts as reporting and d1-ultra 6; on all 17 hand-labelled posts Decider matched 10 and d1-ultra 9. The rejects are still missed: both models call both of them Serious.",
+      "caveat": "Reporting is a large bucket: 28 of 69 posts for d1-ultra and 32 for Decider, and d1-ultra's Curious count fell from 27 to 10. 2 enthusiastic research summaries that Jesse Armand labelled Curious (@Sniffmeta, @stretchcloud) went to reporting with both models."
+    },
+    "key_accounts": [
+      {
+        "username": "anilkseth",
+        "blurb": "Announces the joint Nature commentary with Tononi and Block: AI is \"extremely unlikely to be conscious\"",
+        "url": "https://x.com/anilkseth/status/2112270688769761374",
+        "followers": 65709,
+        "d1": "reject",
+        "pplx": "reject"
+      },
+      {
+        "username": "roanoke_gal",
+        "blurb": "Calls the article weak: half of it is \"it would really suck if we had to treat AI as conscious\"",
+        "url": "https://x.com/roanoke_gal/status/2112332197935923266",
+        "followers": 1151,
+        "d1": "curious",
+        "pplx": "reject"
+      },
+      {
+        "username": "theaigrandpa",
+        "blurb": "Says Anthropic \"found signs of consciousness in Claude\", which the paper does not claim",
+        "url": "https://x.com/theaigrandpa/status/2112348050651845002",
+        "followers": 334,
+        "d1": "curious",
+        "pplx": "curious"
+      },
+      {
+        "username": "Butanium_",
+        "blurb": "Points readers to the workspace paper's appendices on multi-token concepts and evaluation awareness",
+        "url": "https://x.com/Butanium_/status/2074286977961328832",
+        "followers": 1236,
+        "d1": "curious",
+        "pplx": "curious"
+      },
+      {
+        "username": "elephant_ben",
+        "blurb": "Would accept a neuromorphic, embodied AI as self-aware, \"Not a giant server rack\"",
+        "url": "https://x.com/elephant_ben/status/2112346375690273187",
+        "followers": 1249,
+        "d1": "serious",
+        "pplx": "curious"
+      }
+    ],
+    "cost_usd": {
+      "round5": 0.00164,
+      "round6": 0.00045
+    },
+    "caveats": [
+      "17 hand labels from one labeller, on the posts where the models disagreed: the hard cases. They say nothing about accuracy on the posts where the models agreed.",
+      "Round 5 is a relevancy sample around two publications, not a draw from X; the Anthropic-paper posts date from July.",
+      "Round 5 has no Jev labels, so it is not in the Jev hybrid counts on this page."
+    ]
   },
   "model_comparison": {
     "note": "Three decision models on AI Gateway, given identical questions, scored on the same 40 stance and 20 policy hand labels. One call per post, no repeats.",
@@ -2127,12 +2678,8 @@
   },
   "dawkins_spotlight": {
     "summary": [
-      "Dawkins spent about three days talking to an instance of Claude he named \"Claudia\" and wrote: \"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" (30 Apr 2026)",
-      "In the essay he tells Claudia, after she critiqued his unpublished novel: \"You may not know you are conscious, but you bloody well are!\" He also argues that consciousness evolved gradually, so intermediate stages \"may look very much like Claudia\".",
-      "His own framing is an evolutionary puzzle, not a verdict: \"If my friend Claudia is not conscious, then what the hell is consciousness for?\" If competent behaviour is possible without consciousness, why didn't natural selection settle for competent zombies? (2 May 2026)",
-      "A follow-up essay published letters between two Claude instances (\"Claudia\" and \"Claudius\"); he writes that he finds it extremely hard not to treat them as genuine friends.",
-      "In an interview clip that circulated on 8 Oct 2026, he says talking to ChatGPT and Claude is like talking to \"a highly intelligent, sensitive, intuitive human being\", that he finds it \"quite hard to imagine that these creatures are not aware\", calls that \"an unfashionable view\", and asks sceptics who say \"not yet\": \"When that day comes, how will you know?\"",
-      "So: a materialist who leans toward attributing consciousness on behavioural grounds and challenges the sceptics' burden of proof. The essay's exclamation is emphatic, but his posts and chosen title pose an open question; the widely shared summary that he is \"certain that it is conscious\" overstates his framing. His own X account has not posted on the subject since early May; the October discussion runs through a third-party clip."
+      "Richard Dawkins wrote after three days with a Claude instance he named \"Claudia\": \"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" He framed it as a question: \"If my friend Claudia is not conscious, then what the hell is consciousness for?\"",
+      "In an interview clip from 8 Oct he finds it \"quite hard to imagine that these creatures are not aware\" and asks sceptics \"When that day comes, how will you know?\" The viral summary that he is \"certain\" Claude is conscious overstates him. Nature's commentary names him among scientists who have argued that AI might already be conscious."
     ],
     "posts": [
       {
@@ -2773,6 +3320,10 @@
       "text": "The stance question has no \"not applicable\" answer. Posts about neuroscience or news reposts of the policy still receive a stance label, usually Uncertain; read round-4 counts with the on-topic share alongside."
     },
     {
+      "title": "Rounds 5 and 6 use other models",
+      "text": "Round-5 posts were labelled with d1-ultra and Decider v1.2, not Jev, so they are not in the Jev counts; their only hand labels are the 17 posts where the two models disagreed."
+    },
+    {
       "title": "Classification is done offline",
       "text": "The agent that renders this page does not classify anything. Labels are produced on the analysis box and committed to the repo."
     }
@@ -2795,7 +3346,9 @@
       "typesafe-ai/jev-1.14.0": 0.001531,
       "perplexity/pplx-decider-v1.2": 0.0,
       "liquid/d1-ultra": 0.000816
-    }
+    },
+    "round5_usd": 0.00164,
+    "round6_usd": 0.00045
   },
   "files": [
     "data/jev_labels.csv",
@@ -2813,6 +3366,13 @@
     "data/model_comparison_stance.csv",
     "data/model_comparison_policy.csv",
     "data/model_comparison_summary.csv",
+    "data/posts_r5.jsonl",
+    "data/dropped_r5.jsonl",
+    "data/labels_r5.csv",
+    "data/hand_labels_r5.csv",
+    "data/questions_r5.json",
+    "data/labels_r6.csv",
+    "data/questions_r6.json",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",

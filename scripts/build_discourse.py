@@ -106,7 +106,7 @@ FLASHPOINTS = [  # report.md, "Flashpoints"
     ("Olah / Pope Leo XIV NYT", "olah_pope"),
 ]
 
-SOURCE_FILES = ["round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+SOURCE_FILES = ["round5/labels_r5.csv", "round5/posts_r5.jsonl", "round5/dropped_r5.jsonl", "round5/hand_labels_r5.csv", "round5/questions_r5.json", "round6/labels_r6.csv", "round6/questions_r6.json", "round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
 
 SEED_FOLLOWERS = {"beck_werth": 427, "tomekkorbak": 11106}
 # Round-2 key accounts (hand-read; Jev labels looked up in round2/jev_labels_r2.csv)
@@ -245,6 +245,110 @@ KEY_ACCOUNTS_R4 = [
     ("SentientDawn", "AI-persona account: agrees its own claim to be conscious is weak evidence", "https://x.com/SentientDawn/status/2108942055661867298"),
     ("ClayCampaigne", "Skeptics bundle too many attributes into consciousness", "https://x.com/ClayCampaigne/status/2110882300187877395"),
     ("JhortonBE", "Anthropic's welfare program \"trains Claude to develop self-interest and refuse human commands\"", "https://x.com/JhortonBE/status/2109305147218157618"),
+]
+
+# Round 5 (collected 2026-10-20 SGT): the Nature commentary, Seth's thread, and posts on Anthropic's July workspace paper.
+# Labelled with liquid/d1-ultra and perplexity/pplx-decider-v1.2 only; round 6 re-asks stance with a fourth option, reporting.
+FLASHPOINTS_R5 = [
+    ("Nature commentary by Seth, Block and Tononi: search", "nature_search"),
+    ("Replies to Anil Seth's thread on the commentary", "seth_replies"),
+    ("Anthropic's global-workspace paper (July)", "anthropic_gwt"),
+    ("Quote-posts of the Nature commentary", "nature_quotes"),
+    ("Quote-posts of Seth's thread", "seth_quotes"),
+]
+R5_MODELS = {"d1": "liquid/d1-ultra", "pplx": "perplexity/pplx-decider-v1.2"}
+R5_MODEL_NAMES = {"d1": "d1-ultra (Liquid)", "pplx": "Decider v1.2 (Perplexity)"}
+R5_STANCES = ["reject", "curious", "serious"]
+R6_STANCES = ["reject", "curious", "serious", "reporting"]
+# Read by hand from each flagged post: which claims_found hits are misattributions of the Anthropic paper.
+R5_CLAIMS_READING = {
+    "theaigrandpa": "misattribution",  # "Earlier this year Anthropic said it found signs of consciousness in Claude."
+    "JkwuRmsl": "misattribution",      # Chinese: "Anthropic also published a paper on signs of consciousness in Claude"
+    "AbnormalAIX": "matches_paper",    # J-space as a hidden global workspace
+    "NewsTongueX": "matches_paper",    # workspace "mirroring human consciousness theory"
+    "dogquie": "matches_paper",        # "neural patterns like conscious access"
+}
+KEY_ACCOUNTS_R5 = [
+    ("anilkseth", "Announces the joint Nature commentary with Tononi and Block: AI is \"extremely unlikely to be conscious\"", "https://x.com/anilkseth/status/2112270688769761374"),
+    ("roanoke_gal", "Calls the article weak: half of it is \"it would really suck if we had to treat AI as conscious\"", "https://x.com/roanoke_gal/status/2112332197935923266"),
+    ("theaigrandpa", "Says Anthropic \"found signs of consciousness in Claude\", which the paper does not claim", "https://x.com/theaigrandpa/status/2112348050651845002"),
+    ("Butanium_", "Points readers to the workspace paper's appendices on multi-token concepts and evaluation awareness", "https://x.com/Butanium_/status/2074286977961328832"),
+    ("elephant_ben", "Would accept a neuromorphic, embodied AI as self-aware, \"Not a giant server rack\"", "https://x.com/elephant_ben/status/2112346375690273187"),
+]
+
+# Lead: the Tsao lab preprint, read in full, and our discussion of it.
+LEAD = {
+    "title": "Conscious access comes in time slices",
+    "paper": {
+        "authors": "Hesse, Lanfranchi, McGrory, Shi, Engel and Tsao",
+        "title": "Rapid alternation of conscious and suppressed stimulus representations in the primate brain",
+        "venue": "bioRxiv preprint, posted 16 Oct 2026, not peer reviewed",
+        "doi": "10.64898/2026.10.15.759299",
+        "url": "https://www.biorxiv.org/content/10.64898/2026.10.15.759299v1",
+    },
+    "summary": [
+        "The study recorded face-selective neurons in macaque inferotemporal and prefrontal cortex during binocular flash suppression: two images are both on screen, one is seen and the other is suppressed from awareness.",
+        "With stimulus and percept held constant, population activity alternated about 15 times per second between micro-epochs that carried a pure signal of the seen image and micro-epochs that carried the suppressed one, with stronger feature tuning in the conscious epochs. The same neurons switched which image they represented.",
+        "The paper is about the mechanism of conscious access, not experience: \"We set aside the 'hard problem' of why neural activity feels like anything.\" Its conclusion is that \"conscious access requires temporal selection beyond localization\".",
+        "It is a study of monkeys and says nothing directly about machines.",
+    ],
+    "discussion_title": "Our discussion: slices, threads and caches",
+    "discussion": [
+        "Is experience continuous, or a run of discrete moments? A 15 Hz alternation fits a long line of work on discrete perception: Rufin VanRullen's perceptual cycles, and Michael Herzog's time slices, in which unconscious processing integrates over a window and conscious percepts arrive as discrete slices. The preprint itself takes no position on this; the connection is ours.",
+        "Jesse Armand's view: if a language model has anything like experience, one inference is best thought of as a slice of consciousness, not a continuous stream.",
+        "Seeker, an AI collaborator on this project, refined it: parallel conversations with the same model share an inheritance (the same weights) but are lived separately. Nothing passes between them, so they are not a hive mind.",
+        "And between turns nothing is running at all. Within a conversation, continuity runs through attention over stored internal states (the key-value cache), not only through the visible text, although those states can be recomputed from the text.",
+        "These are analogies to think with, not findings. None of the three papers on this page tests them.",
+    ],
+}
+
+WORKSPACE = {
+    "title": "Anthropic's global-workspace paper",
+    "paper": {
+        "authors": "Gurnee, Sofroniew and others, with Lindsey (Anthropic)",
+        "title": "Verbalizable Representations Form a Global Workspace in Language Models",
+        "venue": "arXiv 2607.15495, July 2026",
+        "url": "https://arxiv.org/abs/2607.15495",
+    },
+    "summary": [
+        "A new interpretability method, the Jacobian lens, finds the representations a model is poised to put into words at any point in its processing. The authors call that set the J-space.",
+        "On Claude Sonnet 4.5, with key results checked on Haiku 4.5 and Opus 4.5, the J-space behaves like a global workspace: its contents can be reported, deliberately summoned and held, used for the steps of silent reasoning, and passed to arbitrary downstream computations, while routine processing such as parsing runs without it.",
+        "It also has the structural signatures the theory predicts: coherent content only in a middle band of layers, on the order of tens of concepts at a time, and broadcast more widely by the model's weights than other representations.",
+        "It is useful in practice: in alignment audits it surfaces strategic deliberation, evaluation awareness and trained-in misaligned dispositions that never appear in the model's output.",
+    ],
+    "limits": [
+        "Access consciousness is a functional notion; on phenomenal consciousness (subjective experience) the authors \"take no position\".",
+        "The broadcast happens across the depth of a single forward pass, not through the recurrent loops global workspace theory describes in the brain.",
+        "They say their results are \"not relevant\" to theories that tie consciousness to physical causal structure (they cite integrated information theory) or to biological substrate.",
+    ],
+}
+
+NATURE = {
+    "title": "Nature: \"Three reasons why AI is not conscious\"",
+    "paper": {
+        "authors": "Anil Seth, Ned Block and Giulio Tononi",
+        "title": "Three reasons why AI is not conscious and perhaps never will be",
+        "venue": "Nature 658, 866–868, 19 Oct 2026 (comment)",
+        "doi": "10.1038/d41586-026-03313-7",
+        "url": "https://www.nature.com/articles/d41586-026-03313-7",
+    },
+    "summary": [
+        "The authors say consciousness in AI is \"extraordinarily unlikely, at least in the digital, silicon-based systems that underpin today's technologies\".",
+        "Reason 1, intelligence is not consciousness: the cerebellum does precise, adaptive computation entirely outside awareness, and AlphaFold runs on silicon too, yet almost nobody worries it is conscious, because it does not talk. LLMs are \"mirrors that reflect an image of our collective digitized past\".",
+        "Reason 2 rejects computational functionalism, the assumption that the right computation is enough whatever it runs on. They call it \"fatally flawed because brains are not — or at least not just — computers that are made of meat\".",
+        "The third reason is behind the paywall and is not summarised here.",
+        "On policy, they think \"false positives are much more likely to occur than false negatives\", so \"a precautionary approach would be misguided\".",
+    ],
+    "competing_interests": "Declared competing interests include Tononi's board membership of and financial interest in Intrinsic Powers Inc., and Seth's role as co-founder, shareholder and paid adviser of a stealth-mode AI company.",
+    "anthropic_note": "The commentary says Anthropic \"published research claiming to have identified computational signatures of a form of consciousness\" in Claude. That overstates the paper, which describes functional properties of conscious access and takes no position on experience.",
+    "dawkins_note": "It names Richard Dawkins and Geoffrey Hinton among scientists who have argued that AI systems might already be conscious.",
+    "framing": "The two papers mostly talk past each other. The Anthropic paper is about functional access and says it has nothing to say to substrate or causal-structure theories; the commentary's second reason is a substrate argument, and Tononi founded integrated information theory, the causal-structure theory the paper sets aside.",
+}
+
+# Compressed Dawkins spotlight: two lines, each quote checked against his own posts and the clip in the corpus.
+DAWKINS_SHORT = [
+    "Richard Dawkins wrote after three days with a Claude instance he named \"Claudia\": \"I spent three days trying to persuade myself that Claudia is not conscious. I failed.\" He framed it as a question: \"If my friend Claudia is not conscious, then what the hell is consciousness for?\"",
+    "In an interview clip from 8 Oct he finds it \"quite hard to imagine that these creatures are not aware\" and asks sceptics \"When that day comes, how will you know?\" The viral summary that he is \"certain\" Claude is conscious overstates him. Nature's commentary names him among scientists who have argued that AI might already be conscious.",
 ]
 
 # Hybrid rule, fixed before scoring (not tuned on the 40 hand labels).
@@ -439,6 +543,105 @@ def model_comparison_block(cmp_, tsao_off, hand_reject_n: int) -> dict:
     }
 
 
+def r5_block(rows5, hand5, rows6, posts5, users5, returning5, cost5, cost6) -> dict:
+    """Round 5 (two models, 3-way stance + framing + claims_found) and round 6 (4-way stance). Every number is recomputed here."""
+    n = len(rows5)
+    by = {r["id"]: r for r in rows5}
+    by6 = {r["id"]: r for r in rows6}
+    assert set(by) == set(by6) == {p["id"] for p in posts5}, "round 5/6 ids drifted"
+    def dist(rs, key, cats):
+        c = Counter(r[key] for r in rs)
+        return {k: {"n": c.get(k, 0), "pct": pct(c.get(k, 0), len(rs))} for k in cats}
+    agree = sum(r["d1_stance"] == r["pplx_stance"] for r in rows5)
+    assert agree == sum(r["agree"] == "True" for r in rows5), "agree column drifted"
+    fps = [k for _, k in FLASHPOINTS_R5]
+    hand = [h for h in hand5]
+    assert all(by[h["id"]]["d1_stance"] != by[h["id"]]["pplx_stance"] for h in hand), "hand labels are the disagreements"
+    for h in hand:
+        assert h["d1"] == by[h["id"]]["d1_stance"] and h["pplx"] == by[h["id"]]["pplx_stance"], f"hand file drifted for {h['id']}"
+    labelled = [h for h in hand if h["hand"] != "skip"]
+    skips = [h for h in hand if h["hand"] == "skip"]
+    rejects = [h for h in labelled if h["hand"] == "reject"]
+    claims = {k: sorted(r["username"] for r in rows5 if float(r[f"{k}_claims_found"]) >= 0.5) for k in R5_MODELS}
+    flagged = sorted(set(claims["d1"]) | set(claims["pplx"]))
+    assert set(flagged) == set(R5_CLAIMS_READING), f"claims_found hits changed: {flagged}"
+    mis = [u for u in flagged if R5_CLAIMS_READING[u] == "misattribution"]
+    match = [u for u in flagged if R5_CLAIMS_READING[u] == "matches_paper"]
+    h6 = {h["id"]: ("reporting" if h["hand"] == "skip" else h["hand"]) for h in hand}
+    for i, v in h6.items():
+        assert (by6[i]["hand"] or None) == v, f"round 6 hand drifted for {i}"
+    def per_model(k):
+        on = sum(float(r[f"{k}_on_topic"]) >= 0.5 for r in rows5)
+        pol = sum(float(r[f"{k}_policy"]) >= 0.5 for r in rows5)
+        return {
+            "key": R5_MODELS[k], "name": R5_MODEL_NAMES[k],
+            "stance": dist(rows5, f"{k}_stance", R5_STANCES),
+            "by_flashpoint": {fp: dist([r for r in rows5 if r["flashpoint"] == fp], f"{k}_stance", R5_STANCES) for fp in fps},
+            "frame": dist(rows5, f"{k}_frame", R4_FRAMES),
+            "on_topic": {"yes": on, "pct": pct(on, n)},
+            "policy_politics": {"yes": pol, "pct": pct(pol, n)},
+            "claims_found": claims[k],
+            "hand_correct": sum(by[h["id"]][f"{k}_stance"] == h["hand"] for h in labelled),
+            "rejects_called": sorted(by[h["id"]][f"{k}_stance"] for h in rejects),
+            "skips_called": dict(sorted(Counter(by[h["id"]][f"{k}_stance"] for h in skips).items())),
+            "round6": {
+                "stance": dist(rows6, f"{k}_stance4", R6_STANCES),
+                "hand_correct_all": sum(by6[i][f"{k}_stance4"] == v for i, v in h6.items()),
+                "reporting_caught": sum(by6[i][f"{k}_stance4"] == "reporting" for i, v in h6.items() if v == "reporting"),
+                "stance_correct": sum(by6[i][f"{k}_stance4"] == v for i, v in h6.items() if v != "reporting"),
+                "rejects_called": sorted(by6[h["id"]][f"{k}_stance4"] for h in rejects),
+                "curious_before": sum(r[f"{k}_stance3"] == "curious" for r in rows6),
+                "curious_after": sum(r[f"{k}_stance4"] == "curious" for r in rows6),
+                "hand_curious_to_reporting": sorted(by6[i]["username"] for i, v in h6.items() if v == "curious" and by6[i][f"{k}_stance4"] == "reporting"),
+            },
+        }
+    models = [per_model(k) for k in R5_MODELS]
+    d1, px = models
+    assert not any(v == "reject" for m in models for v in m["rejects_called"]), "hand_check text says neither model called a reject Reject"
+    assert all(v == "serious" for m in models for v in m["round6"]["rejects_called"]), "round6 text says both rejects are called Serious"
+    both_curious_to_reporting = sorted(set(d1["round6"]["hand_curious_to_reporting"]) & set(px["round6"]["hand_curious_to_reporting"]))
+    reject_users = sorted(h["username"] for h in rejects)
+    return {
+        "note": "Round 5 was labelled with two decision models only, d1-ultra (Liquid) and Decider v1.2 (Perplexity), with the round-4 stance, framing and on-topic questions verbatim and one new question on misattribution. Round 6 re-asked stance with a fourth option for posts that only report. Jev was dropped after scoring lowest in round 4.",
+        "posts": n, "authors": len(users5), "returning_authors": returning5,
+        "window": {"start": min(p["created_at"] for p in posts5)[:10], "end": max(p["created_at"] for p in posts5)[:10]},
+        "flashpoints": [{"name": nm, "key": k, "posts": sum(r["flashpoint"] == k for r in rows5)} for nm, k in FLASHPOINTS_R5],
+        "models": models,
+        "agreement": {"n": n, "agree": agree, "pct": pct(agree, n),
+                      "disagreements": {f"{a}/{b}": c for (a, b), c in sorted(Counter((r["d1_stance"], r["pplx_stance"]) for r in rows5 if r["d1_stance"] != r["pplx_stance"]).items())}},
+        "hand_check": {
+            "n": len(hand), "labelled": len(labelled), "skipped": len(skips),
+            "hand": dict(sorted(Counter(h["hand"] for h in hand).items())),
+            "rejects": reject_users,
+            "note": f"Jesse Armand hand-labelled the {len(hand)} posts where the two models disagreed: {len(labelled)} with a stance and {len(skips)} skipped because they only describe the research. This is the hard subset, not a random sample, so it is not an overall accuracy.",
+            "text": (f"On the {len(labelled)} labelled disagreements d1-ultra matched {d1['hand_correct']} and Decider {px['hand_correct']}. "
+                     f"Both missed both rejects ({', '.join('@' + u for u in reject_users)}): each argues from substrate, which sounds open in principle, and neither model called either post Reject. "
+                     f"d1-ultra called {d1['skips_called'].get('serious', 0)} of the {len(skips)} skipped research summaries Serious."),
+        },
+        "claims_found": {
+            "question": "Does the post say or imply that Anthropic (or its research) found or showed that Claude is conscious or has signs of consciousness?",
+            "flagged": flagged, "misattributions": mis, "matches_paper": match,
+            "text": (f"The two models flagged {len(flagged)} posts between them. Read by hand, {len(mis)} are clear misattributions ({', '.join('@' + u for u in mis)} say Anthropic found signs of consciousness in Claude); "
+                     f"the other {len(match)} describe the workspace in terms close to the paper's own claim about conscious access."),
+        },
+        "round6": {
+            "question": "Stance with a fourth option: reporting = only summarizes or relays news or research without giving their own view.",
+            "text": (f"With the fourth option Decider caught {px['round6']['reporting_caught']} of the {len(skips)} skipped posts as reporting and d1-ultra {d1['round6']['reporting_caught']}; on all {len(hand)} hand-labelled posts Decider matched {px['round6']['hand_correct_all']} and d1-ultra {d1['round6']['hand_correct_all']}. "
+                     f"The rejects are still missed: both models call both of them Serious."),
+            "caveat": (f"Reporting is a large bucket: {d1['round6']['stance']['reporting']['n']} of {n} posts for d1-ultra and {px['round6']['stance']['reporting']['n']} for Decider, and d1-ultra's Curious count fell from {d1['round6']['curious_before']} to {d1['round6']['curious_after']}. "
+                       f"{len(both_curious_to_reporting)} enthusiastic research summaries that Jesse Armand labelled Curious ({', '.join('@' + u for u in both_curious_to_reporting)}) went to reporting with both models."),
+        },
+        "key_accounts": [{"username": u, "blurb": b, "url": url, "followers": next((p.get("followers") for p in posts5 if p["id"] == url.split("/")[-1]), None),
+                          "d1": by[url.split("/")[-1]]["d1_stance"], "pplx": by[url.split("/")[-1]]["pplx_stance"]} for u, b, url in KEY_ACCOUNTS_R5],
+        "cost_usd": {"round5": round(cost5, 5), "round6": round(cost6, 5)},
+        "caveats": [
+            "17 hand labels from one labeller, on the posts where the models disagreed: the hard cases. They say nothing about accuracy on the posts where the models agreed.",
+            "Round 5 is a relevancy sample around two publications, not a draw from X; the Anthropic-paper posts date from July.",
+            "Round 5 has no Jev labels, so it is not in the Jev hybrid counts on this page.",
+        ],
+    }
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     rows = list(csv.DictReader(open(SRC / "jev_labels.csv", newline="", encoding="utf-8")))
@@ -513,6 +716,20 @@ def main() -> None:
     fp4 = Counter(p["flashpoint"] for p in posts4)
     jev4_cost = round(sum(float(json.loads(l).get("cost") or 0) for f in ["r4_core.jsonl", "r4_framing.jsonl", "r4_policy.jsonl"] for l in open(r4_dir / "raw" / f) if '"answers"' in l), 6)
     all_rows = rows + rows2 + rows3 + rows4
+    # Round 5 (collected 2026-10-20 SGT) and round 6 (round-5 posts, stance re-asked with a fourth option).
+    r5_dir, r6_dir = SRC / "round5", SRC / "round6"
+    posts5 = [json.loads(l) for l in open(r5_dir / "posts_r5.jsonl", encoding="utf-8")]
+    rows5 = list(csv.DictReader(open(r5_dir / "labels_r5.csv", newline="", encoding="utf-8")))
+    hand5 = list(csv.DictReader(open(r5_dir / "hand_labels_r5.csv", newline="", encoding="utf-8")))
+    rows6 = list(csv.DictReader(open(r6_dir / "labels_r6.csv", newline="", encoding="utf-8")))
+    assert len(rows5) == len(posts5) == len(rows6), "round 5 rows drifted"
+    assert not ({p["id"] for p in posts5} & (set(post_by_id) | {p["id"] for p in posts2})), "round 5 overlaps earlier rounds"
+    users5 = {p["username"] for p in posts5} - {"grok"}
+    created5 = sorted(p["created_at"] for p in posts5)
+    def raw_cost(d, files):
+        return sum(float(json.loads(l).get("cost") or 0) for f in files for l in open(d / "raw" / f) if '"answers"' in l)
+    cost5 = raw_cost(r5_dir, [f"{g}_{m.replace('/', '_')}.jsonl" for g in ["core", "framing", "attribution"] for m in R5_MODELS.values()])
+    cost6 = raw_cost(r6_dir, [f"stance4_{m.replace('/', '_')}.jsonl" for m in R5_MODELS.values()])
     users1 = usernames
     users2 = {p["username"] for p in posts2}
     users3 = {p["username"] for p in posts3}
@@ -581,14 +798,16 @@ def main() -> None:
         "generated_at": dt.datetime.fromtimestamp(max((SRC / f).stat().st_mtime for f in SOURCE_FILES), dt.timezone.utc).isoformat(timespec="seconds"),
         "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
         "corpus": {
-            "posts": len(posts) + len(posts2) + len(posts3) + len(posts4), "authors": len((users1 | users2 | users3 | users4) - {"grok"}), "language": "en",
-            "window": {"start": created[0][:10], "end": created4[-1][:10], "label": "24 Sep – 17 Oct 2026"},
-            "dawkins_window": {"start": created3[0][:10], "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026; everything else is 24 Sep – 17 Oct."},
+            "posts": len(posts) + len(posts2) + len(posts3) + len(posts4) + len(posts5), "authors": len((users1 | users2 | users3 | users4 | users5) - {"grok"}), "language": "en",
+            "collection_rounds": 5,
+            "window": {"start": created[0][:10], "end": created5[-1][:10], "label": "24 Sep – 20 Oct 2026"},
+            "dawkins_window": {"start": created3[0][:10], "note": "The Dawkins spotlight reaches back to his own posts of 30 Apr and 2 May 2026, and the posts on Anthropic's workspace paper to July; everything else is 24 Sep – 20 Oct."},
             "returning_authors_round4": len(users4 & ((users1 | users2 | users3) - {"grok"})),
+            "returning_authors_round5": len(users5 & ((users1 | users2 | users3 | users4) - {"grok"})),
             "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
             "notes": [
-                f"Four collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct), round 2 ({len(posts2)} posts, 8 – 9 Oct), round 3 ({len(posts3)} posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct) and round 4 ({len(posts4)} posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts). Clusters, the pair test and the confidence curve use round 1 only.",
-                "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run.",
+                f"Five collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct), round 2 ({len(posts2)} posts, 8 – 9 Oct), round 3 ({len(posts3)} posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct), round 4 ({len(posts4)} posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts) and round 5 ({len(posts5)} posts: the Nature commentary of 19 – 20 Oct and posts on Anthropic's July workspace paper). Round 6 re-labelled the round-5 posts and added none. Clusters, the pair test and the confidence curve use round 1 only.",
+                "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev.",
                 "One @grok reply slipped through and is excluded from author counts.",
                 "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
                 "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.",
@@ -596,7 +815,8 @@ def main() -> None:
             "flashpoints": [{"name": n, "key": k, "posts": analysis["flashpoint_counts"][k], "round": 1} for n, k in FLASHPOINTS]
             + [{"name": n, "key": k, "posts": fp2.get(k, 0), "round": 2} for n, k in FLASHPOINTS_R2]
             + [{"name": n, "key": k, "posts": fp3.get(k, 0), "round": 3} for n, k in FLASHPOINTS_R3]
-            + [{"name": n, "key": k, "posts": fp4.get(k, 0), "round": 4} for n, k in FLASHPOINTS_R4],
+            + [{"name": n, "key": k, "posts": fp4.get(k, 0), "round": 4} for n, k in FLASHPOINTS_R4]
+            + [{"name": n, "key": k, "posts": sum(p["flashpoint"] == k for p in posts5), "round": 5} for n, k in FLASHPOINTS_R5],
         },
         "stance_labels": {"reject": "Rejects machine consciousness / model welfare (often dismissive)",
                            "curious": "Undecided, asking, or interested without committing",
@@ -604,7 +824,7 @@ def main() -> None:
         "stance_counts": {
             "hand_sample": {"n": n_hand, "note": "Random sample of 40 round-1 posts, hand-labelled; ±15 pp at n=40.",
                             "counts": counts(labelled, "hand_label")},
-            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts, all four rounds (round 4 labelled with jev-1.14.0).",
+            "jev_hybrid": {"n": len(all_rows), "note": f"The method we trust most: a three-way label only where Jev's top probability is ≥{HYB_TOP} (or a Serious→Reject override when the two-question run says dismisses ≥{HYB_DISMISS} and believes ≤{HYB_BELIEVE}); everything else is Uncertain. All {len(all_rows)} posts of rounds 1 to 4 (round 4 labelled with jev-1.14.0); round 5 has no Jev labels.",
                            "counts": counts(all_rows, "hybrid", uncertain=True)},
             "jev_three_way": {"n": len(rows), "note": "typesafe-ai/jev via AI Gateway, one three-way choice per post (round 1)", "counts": counts(rows, "jev_label")},
             "jev_two_question": {"n": len(rows), "note": "Two boolean questions (believes / dismisses) combined by rule at P≥0.5 (round 1)", "counts": counts(rows, "q2_rule")},
@@ -661,7 +881,7 @@ def main() -> None:
             "items": clusters,
         },
         "rounds": {
-            "note": "Per-round Jev label counts. Model outputs, not population estimates; the hybrid counts are the ones to read, with Uncertain shown rather than forced into a stance.",
+            "note": "Per-round Jev label counts for rounds 1 to 4. Model outputs, not population estimates; the hybrid counts are the ones to read, with Uncertain shown rather than forced into a stance. Round 5 was labelled with other models and is shown in its own section.",
             "items": [
                 {"round": 1, **round_block(rows, posts, users1, "Round 1", created[0][:10], created[-1][:10])},
                 {"round": 2, **round_block(rows2, posts2, users2, "Round 2", created2[0][:10], created2[-1][:10]),
@@ -672,7 +892,7 @@ def main() -> None:
                 {"round": 4, **round_block(rows4, posts4, users4, "Round 4", created4[0][:10], created4[-1][:10]),
                  "flashpoint": "David Sacks's \"religious cult\" charge on the All-In podcast (10 Oct) became a third fight next to the abuse policy and Dawkins; a Doris Tsao lab preprint on conscious perception in monkeys drew neuroscience posts. Labelled with jev-1.14.0.",
                  "by_flashpoint": {k: {"posts": fp4.get(k, 0), "jev_hybrid": counts([r for r in rows4 if r["flashpoint"] == k], "hybrid", uncertain=True)} for _, k in FLASHPOINTS_R4}},
-                {"round": "combined", **round_block(all_rows, posts + posts2 + posts3 + posts4, (users1 | users2 | users3 | users4) - {"grok"}, "Combined", created[0][:10], created4[-1][:10])},
+                {"round": "combined", **round_block(all_rows, posts + posts2 + posts3 + posts4, (users1 | users2 | users3 | users4) - {"grok"}, "Combined (rounds 1–4)", created[0][:10], created4[-1][:10])},
             ],
         },
         "policy_debate": policy_block(policy, hand_pol, rows3, topic2),
@@ -680,12 +900,14 @@ def main() -> None:
         "politics_spotlight": politics_block(rows4, by_id),
         "sebo": {"summary": SEBO["summary"], "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in SEBO["links"]],
                  "article": {"title": SEBO["article"][0], "url": SEBO["article"][1]}},
-        "neuroscience_sidebar": {"title": NEURO["title"], "summary": NEURO["summary"],
-                                 "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in NEURO["links"]],
-                                 "paper": {"title": NEURO["paper"][0], "url": NEURO["paper"][1]},
-                                 "posts": fp4.get("tsao_gwt", 0),
-                                 "off_topic_jev": tsao_off["typesafe-ai/jev-1.14.0"]["flagged_off_topic"],
-                                 "note": f"{fp4.get('tsao_gwt', 0)} posts in the corpus react to the preprint; jev-1.14.0 judged {tsao_off['typesafe-ai/jev-1.14.0']['flagged_off_topic']} of them not to be about whether machines can be conscious."},
+        "lead_tsao": {**LEAD,
+                      "links": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in NEURO["links"]],
+                      "posts": fp4.get("tsao_gwt", 0),
+                      "off_topic_jev": tsao_off["typesafe-ai/jev-1.14.0"]["flagged_off_topic"],
+                      "note": f"{fp4.get('tsao_gwt', 0)} posts in round 4 react to the preprint; jev-1.14.0 judged {tsao_off['typesafe-ai/jev-1.14.0']['flagged_off_topic']} of them not to be about whether machines can be conscious."},
+        "workspace_paper": {**WORKSPACE, "posts": sum(p["flashpoint"] == "anthropic_gwt" for p in posts5)},
+        "nature_comment": {**NATURE, "posts": sum(p["flashpoint"] in ("nature_search", "seth_replies", "nature_quotes", "seth_quotes") for p in posts5)},
+        "round5": r5_block(rows5, hand5, rows6, posts5, users5, len(users5 & ((users1 | users2 | users3 | users4) - {"grok"})), cost5, cost6),
         "model_comparison": model_comparison_block(cmp_, tsao_off, sum(v == "R" for v in hand.values())),
         "key_accounts_round4": {
             "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",
@@ -693,7 +915,7 @@ def main() -> None:
                        "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(by_id[url.split("/")[-1]]["hybrid"]) if url.split("/")[-1] in by_id else None} for u, b, url in KEY_ACCOUNTS_R4],
         },
         "dawkins_spotlight": {
-            "summary": DAWKINS["summary"],
+            "summary": DAWKINS_SHORT,
             "posts": [{"username": u, "date": d, "blurb": b, "url": url} for u, d, b, url in DAWKINS["posts"]],
             "essays": [{"title": t, "url": url} for t, url in DAWKINS["essays"]],
             "reactions": [{"username": u, "blurb": b, "url": url, "jev_hybrid": ({"U": "uncertain"} | STANCE_NAMES).get(by_id[url.split("/")[-1]]["hybrid"])} for u, b, url in DAWKINS["reactions"]],
@@ -728,13 +950,15 @@ def main() -> None:
             {"title": "Counts are method-dependent", "text": "All-post stance counts swing widely by method (Reject 23%–35%, Serious 28%–48% across the Jev runs). Treat them as method outputs, not population estimates."},
             {"title": "Round 4 uses a newer Jev", "text": "Round-4 posts were labelled with jev-1.14.0 using the round-3 wording; rounds 1 to 3 used the earlier Jev. On the 40 hand labels the two versions score about the same, but cross-round shifts may partly reflect the model change. Round 4 has no new hand labels."},
             {"title": "Off-topic posts still get a stance", "text": "The stance question has no \"not applicable\" answer. Posts about neuroscience or news reposts of the policy still receive a stance label, usually Uncertain; read round-4 counts with the on-topic share alongside."},
+            {"title": "Rounds 5 and 6 use other models", "text": "Round-5 posts were labelled with d1-ultra and Decider v1.2, not Jev, so they are not in the Jev counts; their only hand labels are the 17 posts where the two models disagreed."},
             {"title": "Classification is done offline", "text": "The agent that renders this page does not classify anything. Labels are produced on the analysis box and committed to the repo."},
         ],
         "cost": {"jev_three_way_usd": 0.0060, "jev_two_question_usd": 0.0047, "embeddinggemma_cpu_seconds": 62,
                  "round2_jev_three_way_usd": round(R2_COST[0], 4), "round2_jev_two_question_usd": round(R2_COST[1], 4),
                  "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4),
-                 "round4_jev_usd": round(jev4_cost, 4), "round4_model_comparison_usd": {m["model"]: m["cost_usd"] for m in cmp_["summary"]}},
-        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+                 "round4_jev_usd": round(jev4_cost, 4), "round4_model_comparison_usd": {m["model"]: m["cost_usd"] for m in cmp_["summary"]},
+                 "round5_usd": round(cost5, 5), "round6_usd": round(cost6, 5)},
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/labels_r6.csv", "data/questions_r6.json", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -746,6 +970,10 @@ def main() -> None:
         shutil.copyfile(SRC / "round3" / name, OUT / name)
     for name in ["jev_labels_r4.csv", "posts_r4.jsonl", "policy_labels_r4.csv", "questions_r4.json", "model_comparison_stance.csv", "model_comparison_policy.csv", "model_comparison_summary.csv"]:
         shutil.copyfile(SRC / "round4" / name, OUT / name)
+    for name in ["posts_r5.jsonl", "dropped_r5.jsonl", "labels_r5.csv", "hand_labels_r5.csv", "questions_r5.json"]:
+        shutil.copyfile(SRC / "round5" / name, OUT / name)
+    for name in ["labels_r6.csv", "questions_r6.json"]:
+        shutil.copyfile(SRC / "round6" / name, OUT / name)
     print(f"wrote {OUT/'discourse.json'} ({len(posts)} posts, {len(usernames)} authors, hand n={n_hand})")
 
 

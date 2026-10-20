@@ -1,0 +1,15 @@
+{
+ "_note": "Round 6: round 4/5 stance question plus a fourth option, reporting, after Jesse's round 5 hand labels skipped 7 posts that only describe research. The other three option definitions are verbatim.",
+ "models": [
+  "liquid/d1-ultra",
+  "perplexity/pplx-decider-v1.2"
+ ],
+ "stance4": {
+  "args": [
+   "--choice",
+   "stance=What is the author's stance on whether AI could be conscious? reject = dismisses it; curious = unsure, open or just interested; serious = treats it as a real possibility or deserving moral concern; reporting = only summarizes or relays news or research without giving their own view",
+   "--choices",
+   "stance=reject,curious,serious,reporting"
+  ]
+ }
+}
