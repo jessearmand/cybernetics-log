@@ -274,7 +274,7 @@ function policySection(d: Discourse, e: Editorial): string {
 <h3>Arguing about the policy, or about minds?</h3><p class="fine">${esc(ts.note)}</p>
 <div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About the policy</th><th>About minds</th></tr></thead><tbody>
 ${tRow("Round 3, all posts", ts.round3_all)}${tRow("Round 3, policy posts", ts.round3_policy_posts)}${tRow("Round 2, all posts", ts.round2_all)}${tRow("Round 2, policy posts", ts.round2_policy_posts)}</tbody></table></div>
-<ul class="caveats">${p.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
+${fold("Caveats", p.caveats, { list: "caveats" })}
 ${seboBlock(d)}</section>`;
 }
 
@@ -287,9 +287,9 @@ function dawkinsSection(d: Discourse, e: Editorial): string {
 <p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)})`).join(" · ")} · ${k.essays.map((x) => link(x.url, esc(x.title))).join(" · ")}.</p></section>`;
   }
   return `<section id="dawkins" class="callout"><h2>Spotlight: Richard Dawkins and “Claudia”</h2>${note(e, "dawkins")}
-<ul>${k.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
+${fold("The story in brief", k.summary)}
 <p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. Essays: ${k.essays.map((x) => link(x.url, esc(x.title))).join(" · ")}.</p>
-<h3>Reactions</h3><ul class="r3acc">${k.reactions.map((r) => `<li>${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}</li>`).join("")}</ul>
+${fold("Reactions", k.reactions.map((r) => `${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}`), { list: "r3acc", plain: true })}
 <div class="bars">${stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), "Dawkins items: Jev hybrid", `${k.items} posts`)}</div>
 <p class="fine">Jev on his own posts: ${k.dawkins_own_posts_jev.map((x) => `${link(x.url, "post")} three-way ${esc(x.jev_three_way)} (top ${x.jev_top_prob}), hybrid ${esc(x.jev_hybrid)}`).join("; ")}. ${esc(k.note)}</p></section>`;
 }
@@ -300,7 +300,7 @@ const has = (d: Discourse, key: string): boolean => (d as Record<string, unknown
 function seboBlock(d: Discourse): string {
   if (!has(d, "sebo")) return "";
   const s = d.sebo;
-  return `<div id="sebo" class="sidebar"><h3>Jeff Sebo on the rule</h3><ul>${s.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+  return `<div id="sebo" class="sidebar">${fold("Jeff Sebo on the rule", s.summary)}
 <p class="fine">Sources: ${s.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")} · ${link(s.article.url, esc(s.article.title))}.</p></div>`;
 }
 
@@ -309,13 +309,22 @@ function politicsSection(d: Discourse, e: Editorial): string {
   const k = d.politics_spotlight;
   const h = k.jev_hybrid as Counts;
   return `<section id="politics" class="callout"><h2>The Sacks / All-In fight: “a religious cult”</h2>${note(e, "politics")}
-<ul>${k.summary.map((s) => `<li>${esc(s)}</li>`).join("")}</ul>
+${fold("The fight in brief", k.summary)}
 <p class="studynote"><b>About the study:</b> ${esc(k.study_note)} ${link(k.study.url, esc(k.study.title))}</p>
 <p>${esc(k.finding.text)}</p>
 <p class="fine">Sources: ${k.posts.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}.</p>
-<h3>Reactions</h3><ul class="r3acc">${k.reactions.map((r) => `<li>${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}</li>`).join("")}</ul>
+${fold("Reactions", k.reactions.map((r) => `${link(r.url, `<b>@${esc(r.username)}</b>`)} — ${esc(r.blurb)}${r.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(r.jev_hybrid))}</span>` : ""}`), { list: "r3acc", plain: true })}
 <div class="bars">${stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), "Sacks / All-In posts: Jev hybrid", `${k.items} posts`)}</div>
 <p class="fine">${esc(k.note)}</p></section>`;
+}
+
+/**
+ * A long bulleted explanation, collapsed by default so a phone shows the heading only.
+ * Native <details>: no JavaScript, keyboard-operable, and find-in-page opens it in current browsers.
+ */
+function fold(label: string, items: readonly string[], opts: { list?: string; plain?: boolean } = {}): string {
+  const lis = items.map((x) => `<li>${opts.plain ? x : esc(x)}</li>`).join("");
+  return `<details class="fold"><summary><span class="flabel">${esc(label)}</span><span class="fcount">${items.length} ${items.length === 1 ? "point" : "points"}</span></summary><ul${opts.list ? ` class="${opts.list}"` : ""}>${lis}</ul></details>`;
 }
 
 type Paper = { authors: string; title: string; venue: string; url: string; doi?: string };
@@ -325,8 +334,8 @@ function leadSection(d: Discourse, e: Editorial): string {
   if (!has(d, "lead_tsao")) return "";
   const l = d.lead_tsao;
   return `<section id="lead" class="callout"><h2>${esc(l.title)}</h2>${note(e, "lead")}${cite(l.paper)}
-<ul>${l.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-<h3>${esc(l.discussion_title)}</h3><ul>${l.discussion.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+${fold("The preprint in brief", l.summary)}
+${fold(l.discussion_title, l.discussion)}
 <p class="fine">${[...l.links, l.followup].map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(l.note)}</p></section>`;
 }
 
@@ -334,8 +343,8 @@ function workspaceSection(d: Discourse, e: Editorial): string {
   if (!has(d, "workspace_paper")) return "";
   const w = d.workspace_paper;
   return `<section id="workspace"><h2>${esc(w.title)}</h2>${note(e, "workspace")}${cite(w.paper)}
-<ul>${w.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-<h3>What it does not claim</h3><ul>${w.limits.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+${fold("The paper in brief", w.summary)}
+${fold("What it does not claim", w.limits)}
 <p class="fine">${w.posts} posts in round 5 react to the paper.</p></section>`;
 }
 
@@ -343,7 +352,7 @@ function natureSection(d: Discourse, e: Editorial): string {
   if (!has(d, "nature_comment")) return "";
   const n = d.nature_comment;
   return `<section id="nature"><h2>${esc(n.title)}</h2>${note(e, "nature")}${cite(n.paper)}
-<ul>${n.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+${fold("The commentary in brief", n.summary)}
 <p class="studynote"><b>On the Anthropic paper:</b> ${esc(n.anthropic_note)}</p>
 <p>${esc(n.framing)}</p>
 <p class="fine">${esc(n.dawkins_note)} ${esc(n.competing_interests)} ${n.posts} posts in round 5 react to the commentary.</p></section>`;
@@ -387,16 +396,16 @@ function round5Section(d: Discourse, e: Editorial): string {
 <p>${esc(r.hand_check.text)}</p><p>${esc(r.round6.text)}</p><p>${esc(r.round6.caveat)}</p>
 ${hand6Block(r)}
 <h3>Who says Anthropic found consciousness?</h3><p class="fine">${esc(r.claims_found.question)}</p><p>${esc(r.claims_found.text)}</p>
-<h3>Round 5: notable accounts</h3><ul class="r3acc">${r.key_accounts.map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span></li>`).join("")}</ul>
+${fold("Round 5: notable accounts", r.key_accounts.map((a) => `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span>`), { list: "r3acc", plain: true })}
 <p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5, $${r.cost_usd.round6} for round 6.</p>
-<ul class="caveats">${r.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
+${fold("Caveats", r.caveats, { list: "caveats" })}</section>`;
 }
 
 function neuroSection(d: Discourse, e: Editorial): string {
   // The round-5 lead section replaces the round-4 aside; older data still renders it.
   const n = d.neuroscience_sidebar;
   if (!n || has(d, "lead_tsao")) return "";
-  return `<aside id="neuro" class="sidebar"><h2>${esc(n.title)}</h2>${note(e, "neuro")}<ul>${n.summary.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+  return `<aside id="neuro" class="sidebar"><h2>${esc(n.title)}</h2>${note(e, "neuro")}${fold("The preprint in brief", n.summary)}
 <p class="fine">${link(n.paper.url, esc(n.paper.title))} · ${n.links.map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" · ")}. ${esc(n.note)}</p></aside>`;
 }
 
@@ -418,7 +427,7 @@ function modelsSection(d: Discourse, e: Editorial): string {
 <p>${esc(m.intensity_check)}</p><p>${esc(m.off_topic)}</p>
 <div class="confusions">${confusions}</div>
 <p class="fine">Agreement on stance: ${m.agreement.map((a) => `${esc(a.pair)} ${a.stance_agree_pct}%`).join(" · ")}.</p>
-<ul class="caveats">${m.caveats.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></section>`;
+${fold("Caveats", m.caveats, { list: "caveats" })}</section>`;
 }
 
 function roundsSection(d: Discourse): string {
@@ -449,13 +458,11 @@ function roundsSection(d: Discourse): string {
   const r4frame = !fr ? "" : `<h3>Round 4: policy or minds, on topic, and framing</h3><p class="fine">${esc(fr.note)}</p>
 <div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About policy or politics</th><th>About machine minds</th><th>Framed politically</th><th>Framed philosophically</th></tr></thead><tbody>${frRows}</tbody></table></div><p class="fine">${esc(fr.caveat)}</p>`;
   const ka4 = has(d, "key_accounts_round4") ? d.key_accounts_round4 : null;
-  const r4list = !ka4 ? "" : `<h3>Round 4: notable new accounts</h3><p class="fine">${esc(ka4.note)}</p><ul class="r3acc">${ka4.items
-    .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</li>`)
-    .join("")}</ul>`;
+  const accItem = (a: { url: string; username: string; followers?: number | string | null; blurb: string; jev_hybrid?: string | null }) =>
+    `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}`;
+  const r4list = !ka4 ? "" : `<p class="fine">${esc(ka4.note)}</p>${fold("Round 4: notable new accounts", ka4.items.map(accItem), { list: "r3acc", plain: true })}`;
   const ka3 = d.key_accounts_round3;
-  const r3list = `<h3>Round 3: notable new accounts</h3><p class="fine">${esc(ka3.note)}</p><ul class="r3acc">${ka3.items
-    .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</li>`)
-    .join("")}</ul>`;
+  const r3list = `<p class="fine">${esc(ka3.note)}</p>${fold("Round 3: notable new accounts", ka3.items.map(accItem), { list: "r3acc", plain: true })}`;
   const ka = d.key_accounts_round2;
   const col = (s: StanceName) =>
     `<div class="acol ${s}"><h3><i style="background:${STANCE_COLOR[s]}"></i>${CAP(s)}</h3><ul>${ka[s]
@@ -463,11 +470,11 @@ function roundsSection(d: Discourse): string {
       .join("")}</ul></div>`;
   return `<section id="rounds"><h2>Rounds</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
-${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${fps4 ? `<p class="fine">Round-4 flashpoints: ${fps4}.</p>` : ""}${r4frame}${r4list}${r3list}<h3>Round 2 key accounts</h3><p class="fine">${esc(ka.note)}</p><div class="acols">${STANCES.map(col).join("")}</div></section>`;
+${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${fps4 ? `<p class="fine">Round-4 flashpoints: ${fps4}.</p>` : ""}${r4frame}${r4list}${r3list}<p class="fine">${esc(ka.note)}</p><details class="fold"><summary><span class="flabel">Round 2 key accounts</span><span class="fcount">${STANCES.reduce((s, x) => s + ka[x].length, 0)} accounts</span></summary><div class="acols">${STANCES.map(col).join("")}</div></details></section>`;
 }
 
 function caveatsSection(d: Discourse, e: Editorial): string {
-  return `<section id="caveats"><h2>Caveats</h2>${note(e, "caveats")}<ul class="caveats">${d.caveats.map((c) => `<li><b>${esc(c.title)}.</b> ${esc(c.text)}</li>`).join("")}</ul></section>`;
+  return `<section id="caveats"><h2>Caveats</h2>${note(e, "caveats")}${fold("Read the caveats", d.caveats.map((c) => `<b>${esc(c.title)}.</b> ${esc(c.text)}`), { list: "caveats", plain: true })}</section>`;
 }
 
 const CSS = `
@@ -522,14 +529,26 @@ blockquote.post p{white-space:pre-line;font-size:15px}.who{font-size:14px}.role{
 .acols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}@media (max-width:860px){.acols{grid-template-columns:1fr}}
 .acol ul{list-style:none;padding:0;margin:0}.acol li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:14px}.acol li p{margin:4px 0 6px}.fol{color:var(--muted);font-size:12px}.chips{display:flex;gap:6px;flex-wrap:wrap}.also{font-size:13px;color:var(--muted)}
 .caveats li{margin-bottom:8px;max-width:820px}
+details.fold{margin:14px 0;border:1px solid var(--line);border-radius:10px;background:var(--card);max-width:860px}
+details.fold>summary{list-style:none;display:flex;align-items:center;gap:12px;min-height:48px;box-sizing:border-box;padding:10px 14px;color:var(--ink);font-size:15px;font-weight:600;line-height:1.35;cursor:pointer;-webkit-tap-highlight-color:transparent}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::before{content:"";flex:none;width:8px;height:8px;margin:0 2px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);transition:transform .15s}
+details.fold[open]>summary::before{transform:rotate(45deg)}
+details.fold>summary:hover .flabel{color:var(--accent)}details.fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+details.fold .fcount{margin-left:auto;flex:none;color:var(--muted);font-size:12.5px;font-weight:400}
+details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}
+@media (prefers-reduced-motion:reduce){details.fold>summary::before{transition:none}}
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
 .cite{font-size:14px;color:var(--muted)}
 .studynote{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px}
 .r3acc{padding-left:18px;font-size:14px}.r3acc li{margin-bottom:6px}.xtabs{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:860px){.xtabs{grid-template-columns:1fr}}
 footer{padding:28px 0 60px;color:var(--muted);font-size:13px}footer dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}footer dt{font-weight:600}footer dd{margin:0;word-break:break-word}
+@media (max-width:640px){footer dl{grid-template-columns:1fr;gap:2px}footer dd{margin-bottom:12px}}
 footer pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12.5px}
 code{font:13px ui-monospace,Menlo,monospace;background:var(--accent-soft);padding:0 4px;border-radius:4px}
 `;
+
+const REPO_URL = "https://github.com/jessearmand/cybernetics-log";
 
 /** Renders the full page. Pure function of (data, editorial, meta). */
 export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string {
@@ -552,14 +571,14 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
 ${leadSection(d, e)}${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
 <footer><dl>
-<dt>Corpus</dt><dd>${esc(d.corpus.source)}. ${d.corpus.notes.map(esc).join(" ")}</dd>
+<dt>Data</dt><dd>${link(`${REPO_URL}/tree/main/data`, "Complete data on GitHub")}: label files, hand labels, write-ups, and the corpus and collection notes (${link(`${REPO_URL}#corpus`, "README")}).</dd>
 <dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev, d1-ultra and Decider via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>
 <dt>Rendered</dt><dd>${esc(meta.renderedAt)} by ${esc(meta.model)} · data ${esc(meta.dataSource)}</dd>
 ${dep ? `<dt>Triggered by</dt><dd>GitHub deployment ${esc(dep.id)} (${esc(dep.environment)}) · commit ${link(commitUrl, `<code>${esc(dep.sha.slice(0, 7))}</code>`)}${dep.targetUrl ? ` · ${link(dep.targetUrl, "deployment")}` : ""}</dd>` : ""}
 ${e.instructionSummary ? `<dt>How the instruction was applied</dt><dd>${prose(e.instructionSummary)}</dd>` : ""}
 ${meta.instruction ? `<dt>Deployment instruction</dt><dd><details><summary>Show</summary><pre>${esc(meta.instruction)}</pre></details></dd>` : ""}
 ${warnings}
-<dt>Source</dt><dd>${link("https://github.com/jessearmand/cybernetics-log", "github.com/jessearmand/cybernetics-log")}</dd>
+<dt>Source</dt><dd>${link(REPO_URL, "github.com/jessearmand/cybernetics-log")}</dd>
 </dl></footer></div></body></html>`;
 }
 

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import discourse from "../data/discourse.json" with { type: "json" };
@@ -83,4 +84,66 @@ test("round 6 hand check renders with the e_philalethes caveat", () => {
   assert.match(html, /@e_philalethes counts as a miss for d1-ultra in the strict score/);
   assert.match(html, /d1-ultra&#39;s Serious has a fair case|d1-ultra's Serious has a fair case/);
   assert.match(html, /16 of 26/);
+});
+
+/** The HTML of one section (sections are never nested). */
+const sectionHtml = (html: string, id: string) => {
+  const m = html.match(new RegExp(`<section id="${id}"[\\s\\S]*?</section>`));
+  assert.ok(m, `section ${id}`);
+  return m[0];
+};
+const withoutFolds = (s: string) => s.replace(/<details class="fold">[\s\S]*?<\/details>/g, "");
+
+test("mobile: long bulleted explanations are collapsed by default behind native <details>", () => {
+  const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
+  const want: Record<string, string[]> = {
+    lead: ["The preprint in brief", discourse.lead_tsao.discussion_title],
+    workspace: ["The paper in brief", "What it does not claim"],
+    nature: ["The commentary in brief"],
+    politics: ["The fight in brief", "Reactions"],
+    policy: ["Caveats", "Jeff Sebo on the rule"],
+    round5: ["Round 5: notable accounts", "Caveats"],
+    models: ["Caveats"],
+    rounds: ["Round 4: notable new accounts", "Round 3: notable new accounts", "Round 2 key accounts"],
+    caveats: ["Read the caveats"],
+  };
+  for (const [id, labels] of Object.entries(want)) {
+    const s = sectionHtml(html, id);
+    for (const l of labels) assert.ok(s.includes(`<summary><span class="flabel">${esc(l)}</span>`), `${id}: "${l}" is a collapsible summary`);
+    assert.ok(!/<details class="fold" open/.test(s), `${id}: collapsed by default`);
+    // Every bullet in these sections sits inside a fold; nothing long is left expanded.
+    assert.ok(!/<li[ >]/.test(withoutFolds(s)), `${id}: no bullet outside a fold`);
+  }
+  // The Sacks bullets and the five general caveats are inside their folds, not lost.
+  const cav = sectionHtml(html, "caveats");
+  for (const c of discourse.caveats) assert.ok(cav.includes(`<b>${esc(c.title)}.</b>`), c.title);
+  assert.ok(cav.includes(`<span class="fcount">${discourse.caveats.length} points</span>`));
+  for (const x of discourse.politics_spotlight.summary) assert.ok(sectionHtml(html, "politics").includes(esc(x)));
+  // Lead text and key numbers stay outside the folds.
+  assert.match(withoutFolds(sectionHtml(html, "round5")), new RegExp(`<b>${discourse.round5.agreement.agree}</b> of ${discourse.round5.agreement.n} posts`));
+  assert.match(withoutFolds(sectionHtml(html, "lead")), /class="cite"/);
+  // Summaries are a comfortable tap target with a visible expand marker.
+  assert.match(html, /details\.fold>summary\{[^}]*min-height:48px/);
+  assert.match(html, /details\.fold\[open\]>summary::before\{transform:rotate\(45deg\)\}/);
+});
+
+test("mobile: the footer drops the Corpus block and links to the complete data on GitHub", () => {
+  const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
+  const footer = html.slice(html.indexOf("<footer>"));
+  assert.ok(!footer.includes("<dt>Corpus</dt>"));
+  assert.ok(!html.includes(esc(discourse.corpus.source)), "corpus source line is no longer on the page");
+  for (const n of discourse.corpus.notes) assert.ok(!html.includes(esc(n)), `corpus note still on the page: ${n.slice(0, 40)}`);
+  assert.match(footer, /<dt>Data<\/dt><dd><a href="https:\/\/github\.com\/jessearmand\/cybernetics-log\/tree\/main\/data"[^>]*>Complete data on GitHub<\/a>/);
+  assert.match(footer, /href="https:\/\/github\.com\/jessearmand\/cybernetics-log#corpus"/);
+  assert.match(html, /@media \(max-width:640px\)\{footer dl\{grid-template-columns:1fr/);
+});
+
+test("mobile: the corpus notes moved off the page live in the README", () => {
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+  const sec = readme.slice(readme.indexOf("## Corpus\n"), readme.indexOf("## Regenerating"));
+  assert.ok(sec.length > 100, "README has a Corpus section");
+  const c = discourse.corpus;
+  assert.ok(sec.includes(`${c.posts} English posts from ${c.authors} authors, ${c.window.label}`));
+  assert.ok(sec.includes(`**Source:** ${c.source}.`));
+  for (const n of c.notes) assert.ok(sec.includes(`- ${n}\n`), `README is missing corpus note: ${n.slice(0, 40)}`);
 });
