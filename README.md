@@ -61,6 +61,12 @@ data/
   authors.json                  per-author model shares and hand reading
   hand_labels.json              40 hand labels (the ground truth: R 45% / C 25% / S 30%)
   jev_report.md                 full Jev write-up
+  posts_r5.jsonl, labels_r5.csv  round 5: 69 posts, d1-ultra and Decider labels side by side (+ dropped_r5.jsonl, questions_r5.json)
+  hand_labels_r5.csv            17 hand labels on the posts where the two models disagreed
+  hand_labels_r6.csv            9 hand labels on the new round 6 (four-way) disagreements
+  tsao_followup.json            Doris Tsao's 18 Oct follow-up post (source for the quotes in the lead)
+  labels_r6.csv                 round 6: four-way stance (with reporting) on the round-5 posts (+ questions_r6.json)
+  round5_6.md                   rounds 5 and 6 write-up, checked against the CSVs by test/round5-6.test.ts
   gated_stance_r4b.md           gated stance-rule experiment (not used on the page) + gated_stance_r4b.csv, questions_r4b.json
   render-instruction.md         default render instruction
 scripts/

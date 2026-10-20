@@ -13,10 +13,10 @@ const count = (key: string) => rows.reduce<Record<string, number>>((acc, r) => (
 
 test("data: corpus matches the brief", () => {
   assert.equal(rows.length, 268);
-  assert.equal(discourse.corpus.posts, 508);
-  assert.equal(discourse.corpus.authors, 431);
+  assert.equal(discourse.corpus.posts, 577);
+  assert.equal(discourse.corpus.authors, 490);
   assert.equal(discourse.corpus.window.start, "2026-09-24");
-  assert.equal(discourse.corpus.window.end, "2026-10-17");
+  assert.equal(discourse.corpus.window.end, "2026-10-20");
   const [r1, r2, r3, r4, all] = discourse.rounds.items;
   assert.equal(r1!.posts, 268);
   assert.equal(r2!.posts, 64);
@@ -155,7 +155,7 @@ test("data: Sacks spotlight carries the study note; model comparison covers thre
   assert.equal(m.reference_old_jev.stance_acc_pct, 55);
   assert.equal(m.hand_reject_n, 18);
   assert.ok(m.intensity_check.includes(`${m.models[0]!.reject_to_serious} of ${m.hand_reject_n}`));
-  assert.match(discourse.neuroscience_sidebar.summary.join(" "), /not been peer reviewed/);
-  const pub = JSON.stringify([discourse.politics_spotlight, discourse.sebo, discourse.neuroscience_sidebar, discourse.model_comparison, discourse.round4_framing, discourse.key_accounts_round4]);
+  assert.match(discourse.lead_tsao.paper.venue, /not peer reviewed/);
+  const pub = JSON.stringify([discourse.politics_spotlight, discourse.sebo, discourse.lead_tsao, discourse.model_comparison, discourse.round4_framing, discourse.key_accounts_round4, discourse.workspace_paper, discourse.nature_comment, discourse.round5]);
   for (const bad of ["jev_labels", "posts_r4", "questions_r4", ".csv", ".json", "SKILL"]) assert.ok(!pub.includes(bad), bad);
 });

@@ -3,7 +3,21 @@ import bundledDiscourse from "../../data/discourse.json" with { type: "json" };
 import type { DeploymentTrigger } from "./github-webhook.ts";
 
 /** Shape of data/discourse.json (only the fields the renderer reads are typed strictly). */
-export type Discourse = typeof bundledDiscourse;
+type SourceLink = { readonly username: string; readonly date: string; readonly blurb: string; readonly url: string };
+/** The round-4 neuroscience aside: present in data committed before round 5, replaced by `lead_tsao` since. */
+export interface NeuroscienceSidebar {
+  readonly title: string;
+  readonly summary: readonly string[];
+  readonly links: readonly SourceLink[];
+  readonly paper: { readonly title: string; readonly url: string };
+  readonly note: string;
+}
+type Bundled = typeof bundledDiscourse;
+/** The committed data's shape, plus fields that only older commits carry or that newer fields replaced. */
+export type Discourse = Omit<Bundled, "corpus"> & {
+  readonly corpus: Omit<Bundled["corpus"], "collection_rounds"> & { readonly collection_rounds?: number };
+  readonly neuroscience_sidebar?: NeuroscienceSidebar;
+};
 
 // The default instruction ships with the build so a render never depends on the network.
 // Keep in sync with data/render-instruction.md (a test checks this).
