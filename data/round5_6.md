@@ -52,13 +52,26 @@ Round 6 asks the stance question again on the same 69 posts with a fourth option
 - Reporting is a large bucket: 28 of 69 posts for d1-ultra and 32 for pplx-decider-v1.2. d1-ultra's curious count fell from 27 to 10.
 - Two enthusiastic research summaries that Jesse labelled curious, Sniffmeta and stretchcloud, went to reporting with both models.
 
+### Hand check on the new disagreements
+
+Round 6 left 9 new disagreements, on posts that round 5 had not hand-labelled. Jesse Armand labelled them too (`hand_labels_r6.csv`): 6 with a label and 3 skipped. Like round 5, this is the hard subset and the sample is small.
+
+On the 6 posts he did not skip, pplx-decider-v1.2 matched 4 and d1-ultra matched 0. pplx-decider-v1.2 called RichUniverse_ reporting and e_philalethes reject, both of which Jesse labelled curious. d1-ultra called both reporting posts reject, with confidence 0.85 and 0.82, and called the curious posts reject or serious. Of the 3 skipped posts, pplx-decider-v1.2 called 2 reporting and d1-ultra called 1. pplx-decider-v1.2 used reporting for 5 of the 9 posts, and only 1 of those was a curious post pulled into reporting.
+
+e_philalethes counts as a miss for d1-ultra in the strict score. Jesse labelled it curious but noted that it leans serious, because it considers the possibility with the right hardware, so d1-ultra's serious has a fair case.
+
+Across all 26 hand labels from rounds 5 and 6, scored four-way with skips counted as reporting, pplx-decider-v1.2 matched 16 and d1-ultra matched 10. On the 16 posts he did not skip, pplx-decider-v1.2 matched 7 and d1-ultra matched 3.
+
+On these new posts pplx-decider-v1.2 is clearly better on direction, while d1-ultra still confuses how strongly a post is worded with which way it leans. The proposal, from Seeker and agreed by Jesse, is to use pplx-decider-v1.2 as the primary labeller, with d1-ultra as a second opinion only on serious. Nine posts is a small sample.
+
 ## Cost
 
 Round 5 cost $0.00164 (414 calls) and round 6 cost $0.00045 (138 calls).
 
 ## Verification
 
-`test/round5-6.test.ts` runs in `npm run check`. It recomputes every figure in this file from `labels_r5.csv`, `hand_labels_r5.csv`, `labels_r6.csv` and `posts_r5.jsonl`, and checks that this file contains each one. It does not check two things:
+`test/round5-6.test.ts` runs in `npm run check`. It recomputes every figure in this file from `labels_r5.csv`, `hand_labels_r5.csv`, `labels_r6.csv`, `hand_labels_r6.csv` and `posts_r5.jsonl`, and checks that this file contains each one. It does not check two things:
 
 - the costs, because the raw call logs are not in the repo (they are checked against `discourse.json`, which the build script computes from those logs);
 - which `claims_found` hits are misattributions, because that is a hand reading.
+- the round 6 judgements in prose: that e_philalethes has a fair case for serious, that pplx-decider-v1.2 is better on direction, and the proposal.

@@ -147,6 +147,63 @@ test("round 6: four-way stance counts and the hand check", () => {
   assert.ok(R5.round6.text.includes(`Decider matched ${all("pplx")} and d1-ultra ${all("d1")}`));
 });
 
+test("round 6: hand check on the new disagreements and the combined score", () => {
+  const hand6 = parseCsv(read("hand_labels_r6.csv"));
+  const H = R5.hand6;
+  const handIds = new Set(hand.map((h) => h.id!));
+  const newDis = r6.filter((r) => r.d1_stance4 !== r.pplx_stance4 && !handIds.has(r.id!)).map((r) => r.id!).sort();
+  assert.deepEqual(hand6.map((h) => h.id!).sort(), newDis, "round-6 hand labels are exactly the new four-way disagreements");
+  assert.equal(hand6.length, 9);
+  const lab = hand6.filter((h) => h.hand !== "skip");
+  const sk = hand6.filter((h) => h.hand === "skip");
+  const s4 = (h: Record<string, string>, k: K) => by6.get(h.id!)![`${k}_stance4`]!;
+  const user = (h: Record<string, string>) => by6.get(h.id!)!.username!;
+  has(`Round 6 left ${hand6.length} new disagreements`);
+  has(`${lab.length} with a label and ${sk.length} skipped`);
+  const right = (k: K) => lab.filter((h) => s4(h, k) === h.hand).length;
+  assert.deepEqual([right("pplx"), right("d1")], [4, 0]);
+  has(`On the ${lab.length} posts he did not skip, pplx-decider-v1.2 matched ${right("pplx")} and d1-ultra matched ${right("d1")}`);
+  const pxMiss = lab.filter((h) => s4(h, "pplx") !== h.hand);
+  assert.deepEqual(pxMiss.map((h) => [user(h), h.hand, s4(h, "pplx")]), [["RichUniverse_", "curious", "reporting"], ["e_philalethes", "curious", "reject"]]);
+  has("pplx-decider-v1.2 called RichUniverse_ reporting and e_philalethes reject, both of which Jesse labelled curious");
+  const d1Rep = lab.filter((h) => h.hand === "reporting");
+  assert.ok(d1Rep.every((h) => s4(h, "d1") === "reject"));
+  const confs = d1Rep.map((h) => Number(by6.get(h.id!)!.d1_conf4).toFixed(2)).sort().reverse();
+  has(`d1-ultra called both reporting posts reject, with confidence ${confs[0]} and ${confs[1]}`);
+  assert.deepEqual([...new Set(lab.filter((h) => h.hand === "curious").map((h) => s4(h, "d1")))].sort(), ["reject", "serious"]);
+  const skRep = (k: K) => sk.filter((h) => s4(h, k) === "reporting").length;
+  has(`Of the ${sk.length} skipped posts, pplx-decider-v1.2 called ${skRep("pplx")} reporting and d1-ultra called ${skRep("d1")}`);
+  const used = hand6.filter((h) => s4(h, "pplx") === "reporting");
+  const pulled = used.filter((h) => h.hand === "curious");
+  has(`pplx-decider-v1.2 used reporting for ${used.length} of the ${hand6.length} posts, and only ${pulled.length} of those was a curious post`);
+  // The e_philalethes caveat: a strict miss for d1-ultra, but Jesse's own note leans serious.
+  const lean = hand6.filter((h) => /leaning serious/.test(h.note!));
+  assert.equal(lean.length, 1);
+  assert.equal(user(lean[0]!), "e_philalethes");
+  assert.equal(lean[0]!.hand, "curious");
+  assert.equal(s4(lean[0]!, "d1"), "serious");
+  assert.match(lean[0]!.note!, /considers possibility with the right hardware/);
+  has("e_philalethes counts as a miss for d1-ultra in the strict score");
+  has("so d1-ultra's serious has a fair case");
+  assert.equal(H.leans_serious, "e_philalethes");
+  assert.match(H.lean_caveat, /d1-ultra's Serious has a fair case/);
+  // Combined: all 26 hand labels, four-way, skips as reporting.
+  const combined = [...hand.map((h) => [h.id!, h6(h)]), ...hand6.map((h) => [h.id!, h6(h)])] as [string, string][];
+  assert.equal(new Set(combined.map(([i]) => i)).size, 26);
+  const all = (k: K) => combined.filter(([i, v]) => by6.get(i)![`${k}_stance4`] === v).length;
+  const ns = [...labelled.map((h) => [h.id!, h.hand!]), ...lab.map((h) => [h.id!, h.hand!])] as [string, string][];
+  const st = (k: K) => ns.filter(([i, v]) => by6.get(i)![`${k}_stance4`] === v).length;
+  has(`Across all ${combined.length} hand labels from rounds 5 and 6, scored four-way with skips counted as reporting, pplx-decider-v1.2 matched ${all("pplx")} and d1-ultra matched ${all("d1")}`);
+  has(`On the ${ns.length} posts he did not skip, pplx-decider-v1.2 matched ${st("pplx")} and d1-ultra matched ${st("d1")}`);
+  assert.ok(H.combined.includes(`Decider matched ${all("pplx")} and d1-ultra ${all("d1")}`));
+  assert.ok(H.combined.includes(`Decider matched ${st("pplx")} and d1-ultra ${st("d1")}`));
+  for (const m of H.models) {
+    const k = m.id as K;
+    assert.deepEqual([m.stance_correct, m.skips_reporting, m.combined_all, m.combined_stance], [right(k), skRep(k), all(k), st(k)]);
+  }
+  assert.deepEqual([H.n_all, H.n_stance, H.labelled, H.skipped], [combined.length, ns.length, lab.length, sk.length]);
+});
+
 test("rounds 5 and 6: costs match discourse.json; totals include round 5", () => {
   has(`Round 5 cost $${R5.cost_usd.round5} (`);
   has(`round 6 cost $${R5.cost_usd.round6} (`);

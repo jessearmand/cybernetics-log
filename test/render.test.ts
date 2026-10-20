@@ -76,3 +76,11 @@ test("round-5 stance bars treat a missing stance key as zero", () => {
   assert.match(html, /with reporting/);
   assert.match(html, /Reporting: 0 \(0%\)/);
 });
+
+test("round 6 hand check renders with the e_philalethes caveat", () => {
+  const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
+  assert.match(html, /Round 6: hand check on the new disagreements/);
+  assert.match(html, /@e_philalethes counts as a miss for d1-ultra in the strict score/);
+  assert.match(html, /d1-ultra&#39;s Serious has a fair case|d1-ultra's Serious has a fair case/);
+  assert.match(html, /16 of 26/);
+});

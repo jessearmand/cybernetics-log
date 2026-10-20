@@ -63,6 +63,7 @@ data/
   jev_report.md                 full Jev write-up
   posts_r5.jsonl, labels_r5.csv  round 5: 69 posts, d1-ultra and Decider labels side by side (+ dropped_r5.jsonl, questions_r5.json)
   hand_labels_r5.csv            17 hand labels on the posts where the two models disagreed
+  hand_labels_r6.csv            9 hand labels on the new round 6 (four-way) disagreements
   tsao_followup.json            Doris Tsao's 18 Oct follow-up post (source for the quotes in the lead)
   labels_r6.csv                 round 6: four-way stance (with reporting) on the round-5 posts (+ questions_r6.json)
   round5_6.md                   rounds 5 and 6 write-up, checked against the CSVs by test/round5-6.test.ts

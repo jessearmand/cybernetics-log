@@ -357,6 +357,18 @@ function countBar(c: Counts, keys: string[], label: string, sub: string): string
   return `<div class="barrow"><div class="barlabel"><strong>${esc(label)}</strong><span>${esc(sub)}</span></div><div class="bar" role="img" aria-label="${esc(`${label}: ${keys.map((k) => `${CAP(k)} ${v(k).pct}%`).join(", ")}`)}">${segs}</div><div class="barcounts">${keys.map((k) => `<span>${v(k).n}</span>`).join("")}</div></div>`;
 }
 
+/** Round 6 hand check on the new four-way disagreements. Absent from data built before those labels existed. */
+function hand6Block(r: Discourse["round5"]): string {
+  const h = r.hand6;
+  if (!h) return "";
+  const rows = h.models
+    .map((s) => `<tr><th scope="row">${esc(s.name)}</th><td>${s.stance_correct} of ${h.labelled}</td><td>${s.skips_reporting} of ${h.skipped}</td><td>${s.combined_all} of ${h.n_all}</td><td>${s.combined_stance} of ${h.n_stance}</td></tr>`)
+    .join("");
+  return `<h3>Round 6: hand check on the new disagreements</h3><p>${esc(h.note)}</p>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on the new labelled posts</th><th>New skipped posts called reporting</th><th>Four-way, all hand labels (rounds 5 and 6)</th><th>All hand labels he did not skip</th></tr></thead><tbody>${rows}</tbody></table></div>
+<p>${esc(h.text)}</p><p>${esc(h.lean_caveat)}</p><p>${esc(h.combined)}</p><p>${esc(h.conclusion)}</p>`;
+}
+
 function round5Section(d: Discourse, e: Editorial): string {
   if (!has(d, "round5")) return "";
   const r = d.round5;
@@ -373,6 +385,7 @@ function round5Section(d: Discourse, e: Editorial): string {
 <p>The two models agree on stance for <b>${r.agreement.agree}</b> of ${r.agreement.n} posts (${r.agreement.pct}%). ${esc(r.hand_check.note)}</p>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on labelled disagreements</th><th>Matches with reporting (round 6)</th><th>Skipped posts called reporting</th><th>Curious, three-way → four-way</th><th>On topic</th><th>Misattribution flags</th></tr></thead><tbody>${rows}</tbody></table></div>
 <p>${esc(r.hand_check.text)}</p><p>${esc(r.round6.text)}</p><p>${esc(r.round6.caveat)}</p>
+${hand6Block(r)}
 <h3>Who says Anthropic found consciousness?</h3><p class="fine">${esc(r.claims_found.question)}</p><p>${esc(r.claims_found.text)}</p>
 <h3>Round 5: notable accounts</h3><ul class="r3acc">${r.key_accounts.map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span></li>`).join("")}</ul>
 <p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5, $${r.cost_usd.round6} for round 6.</p>

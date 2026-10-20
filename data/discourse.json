@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T04:32:12+00:00",
+  "generated_at": "2026-10-20T05:06:02+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
     "posts": 577,
@@ -2378,6 +2378,100 @@
       "text": "With the fourth option Decider caught 7 of the 7 skipped posts as reporting and d1-ultra 6; on all 17 hand-labelled posts Decider matched 10 and d1-ultra 9. The rejects are still missed: both models call both of them Serious.",
       "caveat": "Reporting is a large bucket: 28 of 69 posts for d1-ultra and 32 for Decider, and d1-ultra's Curious count fell from 27 to 10. 2 enthusiastic research summaries that Jesse Armand labelled Curious (@Sniffmeta, @stretchcloud) went to reporting with both models."
     },
+    "hand6": {
+      "n": 9,
+      "labelled": 6,
+      "skipped": 3,
+      "n_all": 26,
+      "n_stance": 16,
+      "hand": {
+        "curious": 4,
+        "reporting": 2,
+        "skip": 3
+      },
+      "models": [
+        {
+          "id": "d1",
+          "name": "d1-ultra (Liquid)",
+          "stance_correct": 0,
+          "skips_reporting": 1,
+          "reporting_used": 1,
+          "curious_to_reporting": [],
+          "misses": [
+            {
+              "username": "RichUniverse_",
+              "hand": "curious",
+              "model": "reject",
+              "conf": 0.702
+            },
+            {
+              "username": "John_W_Maki",
+              "hand": "reporting",
+              "model": "reject",
+              "conf": 0.854
+            },
+            {
+              "username": "net_science",
+              "hand": "reporting",
+              "model": "reject",
+              "conf": 0.818
+            },
+            {
+              "username": "Pherekydez",
+              "hand": "curious",
+              "model": "serious",
+              "conf": 0.753
+            },
+            {
+              "username": "e_philalethes",
+              "hand": "curious",
+              "model": "serious",
+              "conf": 0.519
+            },
+            {
+              "username": "NAtanason",
+              "hand": "curious",
+              "model": "reject",
+              "conf": 0.423
+            }
+          ],
+          "combined_all": 10,
+          "combined_stance": 3
+        },
+        {
+          "id": "pplx",
+          "name": "Decider v1.2 (Perplexity)",
+          "stance_correct": 4,
+          "skips_reporting": 2,
+          "reporting_used": 5,
+          "curious_to_reporting": [
+            "RichUniverse_"
+          ],
+          "misses": [
+            {
+              "username": "RichUniverse_",
+              "hand": "curious",
+              "model": "reporting",
+              "conf": 0.82
+            },
+            {
+              "username": "e_philalethes",
+              "hand": "curious",
+              "model": "reject",
+              "conf": 0.427
+            }
+          ],
+          "combined_all": 16,
+          "combined_stance": 7
+        }
+      ],
+      "leans_serious": "e_philalethes",
+      "note": "Round 6 left 9 new disagreements, on posts round 5 had not hand-labelled. Jesse Armand labelled them too: 6 with a label and 3 skipped. Like round 5, this is the hard subset, and it is small.",
+      "text": "On the 6 he did not skip, Decider matched 4 and d1-ultra 0. Decider's misses: @RichUniverse_ (Curious, called reporting); @e_philalethes (Curious, called Reject). d1-ultra called both reporting posts Reject, with confidence 0.85 and 0.82, and sent the Curious posts to Reject or Serious. Of the 3 skipped posts, Decider called 2 reporting and d1-ultra 1. Decider used reporting for 5 of the 9, and only 1 of those, @RichUniverse_, was a Curious post pulled into reporting.",
+      "lean_caveat": "@e_philalethes counts as a miss for d1-ultra in the strict score. But Jesse labelled it Curious while noting that it leans Serious, because it considers the possibility with the right hardware, so d1-ultra's Serious has a fair case.",
+      "combined": "Across all 26 hand labels from rounds 5 and 6, scored four-way with skips counted as reporting, Decider matched 16 and d1-ultra 10. On the 16 he did not skip, Decider matched 7 and d1-ultra 3.",
+      "conclusion": "On these new posts Decider is clearly better on direction, while d1-ultra still confuses how strongly a post is worded with which way it leans. The proposal, from Seeker and agreed by Jesse Armand: Decider as the primary labeller, with d1-ultra as a second opinion only on Serious. Nine new posts is a small sample."
+    },
     "key_accounts": [
       {
         "username": "anilkseth",
@@ -2425,7 +2519,7 @@
       "round6": 0.00045
     },
     "caveats": [
-      "17 hand labels from one labeller, on the posts where the models disagreed: the hard cases. They say nothing about accuracy on the posts where the models agreed.",
+      "26 hand labels from one labeller (17 in round 5, 9 in round 6), on the posts where the models disagreed: the hard cases. They say nothing about accuracy on the posts where the models agreed.",
       "Round 5 is a relevancy sample around two publications, not a draw from X; the Anthropic-paper posts date from July.",
       "Round 5 has no Jev labels, so it is not in the Jev hybrid counts on this page."
     ]
@@ -3387,6 +3481,7 @@
     "data/tsao_followup.json",
     "data/labels_r6.csv",
     "data/questions_r6.json",
+    "data/hand_labels_r6.csv",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",
