@@ -150,3 +150,43 @@ test("mobile: the corpus notes moved off the page live in the README", () => {
   assert.ok(sec.includes(`**Source:** ${c.source}.`));
   for (const n of c.notes) assert.ok(sec.includes(`- ${n}\n`), `README is missing corpus note: ${n.slice(0, 40)}`);
 });
+
+test("round 5: the third model is shown, its hand-label scores marked not comparable, and its long lists folded", () => {
+  const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
+  const s = sectionHtml(html, "round5");
+  const t = discourse.round5.third_model;
+  assert.ok(s.includes(`<h3>A third model: ${esc(t.name)}</h3>`));
+  assert.ok(s.includes("<b>Not comparable on hand labels:</b>"));
+  // Every row for the third model in a hand-label table carries the marker.
+  assert.equal(s.split(`${esc(t.name)}<sup title="Not comparable`).length - 1, 2);
+  assert.ok(s.includes(`<summary><h3 class="flabel">Agreement on every question</h3>`));
+  assert.ok(s.includes(`<summary><h3 class="flabel">Posts picked for hand-labelling</h3><span class="fcount">${t.candidates.length} points</span>`));
+  // The outlier check: biased against the third model, its own folded table, combined caveat visible.
+  const o = t.outlier_check;
+  assert.ok(s.includes("<b>Biased against GPT-6 Luna:</b>"));
+  assert.ok(s.includes(`<summary><h3 class="flabel">The ${o.n} outlier posts, post by post</h3>`));
+  assert.ok(!/<table class="methods outl">/.test(withoutFolds(s)), "the outlier tables are folded on mobile");
+  for (const x of [o.text, o.instability, o.combined, o.caveat]) assert.ok(withoutFolds(s).includes(esc(x)));
+  assert.ok(s.includes(esc("Doesn’t engage in any side, irrelevant comment ")));
+  for (const c of t.candidates) assert.ok(s.includes(`@${esc(c.username)}`));
+  assert.ok(!/<table class="methods agree">/.test(withoutFolds(s)), "the agreement table is folded on mobile");
+  assert.ok(withoutFolds(s).includes(esc(t.agreement_text)), "the headline agreement numbers stay visible");
+  assert.ok(s.includes(`GPT-6 Luna billed $${t.run.gateway_cost_usd} through the gateway`));
+});
+
+test("round 5: data built before the third model still renders", () => {
+  const d = structuredClone(discourse) as Record<string, unknown> & { round5: Record<string, unknown> };
+  delete d.round5.third_model;
+  const html = renderPage(d as unknown as typeof discourse, PLACEHOLDER_EDITORIAL, meta);
+  assert.ok(!html.includes("A third model"));
+  assert.ok(!html.includes("undefined"));
+});
+
+test("round 5: data built before the outlier hand labels still renders", () => {
+  const d = structuredClone(discourse) as unknown as { round5: { third_model: Record<string, unknown> } };
+  delete d.round5.third_model.outlier_check;
+  const html = renderPage(d as unknown as typeof discourse, PLACEHOLDER_EDITORIAL, meta);
+  assert.ok(html.includes("A third model"));
+  assert.ok(!html.includes("outlier posts, post by post"));
+  assert.ok(!html.includes("undefined"));
+});

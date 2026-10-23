@@ -372,11 +372,61 @@ function hand6Block(r: Discourse["round5"]): string {
   const h = r.hand6;
   if (!h) return "";
   const rows = h.models
-    .map((s) => `<tr><th scope="row">${esc(s.name)}</th><td>${s.stance_correct} of ${h.labelled}</td><td>${s.skips_reporting} of ${h.skipped}</td><td>${s.combined_all} of ${h.n_all}</td><td>${s.combined_stance} of ${h.n_stance}</td></tr>`)
+    .map((s) => `<tr><th scope="row">${esc(s.name)}${s.hand_comparable === false ? NOT_COMPARABLE : ""}</th><td>${s.stance_correct} of ${h.labelled}</td><td>${s.skips_reporting} of ${h.skipped}</td><td>${s.combined_all} of ${h.n_all}</td><td>${s.combined_stance} of ${h.n_stance}</td></tr>`)
     .join("");
   return `<h3>Round 6: hand check on the new disagreements</h3><p>${esc(h.note)}</p>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on the new labelled posts</th><th>New skipped posts called reporting</th><th>Four-way, all hand labels (rounds 5 and 6)</th><th>All hand labels he did not skip</th></tr></thead><tbody>${rows}</tbody></table></div>
+${h.models.some((s) => s.hand_comparable === false) ? `<p class="fine">${NOT_COMPARABLE} Not comparable with the other rows: these posts were picked because d1-ultra and Decider disagreed.</p>` : ""}
 <p>${esc(h.text)}</p><p>${esc(h.lean_caveat)}</p><p>${esc(h.combined)}</p><p>${esc(h.conclusion)}</p>`;
+}
+
+/** Marks hand-label scores of a model that played no part in choosing which posts were hand-labelled. */
+const NOT_COMPARABLE = `<sup title="Not comparable: the hand labels were drawn from d1-ultra/Decider disagreements">†</sup>`;
+
+const Q56: Record<string, string> = { stance: "Stance (round 5)", frame: "Framing", on_topic: "On topic", policy: "About policy or politics", claims_found: "Says Anthropic found consciousness", stance4: "Stance with reporting (round 6)" };
+/** The third decision model, added afterwards on the same posts: agreement, kappa and hand-label candidates. */
+function thirdModelBlock(r: Discourse["round5"]): string {
+  const t = r.third_model;
+  if (!t) return "";
+  const pairs = ["d1/pplx", "d1/oa", "pplx/oa"];
+  const PN: Record<string, string> = { "d1/pplx": "d1-ultra · Decider", "d1/oa": "d1-ultra · GPT-6 Luna", "pplx/oa": "Decider · GPT-6 Luna" };
+  const qs = [...new Set(t.agreement.map((a) => a.question))];
+  const rows = qs
+    .map((q) => `<tr><th scope="row">${esc(Q56[q] ?? q)}</th>${pairs.map((pr) => { const a = t.agreement.find((x) => x.question === q && x.pair === pr); if (!a) return "<td>—</td>"; return `<td>${a.agree} of ${a.n}${a.kappa == null ? "" : `<br><span class="fol">κ ${a.kappa}</span>`}</td>`; }).join("")}</tr>`)
+    .join("");
+  const disagreement = (c: (typeof t.candidates)[number], q: string) => {
+    const r6 = q === "stance4";
+    return `<span class="chip">${r6 ? "Round 6" : "Round 5"}: the other two ${esc(CAP(r6 ? c.d1_stance4 : c.d1_stance))}, GPT-6 Luna ${esc(CAP(r6 ? c.oa_stance4 : c.oa_stance))}</span>`;
+  };
+  const cands = t.candidates.map((c) => `${link(c.url, `<b>@${esc(c.username)}</b>`)} ${c.questions.split(" ").map((q) => disagreement(c, q)).join(" ")}`);
+  return `<h3>A third model: ${esc(t.name)}</h3><p>${esc(t.note)}</p><p class="studynote"><b>Not comparable on hand labels:</b> ${esc(t.comparability)}</p>
+<p>${esc(t.agreement_text)}</p>
+<details class="fold"><summary><h3 class="flabel">Agreement on every question</h3><span class="fcount">${qs.length} questions</span></summary><div class="tablewrap"><table class="methods agree"><thead><tr><th>Question</th>${pairs.map((pr) => `<th>${esc(PN[pr]!)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
+<p class="fine">Posts on which each pair gives the same answer, with Cohen's kappa (κ); yes/no questions are read at P ≥ 0.5. A kappa of 0 with high agreement means one model almost always gives the same answer.</p></details><p>${esc(t.hand_text)}</p><p>${esc(t.candidates_text)}</p>
+${fold("Posts picked for hand-labelling", cands, { list: "r3acc", plain: true })}
+${outlierBlock(t.outlier_check)}`;
+}
+
+/** Jesse's labels on the posts where GPT-6 Luna disagreed with both other models: their own table, biased against it. */
+function outlierBlock(o: Discourse["round5"]["third_model"]["outlier_check"] | undefined): string {
+  if (!o) return "";
+  const M = [["d1", "d1-ultra"], ["pplx", "Decider"], ["oa", "GPT-6 Luna"]] as const;
+  const ans = (p: (typeof o.posts)[number], k: string, q: "stance" | "stance4") => {
+    const v = (p as unknown as Record<string, string>)[`${k}_${q}`] ?? "";
+    const hit = q === "stance4" ? v === (p.hand === "skip" ? "reporting" : p.hand) : v === p.hand;
+    return `<span class="${hit ? "hit" : "miss"}">${esc(CAP(v))}</span>`;
+  };
+  const rows = o.posts
+    .map((p) => `<tr><th scope="row">${link(p.url, `@${esc(p.username)}`)}</th><td><b>${esc(CAP(p.hand))}</b>${p.note ? `<br><span class="fol">${esc(p.note)}</span>` : ""}</td>${M.map(([k]) => `<td>${ans(p, k, "stance")} → ${ans(p, k, "stance4")}</td>`).join("")}</tr>`)
+    .join("");
+  const score = o.models
+    .map((m) => `<tr><th scope="row">${esc(m.name)}</th><td>${m.r5_correct} of ${m.r5_n}</td><td>${m.r6_correct} of ${m.r6_n}</td><td>${m.combined_all} of ${m.combined_n_all}</td><td>${m.combined_stance} of ${m.combined_n_stance}</td></tr>`)
+    .join("");
+  return `<h3>Hand check on GPT-6 Luna's outliers</h3><p class="studynote"><b>Biased against GPT-6 Luna:</b> ${esc(o.note)}</p>
+<p>${esc(o.text)}</p><p>${esc(o.instability)}</p><p>${esc(o.combined)}</p><p class="fine">${esc(o.caveat)}</p>
+<details class="fold"><summary><h3 class="flabel">The ${o.n} outlier posts, post by post</h3><span class="fcount">${o.n} posts</span></summary>
+<p class="fine">Picked because GPT-6 Luna disagreed with both other models (biased against it). Each cell: round 5 three-way → round 6 four-way; matches are bold.</p><div class="tablewrap"><table class="methods outl"><thead><tr><th>Post</th><th>Hand</th>${M.map(([, n]) => `<th>${esc(n)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
+<p class="fine">Scores on the outlier set, and on all ${o.models[0]!.combined_n_all} hand labels combined (two differently biased subsets, not a random sample).</p><div class="tablewrap"><table class="methods outl"><thead><tr><th>Model</th><th>Round 5, three-way</th><th>Round 6, four-way</th><th>All ${o.models[0]!.combined_n_all}, skips as reporting</th><th>All not skipped</th></tr></thead><tbody>${score}</tbody></table></div></details>`;
 }
 
 function round5Section(d: Discourse, e: Editorial): string {
@@ -384,21 +434,23 @@ function round5Section(d: Discourse, e: Editorial): string {
   const r = d.round5;
   const S3 = ["reject", "curious", "serious"];
   const S4 = [...S3, "reporting"];
-  const bars = r.models.map((m) => countBar(m.stance as Counts, S3, `${m.name}: three-way`, `${r.posts} posts`)).join("")
+  const bars = r.models.map((m) => countBar(m.stance as Counts, S3, `${m.name}: three-way`, `${m.answered ?? r.posts} posts`)).join("")
     + r.models.map((m) => countBar(m.round6.stance as Counts, S4, `${m.name}: with reporting`, `${r.posts} posts · round 6`)).join("");
   const rows = r.models
-    .map((m) => `<tr><th scope="row">${esc(m.name)}</th><td>${m.hand_correct} of ${r.hand_check.labelled}</td><td>${m.round6.hand_correct_all} of ${r.hand_check.n}</td><td>${m.round6.reporting_caught} of ${r.hand_check.skipped}</td><td>${m.round6.curious_before} → ${m.round6.curious_after}</td><td>${m.on_topic.yes} (${m.on_topic.pct}%)</td><td>${m.claims_found.length}</td></tr>`)
+    .map((m) => `<tr><th scope="row">${esc(m.name)}${m.hand_comparable === false ? NOT_COMPARABLE : ""}</th><td>${m.hand_correct} of ${r.hand_check.labelled}</td><td>${m.round6.hand_correct_all} of ${r.hand_check.n}</td><td>${m.round6.reporting_caught} of ${r.hand_check.skipped}</td><td>${m.round6.curious_before} → ${m.round6.curious_after}</td><td>${m.on_topic.yes} (${m.on_topic.pct}%)</td><td>${m.claims_found.length}</td></tr>`)
     .join("");
-  return `<section id="round5"><h2>Round 5: two models on the Nature and Anthropic posts</h2>${note(e, "round5")}<p class="fine">${esc(r.note)}</p>
+  return `<section id="round5"><h2>Round 5: decision models on the Nature and Anthropic posts</h2>${note(e, "round5")}<p class="fine">${esc(r.note)}</p>
 <div class="legend">${S4.map((s) => `<span><i style="background:${R5_STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
 <div class="bars">${bars}</div>
-<p>The two models agree on stance for <b>${r.agreement.agree}</b> of ${r.agreement.n} posts (${r.agreement.pct}%). ${esc(r.hand_check.note)}</p>
+<p>d1-ultra and Decider agree on stance for <b>${r.agreement.agree}</b> of ${r.agreement.n} posts (${r.agreement.pct}%). ${esc(r.hand_check.note)}</p>
 <div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on labelled disagreements</th><th>Matches with reporting (round 6)</th><th>Skipped posts called reporting</th><th>Curious, three-way → four-way</th><th>On topic</th><th>Misattribution flags</th></tr></thead><tbody>${rows}</tbody></table></div>
+${r.models.some((m) => m.hand_comparable === false) ? `<p class="fine">${NOT_COMPARABLE} Hand-label columns are not comparable for this model: the labelled posts were picked because d1-ultra and Decider disagreed.</p>` : ""}
 <p>${esc(r.hand_check.text)}</p><p>${esc(r.round6.text)}</p><p>${esc(r.round6.caveat)}</p>
 ${hand6Block(r)}
+${thirdModelBlock(r)}
 <h3>Who says Anthropic found consciousness?</h3><p class="fine">${esc(r.claims_found.question)}</p><p>${esc(r.claims_found.text)}</p>
-${fold("Round 5: notable accounts", r.key_accounts.map((a) => `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span>`), { list: "r3acc", plain: true })}
-<p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5, $${r.cost_usd.round6} for round 6.</p>
+${fold("Round 5: notable accounts", r.key_accounts.map((a) => `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span>${a.oa ? ` <span class="chip">GPT-6 Luna: ${esc(CAP(a.oa))}</span>` : ""}`), { list: "r3acc", plain: true })}
+<p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5, $${r.cost_usd.round6} for round 6${r.third_model ? `; GPT-6 Luna billed $${r.third_model.run.gateway_cost_usd} through the gateway ($${r.third_model.run.market_cost_usd} at list price) for ${r.third_model.run.calls} calls, median ${r.third_model.run.latency_median_s}s` : ""}.</p>
 ${fold("Caveats", r.caveats, { list: "caveats" })}</section>`;
 }
 
@@ -537,7 +589,7 @@ details.fold>summary::before{content:"";flex:none;width:8px;height:8px;margin:0 
 details.fold[open]>summary::before{transform:rotate(45deg)}
 details.fold>summary:hover .flabel{color:var(--accent)}details.fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
 details.fold .flabel{margin:0;font-size:inherit;font-weight:inherit;line-height:inherit;color:inherit}details.fold .fcount{margin-left:auto;flex:none;color:var(--muted);font-size:12.5px;font-weight:400}
-details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}
+details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}details.fold>.tablewrap,details.fold>p{padding:0 14px}table.agree th,table.agree td{padding:8px 6px}table.outl th,table.outl td{padding:8px 6px}.hit{font-weight:700;color:var(--ink)}.miss{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){details.fold>summary::before{transition:none}}
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
 .cite{font-size:14px;color:var(--muted)}

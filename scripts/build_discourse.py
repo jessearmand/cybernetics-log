@@ -106,7 +106,7 @@ FLASHPOINTS = [  # report.md, "Flashpoints"
     ("Olah / Pope Leo XIV NYT", "olah_pope"),
 ]
 
-SOURCE_FILES = ["round5/labels_r5.csv", "round5/posts_r5.jsonl", "round5/dropped_r5.jsonl", "round5/hand_labels_r5.csv", "round5/questions_r5.json", "round5/tsao_followup.json", "round6/labels_r6.csv", "round6/questions_r6.json", "round6/hand_labels_r6.csv", "round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
+SOURCE_FILES = ["round5/labels_r5.csv", "round5/posts_r5.jsonl", "round5/dropped_r5.jsonl", "round5/hand_labels_r5.csv", "round5/questions_r5.json", "round5/tsao_followup.json", "round6/labels_r6.csv", "round6/questions_r6.json", "round6/hand_labels_r6.csv", "round6/hand_labels_r5_6_openai.csv", "round5/raw/core_openai_gpt-6-luna-decisions.jsonl", "round6/raw/stance4_openai_gpt-6-luna-decisions.jsonl", "round4/jev_labels_r4.csv", "round4/posts_r4.jsonl", "round4/policy_labels_r4.csv", "round4/questions_r4.json", "round4/model_comparison.json", "round4/tsao_offtopic.json", "round3/jev_labels_r3.csv", "round3/posts_r3.jsonl", "round3/policy_labels.csv", "round3/hand_labels_policy.json", "round3/topic_r2.csv", "round3/questions_r3.json", "round2/jev_labels_r2.csv", "round2/posts_r2.jsonl", "jev_labels.csv", "hand_labels.json", "authors.json", "analysis.json", "labels.json", "posts.jsonl", "jev_report.md"]
 
 SEED_FOLLOWERS = {"beck_werth": 427, "tomekkorbak": 11106}
 # Round-2 key accounts (hand-read; Jev labels looked up in round2/jev_labels_r2.csv)
@@ -258,6 +258,15 @@ FLASHPOINTS_R5 = [
 ]
 R5_MODELS = {"d1": "liquid/d1-ultra", "pplx": "perplexity/pplx-decider-v1.2"}
 R5_MODEL_NAMES = {"d1": "d1-ultra (Liquid)", "pplx": "Decider v1.2 (Perplexity)"}
+# Third model, added after the fact on exactly the same 69 posts, question groups and args (23 Oct 2026).
+# The hand labels were drawn from d1-ultra/Decider disagreements, so its hand-label scores are not comparable.
+R5_EXTRA = {"oa": "openai/gpt-6-luna-decisions"}
+R5_EXTRA_NAMES = {"oa": "GPT-6 Luna Decisions (OpenAI)"}
+R5_ALL = {**R5_MODELS, **R5_EXTRA}
+R5_ALL_NAMES = {**R5_MODEL_NAMES, **R5_EXTRA_NAMES}
+# Questions compared pairwise across the three models (booleans at P >= 0.5).
+R56_QUESTIONS = [("stance", "round 5", "labels_r5", "choice"), ("frame", "round 5", "labels_r5", "choice"), ("on_topic", "round 5", "labels_r5", "bool"),
+                 ("policy", "round 5", "labels_r5", "bool"), ("claims_found", "round 5", "labels_r5", "bool"), ("stance4", "round 6", "labels_r6", "choice")]
 R5_STANCES = ["reject", "curious", "serious"]
 R6_STANCES = ["reject", "curious", "serious", "reporting"]
 # Read by hand from each flagged post: which claims_found hits are misattributions of the Anthropic paper.
@@ -546,7 +555,171 @@ def model_comparison_block(cmp_, tsao_off, hand_reject_n: int) -> dict:
     }
 
 
-def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost6) -> dict:
+def kappa(a: list, b: list) -> float | None:
+    """Cohen's kappa for two raters over the same items; None when chance agreement is total."""
+    n = len(a)
+    if n == 0:
+        return None
+    po = sum(x == y for x, y in zip(a, b)) / n
+    ca, cb = Counter(a), Counter(b)
+    pe = sum(ca[k] * cb[k] for k in set(ca) | set(cb)) / (n * n)
+    return None if pe == 1 else round((po - pe) / (1 - pe), 3)
+
+
+def r56_answer(row: dict, q: str, k: str, kind: str) -> str:
+    v = row[f"{k}_{q}"]
+    if v == "" or kind == "choice":
+        return v
+    return "yes" if float(v) >= 0.5 else "no"
+
+
+def third_model_block(rows5, rows6, hand5, hand6, raw_oa, hand_oa=None) -> tuple[dict, list, list, list]:
+    """The OpenAI decisions model next to d1-ultra and Decider: agreement, kappa, hand-label confusion and hand-label candidates."""
+    by, by6 = {r["id"]: r for r in rows5}, {r["id"]: r for r in rows6}
+    src = {"labels_r5": by, "labels_r6": by6}
+    ids = [r["id"] for r in rows5]
+    pairs = [("d1", "pplx"), ("d1", "oa"), ("pplx", "oa")]
+    agreement = []
+    for q, rnd, f, kind in R56_QUESTIONS:
+        for a, b in pairs:
+            both = [i for i in ids if src[f][i][f"{a}_{q}"] != "" and src[f][i][f"{b}_{q}"] != ""]
+            xa = [r56_answer(src[f][i], q, a, kind) for i in both]
+            xb = [r56_answer(src[f][i], q, b, kind) for i in both]
+            ag = sum(x == y for x, y in zip(xa, xb))
+            agreement.append({"question": q, "round": rnd, "pair": f"{a}/{b}", "n": len(both), "agree": ag, "pct": pct(ag, len(both)), "kappa": kappa(xa, xb)})
+    missing = [{"id": i, "username": by[i]["username"]} for i in ids if by[i]["oa_stance"] == ""]
+    hv = lambda h: "reporting" if h["hand"] == "skip" else h["hand"]
+    allh = [(h["id"], hv(h)) for h in hand5 + hand6]
+    S4 = R6_STANCES
+    confusion = {k: {t: {p_: sum(1 for i, v in allh if v == t and by6[i][f"{k}_stance4"] == p_) for p_ in S4} for t in S4} for k in R5_ALL}
+    lab5 = [h for h in hand5 if h["hand"] != "skip"]
+    nonskip = [(h["id"], h["hand"]) for h in lab5] + [(h["id"], h["hand"]) for h in hand6 if h["hand"] != "skip"]
+    rejects = [h for h in lab5 if h["hand"] == "reject"]
+    scores = {k: {
+        "r5_hand_correct": sum(by[h["id"]][f"{k}_stance"] == h["hand"] for h in lab5), "r5_labelled": len(lab5),
+        "r5_rejects_called": [by[h["id"]][f"{k}_stance"] for h in sorted(rejects, key=lambda h: h["username"])],
+        "r6_hand_correct_17": sum(by6[h["id"]][f"{k}_stance4"] == hv(h) for h in hand5),
+        "r6_reporting_caught_17": sum(by6[h["id"]][f"{k}_stance4"] == "reporting" for h in hand5 if h["hand"] == "skip"),
+        "r6_new_correct": sum(by6[h["id"]][f"{k}_stance4"] == h["hand"] for h in hand6 if h["hand"] != "skip"),
+        "r6_new_skips_reporting": sum(by6[h["id"]][f"{k}_stance4"] == "reporting" for h in hand6 if h["hand"] == "skip"),
+        "r6_rejects_called": [by6[h["id"]][f"{k}_stance4"] for h in sorted(rejects, key=lambda h: h["username"])],
+        "combined_all": sum(by6[i][f"{k}_stance4"] == v for i, v in allh), "n_all": len(allh),
+        "combined_stance": sum(by6[i][f"{k}_stance4"] == v for i, v in nonskip), "n_stance": len(nonskip),
+        "reporting_recall": sum(by6[i][f"{k}_stance4"] == "reporting" for i, v in allh if v == "reporting"),
+        "reporting_n": sum(v == "reporting" for _, v in allh),
+        "reporting_called_reject": sum(by6[i][f"{k}_stance4"] == "reject" for i, v in allh if v == "reporting"),
+        "comparable": k in R5_MODELS,
+    } for k in R5_ALL}
+    hand_ids = {h["id"] for h in hand5 + hand6}
+    cands = []
+    for i in ids:
+        r, r6 = by[i], by6[i]
+        # Only where d1-ultra and Decider agree with each other, so "the other two" is a single answer.
+        qs = [q for q, rr in (("stance", r), ("stance4", r6)) if rr[f"oa_{q}"] != "" and rr[f"d1_{q}"] == rr[f"pplx_{q}"] and rr[f"oa_{q}"] != rr[f"d1_{q}"]]
+        if qs and i not in hand_ids:
+            cands.append({"id": i, "username": r["username"], "url": r["url"], "questions": " ".join(qs),
+                          "d1_stance": r["d1_stance"], "pplx_stance": r["pplx_stance"], "oa_stance": r["oa_stance"], "oa_conf": r["oa_conf"],
+                          "d1_stance4": r6["d1_stance4"], "pplx_stance4": r6["pplx_stance4"], "oa_stance4": r6["oa_stance4"], "oa_conf4": r6["oa_conf4"], "text": r["text"]})
+    calls = [x for f in raw_oa for x in f]
+    ok = [x for x in calls if "answers" in x]
+    lat = sorted(x["latency_s"] for x in ok)
+    run = {"calls": len(calls), "answered": len(ok), "failed": len(calls) - len(ok),
+           "gateway_cost_usd": round(sum(float(x.get("cost") or 0) for x in ok), 6),
+           "market_cost_usd": round(sum(float(x.get("market_cost") or 0) for x in ok), 6),
+           "latency_total_s": round(sum(lat), 1), "latency_median_s": lat[len(lat) // 2], "latency_p90_s": lat[int(len(lat) * 0.9)]}
+    o, d, x = scores["oa"], scores["d1"], scores["pplx"]
+    ag = {(a["question"], a["pair"]): a for a in agreement}
+    st, st4 = lambda pr: ag[("stance", pr)], lambda pr: ag[("stance4", pr)]
+    oa_dist = Counter(r["oa_stance"] for r in rows5 if r["oa_stance"])
+    oa_dist4 = Counter(r["oa_stance4"] for r in rows6)
+    block = {
+        "id": "oa", "key": R5_EXTRA["oa"], "name": R5_EXTRA_NAMES["oa"],
+        "note": (f"A third decision model, OpenAI's GPT-6 Luna Decisions, was run afterwards on exactly the same {len(ids)} posts with the same questions. "
+                 f"{len(missing)} round-5 calls on the core questions failed on every retry ({', '.join('@' + m['username'] for m in missing)}), so its round-5 stance covers {len(ids) - len(missing)} posts; its round-6 stance covers all {len(ids)}."),
+        "comparability": (f"Its hand-label scores are not comparable with the other two. The {len(allh)} hand labels were drawn from posts where d1-ultra and Decider disagreed, so on each of them at least one of those two is wrong by construction; "
+                          "GPT-6 Luna was not part of that selection. Read its hand-label numbers as a look at the hard cases, not as a ranking."),
+        "agreement_text": (f"On round-5 stance GPT-6 Luna agrees with d1-ultra on {st('d1/oa')['agree']} of {st('d1/oa')['n']} posts (kappa {st('d1/oa')['kappa']}) and with Decider on {st('pplx/oa')['agree']} of {st('pplx/oa')['n']} (kappa {st('pplx/oa')['kappa']}); d1-ultra and Decider agree on {st('d1/pplx')['agree']} of {st('d1/pplx')['n']} (kappa {st('d1/pplx')['kappa']}). "
+                           f"With the reporting option the figures are {st4('d1/oa')['agree']}, {st4('pplx/oa')['agree']} and {st4('d1/pplx')['agree']} of {st4('d1/pplx')['n']} (kappa {st4('d1/oa')['kappa']}, {st4('pplx/oa')['kappa']} and {st4('d1/pplx')['kappa']})."),
+        "hand_text": (f"On the {o['r5_labelled']} round-5 posts Jesse Armand labelled, GPT-6 Luna matched {o['r5_hand_correct']} (d1-ultra {d['r5_hand_correct']}, Decider {x['r5_hand_correct']}). "
+                      f"Across all {o['n_all']} hand labels, four-way with skips as reporting, it matched {o['combined_all']} (Decider {x['combined_all']}, d1-ultra {d['combined_all']}), and {o['combined_stance']} of the {o['n_stance']} he did not skip (Decider {x['combined_stance']}, d1-ultra {d['combined_stance']}). "
+                      f"It also misses both substrate rejects, and it found {o['reporting_recall']} of the {o['reporting_n']} reporting posts, calling {o['reporting_called_reject']} of them Reject."),
+        "candidates_text": (f"{len(cands)} posts without a hand label have GPT-6 Luna disagreeing with both other models on stance, where d1-ultra and Decider agree with each other. They are the next posts to label by hand."),
+        "stance": {k: {"n": oa_dist.get(k, 0), "pct": pct(oa_dist.get(k, 0), len(ids) - len(missing))} for k in R5_STANCES},
+        "stance4": {k: {"n": oa_dist4.get(k, 0), "pct": pct(oa_dist4.get(k, 0), len(ids))} for k in R6_STANCES},
+        "missing": missing, "scores": scores, "confusion": confusion, "agreement": agreement,
+        "candidates": [{k: c[k] for k in ("id", "username", "url", "questions", "d1_stance", "pplx_stance", "oa_stance", "d1_stance4", "pplx_stance4", "oa_stance4")} for c in cands],
+        "run": run,
+    }
+    comparison = []
+    for k in R5_ALL:
+        sc = scores[k]
+        for metric, val, den in [("r5_hand_correct", sc["r5_hand_correct"], sc["r5_labelled"]), ("r6_hand_correct_17", sc["r6_hand_correct_17"], len(hand5)),
+                                 ("r6_new_correct", sc["r6_new_correct"], sum(h["hand"] != "skip" for h in hand6)), ("r6_new_skips_reporting", sc["r6_new_skips_reporting"], sum(h["hand"] == "skip" for h in hand6)),
+                                 ("combined_all", sc["combined_all"], sc["n_all"]), ("combined_stance", sc["combined_stance"], sc["n_stance"]),
+                                 ("reporting_recall", sc["reporting_recall"], sc["reporting_n"]), ("reporting_called_reject", sc["reporting_called_reject"], sc["reporting_n"])]:
+            comparison.append({"model": R5_ALL[k], "metric": metric, "correct": val, "n": den, "pct": pct(val, den), "comparable": "yes" if sc["comparable"] else "no (hand labels drawn from d1-ultra/Decider disagreements)"})
+        for t in R6_STANCES:
+            for p_ in R6_STANCES:
+                comparison.append({"model": R5_ALL[k], "metric": f"confusion_hand_{t}_model_{p_}", "correct": confusion[k][t][p_], "n": sum(confusion[k][t].values()), "pct": pct(confusion[k][t][p_], sum(confusion[k][t].values())) if sum(confusion[k][t].values()) else 0.0, "comparable": "yes" if sc["comparable"] else "no (hand labels drawn from d1-ultra/Decider disagreements)"})
+    if hand_oa:
+        block["outlier_check"], extra = outlier_check(by, by6, hand_oa, cands, scores, allh, nonskip)
+        comparison += extra
+        block["candidates_text"] = (f"{len(cands)} posts without a hand label had GPT-6 Luna disagreeing with both other models on stance, where d1-ultra and Decider agree with each other. "
+                                    "Jesse Armand has since labelled them; the scores are in the next table.")
+    return block, agreement, cands, comparison
+
+
+def outlier_check(by, by6, hand_oa, cands, scores, allh, nonskip) -> tuple[dict, list]:
+    """Jesse's labels on the posts picked because GPT-6 Luna disagreed with both other models: biased against it, as the first 26 were against the other two."""
+    assert [h["id"] for h in hand_oa] == [c["id"] for c in cands], "the new hand labels are exactly the candidates"
+    assert not ({h["id"] for h in hand_oa} & {i for i, _ in allh}), "no overlap with the first 26 hand labels"
+    hv = lambda h: "reporting" if h["hand"] == "skip" else h["hand"]
+    S3 = set(R5_STANCES)
+    posts, per = [], {}
+    for h in hand_oa:
+        r, r6 = by[h["id"]], by6[h["id"]]
+        posts.append({"n": int(h["n"]), "id": h["id"], "username": r["username"], "url": r["url"], "hand": h["hand"], "note": h["note"],
+                      **{f"{k}_stance": r[f"{k}_stance"] for k in R5_ALL}, **{f"{k}_stance4": r6[f"{k}_stance4"] for k in R5_ALL}})
+    r5_scorable = [h for h in hand_oa if h["hand"] in S3]
+    lab = [h for h in hand_oa if h["hand"] != "skip"]
+    for k in R5_ALL:
+        per[k] = {
+            "r5_correct": sum(by[h["id"]][f"{k}_stance"] == h["hand"] for h in r5_scorable), "r5_n": len(r5_scorable),
+            "r6_correct": sum(by6[h["id"]][f"{k}_stance4"] == h["hand"] for h in lab), "r6_n": len(lab),
+            "r6_correct_all": sum(by6[h["id"]][f"{k}_stance4"] == hv(h) for h in hand_oa), "r6_n_all": len(hand_oa),
+            "combined_all": scores[k]["combined_all"] + sum(by6[h["id"]][f"{k}_stance4"] == hv(h) for h in hand_oa), "combined_n_all": len(allh) + len(hand_oa),
+            "combined_stance": scores[k]["combined_stance"] + sum(by6[h["id"]][f"{k}_stance4"] == h["hand"] for h in lab), "combined_n_stance": len(nonskip) + len(lab),
+            # Changed stance between the three-way and four-way runs, not counting moves to the new reporting option.
+            "unstable": [by[h["id"]]["username"] for h in hand_oa if by6[h["id"]][f"{k}_stance4"] != "reporting" and by[h["id"]][f"{k}_stance"] != by6[h["id"]][f"{k}_stance4"]],
+        }
+    o, d, x = per["oa"], per["d1"], per["pplx"]
+    no5 = [h for h in hand_oa if h["hand"] not in S3]
+    ins = [f"@{p_['username']} ({p_['oa_stance']} to {p_['oa_stance4']})" for p_ in posts if p_["username"] in o["unstable"]]
+    block = {
+        "n": len(hand_oa), "posts": posts, "models": [{"id": k, "name": R5_ALL_NAMES[k], **per[k]} for k in R5_ALL],
+        "note": (f"Jesse Armand labelled the {len(hand_oa)} posts picked because GPT-6 Luna disagreed with both other models. "
+                 "This set is biased against GPT-6 Luna, just as the first 26 are biased against d1-ultra and Decider."),
+        "text": (f"Round 6 (four-way), on the {o['r6_n']} he did not skip: d1-ultra {d['r6_correct']} of {o['r6_n']}, Decider {x['r6_correct']} of {o['r6_n']}, GPT-6 Luna {o['r6_correct']} of {o['r6_n']}. "
+                 f"Round 5 (three-way), on the {o['r5_n']} labelled Reject or Curious: d1-ultra {d['r5_correct']} of {o['r5_n']}, Decider {x['r5_correct']} of {o['r5_n']}, GPT-6 Luna {o['r5_correct']} of {o['r5_n']}. "
+                 f"{' and '.join('@' + by[h['id']]['username'] + ' (' + ('skipped' if h['hand'] == 'skip' else h['hand']) + ')' for h in no5)} {'have' if len(no5) > 1 else 'has'} no matching three-way option and {'are' if len(no5) > 1 else 'is'} left out of the round-5 count."),
+        "instability": (f"GPT-6 Luna changed its stance between the round-5 and round-6 runs on {len(o['unstable'])} of these {len(hand_oa)} posts: {', '.join(ins)}. "
+                        f"d1-ultra changed on {len(d['unstable'])} and Decider on {len(x['unstable'])}, not counting moves to the new reporting option."),
+        "combined": (f"All {o['combined_n_all']} hand labels together, four-way with skips as reporting: Decider {x['combined_all']} of {o['combined_n_all']}, d1-ultra {d['combined_all']}, GPT-6 Luna {o['combined_all']}; "
+                     f"on the {o['combined_n_stance']} he did not skip: Decider {x['combined_stance']} of {o['combined_n_stance']}, GPT-6 Luna {o['combined_stance']}, d1-ultra {d['combined_stance']}."),
+        "caveat": ("Neither subset is a random sample. The first 26 were picked where d1-ultra and Decider disagreed, and these 6 where GPT-6 Luna disagreed with both of them, "
+                   "so the combined count adds two differently biased sets and is not an accuracy figure for any model."),
+    }
+    extra = []
+    for k in R5_ALL:
+        q = per[k]
+        for metric, val, den in [("outlier_r5_correct", q["r5_correct"], q["r5_n"]), ("outlier_r6_correct", q["r6_correct"], q["r6_n"]), ("outlier_r6_correct_all", q["r6_correct_all"], q["r6_n_all"]),
+                                 ("combined32_all", q["combined_all"], q["combined_n_all"]), ("combined32_stance", q["combined_stance"], q["combined_n_stance"])]:
+            extra.append({"model": R5_ALL[k], "metric": metric, "correct": val, "n": den, "pct": pct(val, den),
+                          "comparable": "no (outlier set picked where GPT-6 Luna disagreed with both others)" if metric.startswith("outlier") else "no (two differently biased subsets combined)"})
+    return block, extra
+
+
+def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost6, third=None) -> dict:
     """Round 5 (two models, 3-way stance + framing + claims_found) and round 6 (4-way stance). Every number is recomputed here."""
     n = len(rows5)
     by = {r["id"]: r for r in rows5}
@@ -565,7 +738,7 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
     labelled = [h for h in hand if h["hand"] != "skip"]
     skips = [h for h in hand if h["hand"] == "skip"]
     rejects = [h for h in labelled if h["hand"] == "reject"]
-    claims = {k: sorted(r["username"] for r in rows5 if float(r[f"{k}_claims_found"]) >= 0.5) for k in R5_MODELS}
+    claims = {k: sorted(r["username"] for r in rows5 if float(r[f"{k}_claims_found"]) >= 0.5) for k in R5_ALL}
     flagged = sorted(set(claims["d1"]) | set(claims["pplx"]))
     assert set(flagged) == set(R5_CLAIMS_READING), f"claims_found hits changed: {flagged}"
     mis = [u for u in flagged if R5_CLAIMS_READING[u] == "misattribution"]
@@ -574,14 +747,15 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
     for i, v in h6.items():
         assert (by6[i]["hand"] or None) == v, f"round 6 hand drifted for {i}"
     def per_model(k):
-        on = sum(float(r[f"{k}_on_topic"]) >= 0.5 for r in rows5)
+        ans = [r for r in rows5 if r[f"{k}_stance"] != ""]  # the OpenAI model failed the core group on 2 posts
+        on = sum(float(r[f"{k}_on_topic"]) >= 0.5 for r in ans)
         pol = sum(float(r[f"{k}_policy"]) >= 0.5 for r in rows5)
         return {
-            "key": R5_MODELS[k], "name": R5_MODEL_NAMES[k],
-            "stance": dist(rows5, f"{k}_stance", R5_STANCES),
-            "by_flashpoint": {fp: dist([r for r in rows5 if r["flashpoint"] == fp], f"{k}_stance", R5_STANCES) for fp in fps},
+            "id": k, "key": R5_ALL[k], "name": R5_ALL_NAMES[k], "answered": len(ans), "hand_comparable": k in R5_MODELS,
+            "stance": dist(ans, f"{k}_stance", R5_STANCES),
+            "by_flashpoint": {fp: dist([r for r in ans if r["flashpoint"] == fp], f"{k}_stance", R5_STANCES) for fp in fps},
             "frame": dist(rows5, f"{k}_frame", R4_FRAMES),
-            "on_topic": {"yes": on, "pct": pct(on, n)},
+            "on_topic": {"yes": on, "pct": pct(on, len(ans))},
             "policy_politics": {"yes": pol, "pct": pct(pol, n)},
             "claims_found": claims[k],
             "hand_correct": sum(by[h["id"]][f"{k}_stance"] == h["hand"] for h in labelled),
@@ -598,10 +772,10 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
                 "hand_curious_to_reporting": sorted(by6[i]["username"] for i, v in h6.items() if v == "curious" and by6[i][f"{k}_stance4"] == "reporting"),
             },
         }
-    models = [per_model(k) for k in R5_MODELS]
-    d1, px = models
-    assert not any(v == "reject" for m in models for v in m["rejects_called"]), "hand_check text says neither model called a reject Reject"
-    assert all(v == "serious" for m in models for v in m["round6"]["rejects_called"]), "round6 text says both rejects are called Serious"
+    models = [per_model(k) for k in R5_ALL]
+    d1, px = models[0], models[1]
+    assert not any(v == "reject" for m in (d1, px) for v in m["rejects_called"]), "hand_check text says neither model called a reject Reject"
+    assert all(v == "serious" for m in (d1, px) for v in m["round6"]["rejects_called"]), "round6 text says both rejects are called Serious"
     CAP = str.capitalize
     # Round 6 hand check: Jesse's labels on the round-6 disagreements that round 5 had not already hand-labelled.
     assert {h["id"] for h in hand6} == {i for i, r in by6.items() if r["d1_stance4"] != r["pplx_stance4"]} - set(h6), "round-6 hand labels are the new round-6 disagreements"
@@ -619,7 +793,7 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
             "combined_all": sum(by6[i][f"{k}_stance4"] == v for i, v in h6.items()) + sum(st(h) == hv(h) for h in hand6),
             "combined_stance": sum(by6[i][f"{k}_stance4"] == v for i, v in h6.items() if v != "reporting") + sum(st(h) == h["hand"] for h in lab6),
         }
-    s6 = {k: per6(k) for k in R5_MODELS}
+    s6 = {k: per6(k) for k in R5_ALL}
     n_all, n_stance = len(h6) + len(hand6), sum(v != "reporting" for v in h6.values()) + len(lab6)
     d1rep = sorted((m["conf"] for m in s6["d1"]["misses"] if m["hand"] == "reporting"), reverse=True)
     assert all(m["model"] == "reject" for m in s6["d1"]["misses"] if m["hand"] == "reporting"), "text says d1 called the reporting posts Reject"
@@ -632,7 +806,7 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
     hand6_block = {
         "n": len(hand6), "labelled": len(lab6), "skipped": len(skip6), "n_all": n_all, "n_stance": n_stance,
         "hand": dict(sorted(Counter(h["hand"] for h in hand6).items())),
-        "models": [{"id": k, "name": R5_MODEL_NAMES[k], **s6[k]} for k in R5_MODELS], "leans_serious": lean_u,
+        "models": [{"id": k, "name": R5_ALL_NAMES[k], "hand_comparable": k in R5_MODELS, **s6[k]} for k in R5_ALL], "leans_serious": lean_u,
         "note": f"Round 6 left {len(hand6)} new disagreements, on posts round 5 had not hand-labelled. Jesse Armand labelled them too: {len(lab6)} with a label and {len(skip6)} skipped. Like round 5, this is the hard subset, and it is small.",
         "text": (f"On the {len(lab6)} he did not skip, Decider matched {s6['pplx']['stance_correct']} and d1-ultra {s6['d1']['stance_correct']}. "
                  f"Decider's misses: {px_miss}. "
@@ -668,8 +842,9 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
         "claims_found": {
             "question": "Does the post say or imply that Anthropic (or its research) found or showed that Claude is conscious or has signs of consciousness?",
             "flagged": flagged, "misattributions": mis, "matches_paper": match,
-            "text": (f"The two models flagged {len(flagged)} posts between them. Read by hand, {len(mis)} are clear misattributions ({', '.join('@' + u for u in mis)} say Anthropic found signs of consciousness in Claude); "
-                     f"the other {len(match)} describe the workspace in terms close to the paper's own claim about conscious access."),
+            "text": (f"d1-ultra and Decider flagged {len(flagged)} posts between them. Read by hand, {len(mis)} are clear misattributions ({', '.join('@' + u for u in mis)} say Anthropic found signs of consciousness in Claude); "
+                     f"the other {len(match)} describe the workspace in terms close to the paper's own claim about conscious access."
+                     + (f" GPT-6 Luna flagged the same {len(flagged)}." if set(claims["oa"]) == set(flagged) else f" GPT-6 Luna flagged {len(claims['oa'])}: {', '.join('@' + u for u in claims['oa'])}.")),
         },
         "round6": {
             "question": "Stance with a fourth option: reporting = only summarizes or relays news or research without giving their own view.",
@@ -679,13 +854,16 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
                        f"{len(both_curious_to_reporting)} enthusiastic research summaries that Jesse Armand labelled Curious ({', '.join('@' + u for u in both_curious_to_reporting)}) went to reporting with both models."),
         },
         "hand6": hand6_block,
+        "third_model": third,
         "key_accounts": [{"username": u, "blurb": b, "url": url, "followers": next((p.get("followers") for p in posts5 if p["id"] == url.split("/")[-1]), None),
-                          "d1": by[url.split("/")[-1]]["d1_stance"], "pplx": by[url.split("/")[-1]]["pplx_stance"]} for u, b, url in KEY_ACCOUNTS_R5],
-        "cost_usd": {"round5": round(cost5, 5), "round6": round(cost6, 5)},
+                          "d1": by[url.split("/")[-1]]["d1_stance"], "pplx": by[url.split("/")[-1]]["pplx_stance"], "oa": by[url.split("/")[-1]]["oa_stance"]} for u, b, url in KEY_ACCOUNTS_R5],
+        "cost_usd": {"round5": round(cost5, 5), "round6": round(cost6, 5),
+                     "openai_gateway": third["run"]["gateway_cost_usd"] if third else None, "openai_market": third["run"]["market_cost_usd"] if third else None},
         "caveats": [
             f"{n_all} hand labels from one labeller ({len(hand5)} in round 5, {len(hand6)} in round 6), on the posts where the models disagreed: the hard cases. They say nothing about accuracy on the posts where the models agreed.",
             "Round 5 is a relevancy sample around two publications, not a draw from X; the Anthropic-paper posts date from July.",
             "Round 5 has no Jev labels, so it is not in the Jev hybrid counts on this page.",
+            "GPT-6 Luna Decisions was added after the hand labels were drawn from the other two models' disagreements, so its hand-label scores cannot be ranked against theirs.",
         ],
     }
 
@@ -771,6 +949,7 @@ def main() -> None:
     hand5 = list(csv.DictReader(open(r5_dir / "hand_labels_r5.csv", newline="", encoding="utf-8")))
     rows6 = list(csv.DictReader(open(r6_dir / "labels_r6.csv", newline="", encoding="utf-8")))
     hand6 = list(csv.DictReader(open(r6_dir / "hand_labels_r6.csv", newline="", encoding="utf-8")))
+    hand_oa = list(csv.DictReader(open(r6_dir / "hand_labels_r5_6_openai.csv", newline="", encoding="utf-8")))
     tsao_fu = json.load(open(r5_dir / "tsao_followup.json", encoding="utf-8"))
     for q in LEAD["followup_quotes"]:
         assert q in tsao_fu["text"], f"Tsao quote not in her post: {q}"
@@ -782,6 +961,9 @@ def main() -> None:
         return sum(float(json.loads(l).get("cost") or 0) for f in files for l in open(d / "raw" / f) if '"answers"' in l)
     cost5 = raw_cost(r5_dir, [f"{g}_{m.replace('/', '_')}.jsonl" for g in ["core", "framing", "attribution"] for m in R5_MODELS.values()])
     cost6 = raw_cost(r6_dir, [f"stance4_{m.replace('/', '_')}.jsonl" for m in R5_MODELS.values()])
+    oa_slug = R5_EXTRA["oa"].replace("/", "_")
+    raw_oa = [[json.loads(l) for l in open(d / "raw" / f)] for d, f in [(r5_dir, f"{g}_{oa_slug}.jsonl") for g in ["core", "framing", "attribution"]] + [(r6_dir, f"stance4_{oa_slug}.jsonl")]]
+    third, agreement56, cands56, comparison56 = third_model_block(rows5, rows6, hand5, hand6, raw_oa, hand_oa)
     users1 = usernames
     users2 = {p["username"] for p in posts2}
     users3 = {p["username"] for p in posts3}
@@ -859,7 +1041,7 @@ def main() -> None:
             "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
             "notes": [
                 f"Five collection rounds: round 1 ({len(posts)} posts, 24 Sep – 8 Oct), round 2 ({len(posts2)} posts, 8 – 9 Oct), round 3 ({len(posts3)} posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct), round 4 ({len(posts4)} posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts) and round 5 ({len(posts5)} posts: the Nature commentary of 19 – 20 Oct and posts on Anthropic's July workspace paper). Round 6 re-labelled the round-5 posts and added none. Clusters, the pair test and the confidence curve use round 1 only.",
-                "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev.",
+                "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev; OpenAI's GPT-6 Luna Decisions was added later on the same posts and questions.",
                 "One @grok reply slipped through and is excluded from author counts.",
                 "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
                 "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.",
@@ -961,7 +1143,7 @@ def main() -> None:
                       "note": f"{fp4.get('tsao_gwt', 0)} posts in round 4 react to the preprint; jev-1.14.0 judged {tsao_off['typesafe-ai/jev-1.14.0']['flagged_off_topic']} of them not to be about whether machines can be conscious."},
         "workspace_paper": {**WORKSPACE, "posts": sum(p["flashpoint"] == "anthropic_gwt" for p in posts5)},
         "nature_comment": {**NATURE, "posts": sum(p["flashpoint"] in ("nature_search", "seth_replies", "nature_quotes", "seth_quotes") for p in posts5)},
-        "round5": r5_block(rows5, hand5, rows6, hand6, posts5, users5, len(users5 & ((users1 | users2 | users3 | users4) - {"grok"})), cost5, cost6),
+        "round5": r5_block(rows5, hand5, rows6, hand6, posts5, users5, len(users5 & ((users1 | users2 | users3 | users4) - {"grok"})), cost5, cost6, third),
         "model_comparison": model_comparison_block(cmp_, tsao_off, sum(v == "R" for v in hand.values())),
         "key_accounts_round4": {
             "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",
@@ -1012,7 +1194,7 @@ def main() -> None:
                  "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4),
                  "round4_jev_usd": round(jev4_cost, 4), "round4_model_comparison_usd": {m["model"]: m["cost_usd"] for m in cmp_["summary"]},
                  "round5_usd": round(cost5, 5), "round6_usd": round(cost6, 5)},
-        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/tsao_followup.json", "data/labels_r6.csv", "data/questions_r6.json", "data/hand_labels_r6.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/tsao_followup.json", "data/labels_r6.csv", "data/questions_r6.json", "data/hand_labels_r6.csv", "data/model_agreement_r5_6.csv", "data/model_comparison_r5_6.csv", "data/hand_label_candidates_r5_6.csv", "data/hand_labels_r5_6_openai.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -1026,8 +1208,15 @@ def main() -> None:
         shutil.copyfile(SRC / "round4" / name, OUT / name)
     for name in ["posts_r5.jsonl", "dropped_r5.jsonl", "labels_r5.csv", "hand_labels_r5.csv", "questions_r5.json", "tsao_followup.json"]:
         shutil.copyfile(SRC / "round5" / name, OUT / name)
-    for name in ["labels_r6.csv", "questions_r6.json", "hand_labels_r6.csv"]:
+    for name in ["labels_r6.csv", "questions_r6.json", "hand_labels_r6.csv", "hand_labels_r5_6_openai.csv"]:
         shutil.copyfile(SRC / "round6" / name, OUT / name)
+    # Three-model outputs for rounds 5 and 6 (generated here; test/round5-6.test.ts recomputes them from the label CSVs).
+    def write(name, rows_):
+        with open(OUT / name, "w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(rows_[0]), lineterminator="\n"); w.writeheader(); w.writerows(rows_)
+    write("model_agreement_r5_6.csv", [{**a, "kappa": "" if a["kappa"] is None else a["kappa"]} for a in agreement56])
+    write("model_comparison_r5_6.csv", comparison56)
+    write("hand_label_candidates_r5_6.csv", cands56)
     print(f"wrote {OUT/'discourse.json'} ({len(posts)} posts, {len(usernames)} authors, hand n={n_hand})")
 
 
