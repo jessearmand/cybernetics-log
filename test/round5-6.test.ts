@@ -354,8 +354,11 @@ test("third model: hand-label candidates are exactly the unlabelled posts where 
     .filter((r) => !labelledIds.has(r.id!))
     .filter((r) => {
       const q6 = by6.get(r.id!)!;
-      const off5 = r.oa_stance !== "" && r.oa_stance !== r.d1_stance && r.oa_stance !== r.pplx_stance;
-      const off6 = q6.oa_stance4 !== q6.d1_stance4 && q6.oa_stance4 !== q6.pplx_stance4;
+      const off5 = r.oa_stance !== "" && r.d1_stance === r.pplx_stance && r.oa_stance !== r.d1_stance;
+      const off6 = q6.d1_stance4 === q6.pplx_stance4 && q6.oa_stance4 !== q6.d1_stance4;
+      // Every unlabelled post has d1-ultra and Decider agreeing, so this equals "disagrees with both".
+      assert.equal(r.d1_stance, r.pplx_stance);
+      assert.equal(q6.d1_stance4, q6.pplx_stance4);
       return off5 || off6;
     })
     .map((r) => r.id!);

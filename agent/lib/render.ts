@@ -392,7 +392,7 @@ function thirdModelBlock(r: Discourse["round5"]): string {
   const PN: Record<string, string> = { "d1/pplx": "d1-ultra · Decider", "d1/oa": "d1-ultra · GPT-6 Luna", "pplx/oa": "Decider · GPT-6 Luna" };
   const qs = [...new Set(t.agreement.map((a) => a.question))];
   const rows = qs
-    .map((q) => `<tr><th scope="row">${esc(Q56[q] ?? q)}</th>${pairs.map((pr) => { const a = t.agreement.find((x) => x.question === q && x.pair === pr)!; return `<td>${a.agree} of ${a.n}${a.kappa == null ? "" : `<br><span class="fol">κ ${a.kappa}</span>`}</td>`; }).join("")}</tr>`)
+    .map((q) => `<tr><th scope="row">${esc(Q56[q] ?? q)}</th>${pairs.map((pr) => { const a = t.agreement.find((x) => x.question === q && x.pair === pr); if (!a) return "<td>—</td>"; return `<td>${a.agree} of ${a.n}${a.kappa == null ? "" : `<br><span class="fol">κ ${a.kappa}</span>`}</td>`; }).join("")}</tr>`)
     .join("");
   const disagreement = (c: (typeof t.candidates)[number], q: string) => {
     const r6 = q === "stance4";

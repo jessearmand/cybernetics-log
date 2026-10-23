@@ -558,6 +558,8 @@ def model_comparison_block(cmp_, tsao_off, hand_reject_n: int) -> dict:
 def kappa(a: list, b: list) -> float | None:
     """Cohen's kappa for two raters over the same items; None when chance agreement is total."""
     n = len(a)
+    if n == 0:
+        return None
     po = sum(x == y for x, y in zip(a, b)) / n
     ca, cb = Counter(a), Counter(b)
     pe = sum(ca[k] * cb[k] for k in set(ca) | set(cb)) / (n * n)
@@ -612,7 +614,8 @@ def third_model_block(rows5, rows6, hand5, hand6, raw_oa) -> tuple[dict, list, l
     cands = []
     for i in ids:
         r, r6 = by[i], by6[i]
-        qs = [q for q, rr in (("stance", r), ("stance4", r6)) if rr[f"oa_{q}"] != "" and rr[f"oa_{q}"] not in (rr[f"d1_{q}"], rr[f"pplx_{q}"])]
+        # Only where d1-ultra and Decider agree with each other, so "the other two" is a single answer.
+        qs = [q for q, rr in (("stance", r), ("stance4", r6)) if rr[f"oa_{q}"] != "" and rr[f"d1_{q}"] == rr[f"pplx_{q}"] and rr[f"oa_{q}"] != rr[f"d1_{q}"]]
         if qs and i not in hand_ids:
             cands.append({"id": i, "username": r["username"], "url": r["url"], "questions": " ".join(qs),
                           "d1_stance": r["d1_stance"], "pplx_stance": r["pplx_stance"], "oa_stance": r["oa_stance"], "oa_conf": r["oa_conf"],
