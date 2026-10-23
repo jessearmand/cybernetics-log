@@ -68,7 +68,8 @@ data/
   labels_r6.csv                 round 6: four-way stance (with reporting) on the round-5 posts (+ questions_r6.json)
   model_agreement_r5_6.csv      pairwise agreement and Cohen's kappa between the three round 5/6 models, per question
   model_comparison_r5_6.csv     hand-label scores and four-way confusion per model (GPT-6 Luna marked not comparable)
-  hand_label_candidates_r5_6.csv  unlabelled posts where GPT-6 Luna disagrees with both other models (next to hand-label)
+  hand_label_candidates_r5_6.csv  posts where GPT-6 Luna disagreed with both other models (the selection for the next file)
+  hand_labels_r5_6_openai.csv   6 hand labels on those posts (biased against GPT-6 Luna, as the first 26 are against the other two)
   round5_6.md                   rounds 5 and 6 write-up, checked against the CSVs by test/round5-6.test.ts
   gated_stance_r4b.md           gated stance-rule experiment (not used on the page) + gated_stance_r4b.csv, questions_r4b.json
   render-instruction.md         default render instruction

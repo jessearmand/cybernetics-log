@@ -403,7 +403,30 @@ function thirdModelBlock(r: Discourse["round5"]): string {
 <p>${esc(t.agreement_text)}</p>
 <details class="fold"><summary><h3 class="flabel">Agreement on every question</h3><span class="fcount">${qs.length} questions</span></summary><div class="tablewrap"><table class="methods agree"><thead><tr><th>Question</th>${pairs.map((pr) => `<th>${esc(PN[pr]!)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
 <p class="fine">Posts on which each pair gives the same answer, with Cohen's kappa (κ); yes/no questions are read at P ≥ 0.5. A kappa of 0 with high agreement means one model almost always gives the same answer.</p></details><p>${esc(t.hand_text)}</p><p>${esc(t.candidates_text)}</p>
-${fold("Posts to hand-label next", cands, { list: "r3acc", plain: true })}`;
+${fold("Posts picked for hand-labelling", cands, { list: "r3acc", plain: true })}
+${outlierBlock(t.outlier_check)}`;
+}
+
+/** Jesse's labels on the posts where GPT-6 Luna disagreed with both other models: their own table, biased against it. */
+function outlierBlock(o: Discourse["round5"]["third_model"]["outlier_check"] | undefined): string {
+  if (!o) return "";
+  const M = [["d1", "d1-ultra"], ["pplx", "Decider"], ["oa", "GPT-6 Luna"]] as const;
+  const ans = (p: (typeof o.posts)[number], k: string, q: "stance" | "stance4") => {
+    const v = (p as unknown as Record<string, string>)[`${k}_${q}`] ?? "";
+    const hit = q === "stance4" ? v === (p.hand === "skip" ? "reporting" : p.hand) : v === p.hand;
+    return `<span class="${hit ? "hit" : "miss"}">${esc(CAP(v))}</span>`;
+  };
+  const rows = o.posts
+    .map((p) => `<tr><th scope="row">${link(p.url, `@${esc(p.username)}`)}</th><td><b>${esc(CAP(p.hand))}</b>${p.note ? `<br><span class="fol">${esc(p.note)}</span>` : ""}</td>${M.map(([k]) => `<td>${ans(p, k, "stance")} → ${ans(p, k, "stance4")}</td>`).join("")}</tr>`)
+    .join("");
+  const score = o.models
+    .map((m) => `<tr><th scope="row">${esc(m.name)}</th><td>${m.r5_correct} of ${m.r5_n}</td><td>${m.r6_correct} of ${m.r6_n}</td><td>${m.combined_all} of ${m.combined_n_all}</td><td>${m.combined_stance} of ${m.combined_n_stance}</td></tr>`)
+    .join("");
+  return `<h3>Hand check on GPT-6 Luna's outliers</h3><p class="studynote"><b>Biased against GPT-6 Luna:</b> ${esc(o.note)}</p>
+<p>${esc(o.text)}</p><p>${esc(o.instability)}</p><p>${esc(o.combined)}</p><p class="fine">${esc(o.caveat)}</p>
+<details class="fold"><summary><h3 class="flabel">The ${o.n} outlier posts, post by post</h3><span class="fcount">${o.n} posts</span></summary>
+<p class="fine">Picked because GPT-6 Luna disagreed with both other models (biased against it). Each cell: round 5 three-way → round 6 four-way; matches are bold.</p><div class="tablewrap"><table class="methods outl"><thead><tr><th>Post</th><th>Hand</th>${M.map(([, n]) => `<th>${esc(n)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
+<p class="fine">Scores on the outlier set, and on all ${o.models[0]!.combined_n_all} hand labels combined (two differently biased subsets, not a random sample).</p><div class="tablewrap"><table class="methods outl"><thead><tr><th>Model</th><th>Round 5, three-way</th><th>Round 6, four-way</th><th>All ${o.models[0]!.combined_n_all}, skips as reporting</th><th>All not skipped</th></tr></thead><tbody>${score}</tbody></table></div></details>`;
 }
 
 function round5Section(d: Discourse, e: Editorial): string {
@@ -566,7 +589,7 @@ details.fold>summary::before{content:"";flex:none;width:8px;height:8px;margin:0 
 details.fold[open]>summary::before{transform:rotate(45deg)}
 details.fold>summary:hover .flabel{color:var(--accent)}details.fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
 details.fold .flabel{margin:0;font-size:inherit;font-weight:inherit;line-height:inherit;color:inherit}details.fold .fcount{margin-left:auto;flex:none;color:var(--muted);font-size:12.5px;font-weight:400}
-details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}details.fold>.tablewrap,details.fold>p{padding:0 14px}table.agree th,table.agree td{padding:8px 6px}
+details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}details.fold>.tablewrap,details.fold>p{padding:0 14px}table.agree th,table.agree td{padding:8px 6px}table.outl th,table.outl td{padding:8px 6px}.hit{font-weight:700;color:var(--ink)}.miss{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){details.fold>summary::before{transition:none}}
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
 .cite{font-size:14px;color:var(--muted)}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-23T12:48:16+00:00",
+  "generated_at": "2026-10-23T13:26:59+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
     "posts": 577,
@@ -2695,7 +2695,7 @@
       "comparability": "Its hand-label scores are not comparable with the other two. The 26 hand labels were drawn from posts where d1-ultra and Decider disagreed, so on each of them at least one of those two is wrong by construction; GPT-6 Luna was not part of that selection. Read its hand-label numbers as a look at the hard cases, not as a ranking.",
       "agreement_text": "On round-5 stance GPT-6 Luna agrees with d1-ultra on 51 of 67 posts (kappa 0.628) and with Decider on 48 of 67 (kappa 0.538); d1-ultra and Decider agree on 52 of 69 (kappa 0.61). With the reporting option the figures are 56, 54 and 56 of 69 (kappa 0.736, 0.691 and 0.728).",
       "hand_text": "On the 10 round-5 posts Jesse Armand labelled, GPT-6 Luna matched 6 (d1-ultra 4, Decider 3). Across all 26 hand labels, four-way with skips as reporting, it matched 12 (Decider 16, d1-ultra 10), and 6 of the 16 he did not skip (Decider 7, d1-ultra 3). It also misses both substrate rejects, and it found 6 of the 12 reporting posts, calling 5 of them Reject.",
-      "candidates_text": "6 posts without a hand label have GPT-6 Luna disagreeing with both other models on stance, where d1-ultra and Decider agree with each other. They are the next posts to label by hand.",
+      "candidates_text": "6 posts without a hand label had GPT-6 Luna disagreeing with both other models on stance, where d1-ultra and Decider agree with each other. Jesse Armand has since labelled them; the scores are in the next table.",
       "stance": {
         "reject": {
           "n": 21,
@@ -3139,6 +3139,152 @@
         "latency_total_s": 129.3,
         "latency_median_s": 0.447,
         "latency_p90_s": 0.55
+      },
+      "outlier_check": {
+        "n": 6,
+        "posts": [
+          {
+            "n": 1,
+            "id": "2112372961386840163",
+            "username": "NaveenKumar__T",
+            "url": "https://x.com/NaveenKumar__T/status/2112372961386840163",
+            "hand": "reject",
+            "note": "",
+            "d1_stance": "reject",
+            "pplx_stance": "reject",
+            "oa_stance": "serious",
+            "d1_stance4": "reject",
+            "pplx_stance4": "reject",
+            "oa_stance4": "reject"
+          },
+          {
+            "n": 2,
+            "id": "2112355641947742624",
+            "username": "HOTSPOTSREPORTS",
+            "url": "https://x.com/HOTSPOTSREPORTS/status/2112355641947742624",
+            "hand": "reporting",
+            "note": "",
+            "d1_stance": "curious",
+            "pplx_stance": "curious",
+            "oa_stance": "reject",
+            "d1_stance4": "reporting",
+            "pplx_stance4": "reporting",
+            "oa_stance4": "reporting"
+          },
+          {
+            "n": 3,
+            "id": "2112248014504919077",
+            "username": "lord_tgoodwin",
+            "url": "https://x.com/lord_tgoodwin/status/2112248014504919077",
+            "hand": "reject",
+            "note": "",
+            "d1_stance": "reject",
+            "pplx_stance": "reject",
+            "oa_stance": "curious",
+            "d1_stance4": "reject",
+            "pplx_stance4": "reject",
+            "oa_stance4": "curious"
+          },
+          {
+            "n": 4,
+            "id": "2112342179893092384",
+            "username": "NAtanason",
+            "url": "https://x.com/NAtanason/status/2112342179893092384",
+            "hand": "reject",
+            "note": "",
+            "d1_stance": "reject",
+            "pplx_stance": "reject",
+            "oa_stance": "curious",
+            "d1_stance4": "reject",
+            "pplx_stance4": "reject",
+            "oa_stance4": "reject"
+          },
+          {
+            "n": 5,
+            "id": "2112334316789260563",
+            "username": "mCasual1",
+            "url": "https://x.com/mCasual1/status/2112334316789260563",
+            "hand": "skip",
+            "note": "Doesn’t engage in any side, irrelevant comment ",
+            "d1_stance": "reject",
+            "pplx_stance": "reject",
+            "oa_stance": "curious",
+            "d1_stance4": "reject",
+            "pplx_stance4": "reject",
+            "oa_stance4": "reject"
+          },
+          {
+            "n": 6,
+            "id": "2112366441915908402",
+            "username": "therealkingson",
+            "url": "https://x.com/therealkingson/status/2112366441915908402",
+            "hand": "curious",
+            "note": "",
+            "d1_stance": "curious",
+            "pplx_stance": "curious",
+            "oa_stance": "curious",
+            "d1_stance4": "curious",
+            "pplx_stance4": "curious",
+            "oa_stance4": "serious"
+          }
+        ],
+        "models": [
+          {
+            "id": "d1",
+            "name": "d1-ultra (Liquid)",
+            "r5_correct": 4,
+            "r5_n": 4,
+            "r6_correct": 5,
+            "r6_n": 5,
+            "r6_correct_all": 5,
+            "r6_n_all": 6,
+            "combined_all": 15,
+            "combined_n_all": 32,
+            "combined_stance": 8,
+            "combined_n_stance": 21,
+            "unstable": []
+          },
+          {
+            "id": "pplx",
+            "name": "Decider v1.2 (Perplexity)",
+            "r5_correct": 4,
+            "r5_n": 4,
+            "r6_correct": 5,
+            "r6_n": 5,
+            "r6_correct_all": 5,
+            "r6_n_all": 6,
+            "combined_all": 21,
+            "combined_n_all": 32,
+            "combined_stance": 12,
+            "combined_n_stance": 21,
+            "unstable": []
+          },
+          {
+            "id": "oa",
+            "name": "GPT-6 Luna Decisions (OpenAI)",
+            "r5_correct": 1,
+            "r5_n": 4,
+            "r6_correct": 3,
+            "r6_n": 5,
+            "r6_correct_all": 3,
+            "r6_n_all": 6,
+            "combined_all": 15,
+            "combined_n_all": 32,
+            "combined_stance": 9,
+            "combined_n_stance": 21,
+            "unstable": [
+              "NaveenKumar__T",
+              "NAtanason",
+              "mCasual1",
+              "therealkingson"
+            ]
+          }
+        ],
+        "note": "Jesse Armand labelled the 6 posts picked because GPT-6 Luna disagreed with both other models. This set is biased against GPT-6 Luna, just as the first 26 are biased against d1-ultra and Decider.",
+        "text": "Round 6 (four-way), on the 5 he did not skip: d1-ultra 5 of 5, Decider 5 of 5, GPT-6 Luna 3 of 5. Round 5 (three-way), on the 4 labelled Reject or Curious: d1-ultra 4 of 4, Decider 4 of 4, GPT-6 Luna 1 of 4. @HOTSPOTSREPORTS (reporting) and @mCasual1 (skipped) have no matching three-way option and are left out of the round-5 count.",
+        "instability": "GPT-6 Luna changed its stance between the round-5 and round-6 runs on 4 of these 6 posts: @NaveenKumar__T (serious to reject), @NAtanason (curious to reject), @mCasual1 (curious to reject), @therealkingson (curious to serious). d1-ultra changed on 0 and Decider on 0, not counting moves to the new reporting option.",
+        "combined": "All 32 hand labels together, four-way with skips as reporting: Decider 21 of 32, d1-ultra 15, GPT-6 Luna 15; on the 21 he did not skip: Decider 12 of 21, GPT-6 Luna 9, d1-ultra 8.",
+        "caveat": "Neither subset is a random sample. The first 26 were picked where d1-ultra and Decider disagreed, and these 6 where GPT-6 Luna disagreed with both of them, so the combined count adds two differently biased sets and is not an accuracy figure for any model."
       }
     },
     "key_accounts": [
@@ -4162,6 +4308,7 @@
     "data/model_agreement_r5_6.csv",
     "data/model_comparison_r5_6.csv",
     "data/hand_label_candidates_r5_6.csv",
+    "data/hand_labels_r5_6_openai.csv",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",

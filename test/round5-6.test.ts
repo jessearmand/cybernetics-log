@@ -373,3 +373,53 @@ test("third model: hand-label candidates are exactly the unlabelled posts where 
     assert.deepEqual([c.d1_stance, c.pplx_stance, c.oa_stance, c.oa_stance4], [r.d1_stance, r.pplx_stance, r.oa_stance, q6.oa_stance4]);
   }
 });
+
+test("outlier check: Jesse's 6 labels on the candidates, scored per round, biased against the third model", () => {
+  const h = parseCsv(read("hand_labels_r5_6_openai.csv"));
+  const cands = parseCsv(read("hand_label_candidates_r5_6.csv"));
+  assert.deepEqual(h.map((x) => x.id), cands.map((c) => c.id), "the labels are exactly the candidates, in order");
+  assert.deepEqual(h.map((x) => `${x.n} ${x.hand}`), ["1 reject", "2 reporting", "3 reject", "4 reject", "5 skip", "6 curious"]);
+  assert.equal(h[4]!.note, "Doesn’t engage in any side, irrelevant comment ", "note kept verbatim");
+  const O = T.outlier_check;
+  assert.equal(O.posts[4]!.note, h[4]!.note);
+  has(`- mCasual1 (2112334316789260563): ${h[4]!.note}\n`);
+  const S3 = ["reject", "curious", "serious"];
+  const v = (x: Record<string, string>) => (x.hand === "skip" ? "reporting" : x.hand!);
+  const lab = h.filter((x) => x.hand !== "skip");
+  const r5s = h.filter((x) => S3.includes(x.hand!));
+  const sc = (k: A) => ({
+    r5: r5s.filter((x) => by5.get(x.id!)![`${k}_stance`] === x.hand).length,
+    r6: lab.filter((x) => by6.get(x.id!)![`${k}_stance4`] === x.hand).length,
+    r6all: h.filter((x) => by6.get(x.id!)![`${k}_stance4`] === v(x)).length,
+    unstable: h.filter((x) => by6.get(x.id!)![`${k}_stance4`] !== "reporting" && by5.get(x.id!)![`${k}_stance`] !== by6.get(x.id!)![`${k}_stance4`]).map((x) => by5.get(x.id!)!.username!),
+  });
+  const d = sc("d1"), x = sc("pplx"), o = sc("oa");
+  assert.deepEqual([r5s.length, lab.length], [4, 5]);
+  assert.deepEqual([d.r6, x.r6, o.r6], [5, 5, 3], "round 6 on the 5 not skipped");
+  assert.deepEqual([d.r5, x.r5, o.r5], [4, 4, 1], "round 5 on the 4 with a three-way option");
+  assert.deepEqual(o.unstable, ["NaveenKumar__T", "NAtanason", "mCasual1", "therealkingson"]);
+  assert.deepEqual([d.unstable, x.unstable], [[], []]);
+  has(`d1-ultra ${d.r6}/5, pplx-decider-v1.2 ${x.r6}/5, gpt-6-luna-decisions ${o.r6}/5. With the skip counted as reporting, it is ${d.r6all}/6, ${x.r6all}/6 and ${o.r6all}/6`);
+  has(`d1-ultra ${d.r5}/4, pplx-decider-v1.2 ${x.r5}/4, gpt-6-luna-decisions ${o.r5}/4`);
+  has("on 4 of the 6 posts: NaveenKumar__T (serious → reject), NAtanason (curious → reject), mCasual1 (curious → reject), therealkingson (curious → serious)");
+  has("**This set is biased against gpt-6-luna-decisions**");
+  for (const [k, s] of [["d1", d], ["pplx", x], ["oa", o]] as const) {
+    const m = O.models.find((mm) => mm.id === k)!;
+    assert.deepEqual([m.r5_correct, m.r6_correct, m.r6_correct_all, m.unstable], [s.r5, s.r6, s.r6all, s.unstable]);
+  }
+  // Combined 32: the first 26 plus these 6, four-way with skips as reporting.
+  const first = [...hand, ...hand6csv];
+  const all32 = [...first, ...h];
+  const nonskip = all32.filter((y) => y.hand !== "skip");
+  assert.equal(new Set(all32.map((y) => y.id)).size, 32);
+  const c = (k: A) => [all32.filter((y) => by6.get(y.id!)![`${k}_stance4`] === v(y)).length, nonskip.filter((y) => by6.get(y.id!)![`${k}_stance4`] === y.hand).length];
+  assert.deepEqual([c("pplx"), c("d1"), c("oa")], [[21, 12], [15, 8], [15, 9]]);
+  has(`pplx-decider-v1.2 ${c("pplx")[0]}/32, d1-ultra ${c("d1")[0]}/32, gpt-6-luna-decisions ${c("oa")[0]}/32. On the ${nonskip.length} he did not skip: pplx-decider-v1.2 ${c("pplx")[1]}/${nonskip.length}, gpt-6-luna-decisions ${c("oa")[1]}/${nonskip.length}, d1-ultra ${c("d1")[1]}/${nonskip.length}`);
+  has("**Neither subset is a random sample.**");
+  assert.match(O.caveat, /^Neither subset is a random sample/);
+  const comp = parseCsv(read("model_comparison_r5_6.csv"));
+  for (const k of ALL) {
+    const row = (m: string) => Number(comp.find((r) => r.model.endsWith(N3[k]) && r.metric === m)!.correct);
+    assert.deepEqual([row("outlier_r5_correct"), row("outlier_r6_correct"), row("combined32_all"), row("combined32_stance")], [sc(k).r5, sc(k).r6, ...c(k)]);
+  }
+});

@@ -105,7 +105,7 @@ Each cell gives posts with the same answer out of posts both models answered, wi
 
 ### Candidates for hand labelling
 
-There are 6 posts without a hand label where gpt-6-luna-decisions disagrees on stance with both other models, which agree with each other. They are listed in `hand_label_candidates_r5_6.csv`.
+There are 6 posts without a hand label where gpt-6-luna-decisions disagrees on stance with both other models, which agree with each other. They are listed in `hand_label_candidates_r5_6.csv`. Jesse has since hand-labelled them; see the next section.
 
 - NaveenKumar__T (2112372961386840163): round 5: d1-ultra and pplx-decider-v1.2 reject, gpt-6-luna-decisions serious
 - HOTSPOTSREPORTS (2112355641947742624): round 5: d1-ultra and pplx-decider-v1.2 curious, gpt-6-luna-decisions reject
@@ -114,13 +114,40 @@ There are 6 posts without a hand label where gpt-6-luna-decisions disagrees on s
 - mCasual1 (2112334316789260563): round 5: d1-ultra and pplx-decider-v1.2 reject, gpt-6-luna-decisions curious
 - therealkingson (2112366441915908402): round 6: d1-ultra and pplx-decider-v1.2 curious, gpt-6-luna-decisions serious
 
+### Hand check on the candidates (biased against gpt-6-luna-decisions)
+
+Jesse Armand labelled the 6 candidates (`hand_labels_r5_6_openai.csv`). **This set is biased against gpt-6-luna-decisions**: it was picked because that model disagreed with both others, just as the first 26 labels were picked where d1-ultra and pplx-decider-v1.2 disagreed. Each model cell gives the round 5 three-way answer, then the round 6 four-way answer.
+
+| n | Post | Hand | d1-ultra | pplx-decider-v1.2 | gpt-6-luna-decisions |
+|---|---|---|---|---|---|
+| 1 | NaveenKumar__T | reject | reject → reject | reject → reject | serious → reject |
+| 2 | HOTSPOTSREPORTS | reporting | curious → reporting | curious → reporting | reject → reporting |
+| 3 | lord_tgoodwin | reject | reject → reject | reject → reject | curious → curious |
+| 4 | NAtanason | reject | reject → reject | reject → reject | curious → reject |
+| 5 | mCasual1 | skip | reject → reject | reject → reject | curious → reject |
+| 6 | therealkingson | curious | curious → curious | curious → curious | curious → serious |
+
+Jesse's note, verbatim:
+
+- mCasual1 (2112334316789260563): Doesn’t engage in any side, irrelevant comment 
+
+- **Round 6 (four-way), on the 5 he did not skip:** d1-ultra 5/5, pplx-decider-v1.2 5/5, gpt-6-luna-decisions 3/5. With the skip counted as reporting, it is 5/6, 5/6 and 3/6.
+- **Round 5 (three-way), on the 4 labelled reject or curious:** d1-ultra 4/4, pplx-decider-v1.2 4/4, gpt-6-luna-decisions 1/4. HOTSPOTSREPORTS (reporting) and mCasual1 (skip) have no matching three-way option, so they are left out of the round 5 count.
+- **Cross-round instability:** gpt-6-luna-decisions changed its stance between the round 5 and round 6 runs on 4 of the 6 posts: NaveenKumar__T (serious → reject), NAtanason (curious → reject), mCasual1 (curious → reject), therealkingson (curious → serious). d1-ultra changed on 0 and pplx-decider-v1.2 on 0, not counting moves to the new reporting option.
+
+### All 32 hand labels combined
+
+On all 32 hand labels (26 + 6), scored four-way with skips counted as reporting: pplx-decider-v1.2 21/32, d1-ultra 15/32, gpt-6-luna-decisions 15/32. On the 21 he did not skip: pplx-decider-v1.2 12/21, gpt-6-luna-decisions 9/21, d1-ultra 8/21.
+
+**Neither subset is a random sample.** The first 26 were picked where d1-ultra and pplx-decider-v1.2 disagreed, and these 6 where gpt-6-luna-decisions disagreed with both of them. The combined count adds two differently biased sets, so it is not an accuracy figure for any model.
+
 ## Cost
 
 Round 5 cost $0.00164 (414 calls) and round 6 cost $0.00045 (138 calls).
 
 ## Verification
 
-`test/round5-6.test.ts` runs in `npm run check`. It recomputes every figure in this file from `labels_r5.csv`, `hand_labels_r5.csv`, `labels_r6.csv`, `hand_labels_r6.csv` and `posts_r5.jsonl`, except the third model's cost and latency, which come from its raw call logs (checked against `discourse.json`), and checks that this file contains each one. It does not check two things:
+`test/round5-6.test.ts` runs in `npm run check`. It recomputes every figure in this file from `labels_r5.csv`, `hand_labels_r5.csv`, `labels_r6.csv`, `hand_labels_r6.csv`, `hand_labels_r5_6_openai.csv` and `posts_r5.jsonl`, except the third model's cost and latency, which come from its raw call logs (checked against `discourse.json`), and checks that this file contains each one. It does not check two things:
 
 - the costs, because the raw call logs are not in the repo (they are checked against `discourse.json`, which the build script computes from those logs);
 - which `claims_found` hits are misattributions, because that is a hand reading.
