@@ -150,3 +150,27 @@ test("mobile: the corpus notes moved off the page live in the README", () => {
   assert.ok(sec.includes(`**Source:** ${c.source}.`));
   for (const n of c.notes) assert.ok(sec.includes(`- ${n}\n`), `README is missing corpus note: ${n.slice(0, 40)}`);
 });
+
+test("round 5: the third model is shown, its hand-label scores marked not comparable, and its long lists folded", () => {
+  const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
+  const s = sectionHtml(html, "round5");
+  const t = discourse.round5.third_model;
+  assert.ok(s.includes(`<h3>A third model: ${esc(t.name)}</h3>`));
+  assert.ok(s.includes("<b>Not comparable on hand labels:</b>"));
+  // Every row for the third model in a hand-label table carries the marker.
+  assert.equal(s.split(`${esc(t.name)}<sup title="Not comparable`).length - 1, 2);
+  assert.ok(s.includes(`<summary><h3 class="flabel">Agreement on every question</h3>`));
+  assert.ok(s.includes(`<summary><h3 class="flabel">Posts to hand-label next</h3><span class="fcount">${t.candidates.length} points</span>`));
+  for (const c of t.candidates) assert.ok(s.includes(`@${esc(c.username)}`));
+  assert.ok(!/<table class="methods agree">/.test(withoutFolds(s)), "the agreement table is folded on mobile");
+  assert.ok(withoutFolds(s).includes(esc(t.agreement_text)), "the headline agreement numbers stay visible");
+  assert.ok(s.includes(`GPT-6 Luna billed $${t.run.gateway_cost_usd} through the gateway`));
+});
+
+test("round 5: data built before the third model still renders", () => {
+  const d = structuredClone(discourse) as Record<string, unknown> & { round5: Record<string, unknown> };
+  delete d.round5.third_model;
+  const html = renderPage(d as unknown as typeof discourse, PLACEHOLDER_EDITORIAL, meta);
+  assert.ok(!html.includes("A third model"));
+  assert.ok(!html.includes("undefined"));
+});
