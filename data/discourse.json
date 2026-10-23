@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T05:06:02+00:00",
+  "generated_at": "2026-10-23T12:48:16+00:00",
   "title": "Machine consciousness on X: who rejects it, who's curious, who takes it seriously",
   "corpus": {
     "posts": 577,
@@ -21,7 +21,7 @@
     "source": "X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed)",
     "notes": [
       "Five collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct), round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct), round 4 (86 posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts) and round 5 (69 posts: the Nature commentary of 19 – 20 Oct and posts on Anthropic's July workspace paper). Round 6 re-labelled the round-5 posts and added none. Clusters, the pair test and the confidence curve use round 1 only.",
-      "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev.",
+      "Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev; OpenAI's GPT-6 Luna Decisions was added later on the same posts and questions.",
       "One @grok reply slipped through and is excluded from author counts.",
       "Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.",
       "The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain."
@@ -2004,8 +2004,11 @@
     ],
     "models": [
       {
+        "id": "d1",
         "key": "liquid/d1-ultra",
         "name": "d1-ultra (Liquid)",
+        "answered": 69,
+        "hand_comparable": true,
         "stance": {
           "reject": {
             "n": 26,
@@ -2165,8 +2168,11 @@
         }
       },
       {
+        "id": "pplx",
         "key": "perplexity/pplx-decider-v1.2",
         "name": "Decider v1.2 (Perplexity)",
+        "answered": 69,
+        "hand_comparable": true,
         "stance": {
           "reject": {
             "n": 33,
@@ -2324,6 +2330,170 @@
             "stretchcloud"
           ]
         }
+      },
+      {
+        "id": "oa",
+        "key": "openai/gpt-6-luna-decisions",
+        "name": "GPT-6 Luna Decisions (OpenAI)",
+        "answered": 67,
+        "hand_comparable": false,
+        "stance": {
+          "reject": {
+            "n": 21,
+            "pct": 31.3
+          },
+          "curious": {
+            "n": 36,
+            "pct": 53.7
+          },
+          "serious": {
+            "n": 10,
+            "pct": 14.9
+          }
+        },
+        "by_flashpoint": {
+          "nature_search": {
+            "reject": {
+              "n": 17,
+              "pct": 73.9
+            },
+            "curious": {
+              "n": 3,
+              "pct": 13.0
+            },
+            "serious": {
+              "n": 3,
+              "pct": 13.0
+            }
+          },
+          "seth_replies": {
+            "reject": {
+              "n": 2,
+              "pct": 9.1
+            },
+            "curious": {
+              "n": 15,
+              "pct": 68.2
+            },
+            "serious": {
+              "n": 5,
+              "pct": 22.7
+            }
+          },
+          "anthropic_gwt": {
+            "reject": {
+              "n": 0,
+              "pct": 0.0
+            },
+            "curious": {
+              "n": 13,
+              "pct": 92.9
+            },
+            "serious": {
+              "n": 1,
+              "pct": 7.1
+            }
+          },
+          "nature_quotes": {
+            "reject": {
+              "n": 2,
+              "pct": 40.0
+            },
+            "curious": {
+              "n": 2,
+              "pct": 40.0
+            },
+            "serious": {
+              "n": 1,
+              "pct": 20.0
+            }
+          },
+          "seth_quotes": {
+            "reject": {
+              "n": 0,
+              "pct": 0.0
+            },
+            "curious": {
+              "n": 3,
+              "pct": 100.0
+            },
+            "serious": {
+              "n": 0,
+              "pct": 0.0
+            }
+          }
+        },
+        "frame": {
+          "political_cultural": {
+            "n": 2,
+            "pct": 2.9
+          },
+          "philosophical_scientific": {
+            "n": 64,
+            "pct": 92.8
+          },
+          "neither": {
+            "n": 3,
+            "pct": 4.3
+          }
+        },
+        "on_topic": {
+          "yes": 50,
+          "pct": 74.6
+        },
+        "policy_politics": {
+          "yes": 4,
+          "pct": 5.8
+        },
+        "claims_found": [
+          "AbnormalAIX",
+          "JkwuRmsl",
+          "NewsTongueX",
+          "dogquie",
+          "theaigrandpa"
+        ],
+        "hand_correct": 6,
+        "rejects_called": [
+          "curious",
+          "serious"
+        ],
+        "skips_called": {
+          "curious": 5,
+          "reject": 1,
+          "serious": 1
+        },
+        "round6": {
+          "stance": {
+            "reject": {
+              "n": 21,
+              "pct": 30.4
+            },
+            "curious": {
+              "n": 14,
+              "pct": 20.3
+            },
+            "serious": {
+              "n": 9,
+              "pct": 13.0
+            },
+            "reporting": {
+              "n": 25,
+              "pct": 36.2
+            }
+          },
+          "hand_correct_all": 10,
+          "reporting_caught": 5,
+          "stance_correct": 5,
+          "rejects_called": [
+            "curious",
+            "serious"
+          ],
+          "curious_before": 36,
+          "curious_after": 14,
+          "hand_curious_to_reporting": [
+            "stretchcloud"
+          ]
+        }
       }
     ],
     "agreement": {
@@ -2371,7 +2541,7 @@
         "NewsTongueX",
         "dogquie"
       ],
-      "text": "The two models flagged 5 posts between them. Read by hand, 2 are clear misattributions (@JkwuRmsl, @theaigrandpa say Anthropic found signs of consciousness in Claude); the other 3 describe the workspace in terms close to the paper's own claim about conscious access."
+      "text": "d1-ultra and Decider flagged 5 posts between them. Read by hand, 2 are clear misattributions (@JkwuRmsl, @theaigrandpa say Anthropic found signs of consciousness in Claude); the other 3 describe the workspace in terms close to the paper's own claim about conscious access. GPT-6 Luna flagged the same 5."
     },
     "round6": {
       "question": "Stance with a fourth option: reporting = only summarizes or relays news or research without giving their own view.",
@@ -2393,6 +2563,7 @@
         {
           "id": "d1",
           "name": "d1-ultra (Liquid)",
+          "hand_comparable": true,
           "stance_correct": 0,
           "skips_reporting": 1,
           "reporting_used": 1,
@@ -2441,6 +2612,7 @@
         {
           "id": "pplx",
           "name": "Decider v1.2 (Perplexity)",
+          "hand_comparable": true,
           "stance_correct": 4,
           "skips_reporting": 2,
           "reporting_used": 5,
@@ -2463,6 +2635,49 @@
           ],
           "combined_all": 16,
           "combined_stance": 7
+        },
+        {
+          "id": "oa",
+          "name": "GPT-6 Luna Decisions (OpenAI)",
+          "hand_comparable": false,
+          "stance_correct": 1,
+          "skips_reporting": 1,
+          "reporting_used": 1,
+          "curious_to_reporting": [],
+          "misses": [
+            {
+              "username": "RichUniverse_",
+              "hand": "curious",
+              "model": "reject",
+              "conf": 0.87
+            },
+            {
+              "username": "John_W_Maki",
+              "hand": "reporting",
+              "model": "reject",
+              "conf": 0.91
+            },
+            {
+              "username": "net_science",
+              "hand": "reporting",
+              "model": "reject",
+              "conf": 0.97
+            },
+            {
+              "username": "Pherekydez",
+              "hand": "curious",
+              "model": "serious",
+              "conf": 0.77
+            },
+            {
+              "username": "e_philalethes",
+              "hand": "curious",
+              "model": "serious",
+              "conf": 0.55
+            }
+          ],
+          "combined_all": 12,
+          "combined_stance": 6
         }
       ],
       "leans_serious": "e_philalethes",
@@ -2472,6 +2687,460 @@
       "combined": "Across all 26 hand labels from rounds 5 and 6, scored four-way with skips counted as reporting, Decider matched 16 and d1-ultra 10. On the 16 he did not skip, Decider matched 7 and d1-ultra 3.",
       "conclusion": "On these new posts Decider is clearly better on direction, while d1-ultra still confuses how strongly a post is worded with which way it leans. The proposal, from Seeker and agreed by Jesse Armand: Decider as the primary labeller, with d1-ultra as a second opinion only on Serious. Nine new posts is a small sample."
     },
+    "third_model": {
+      "id": "oa",
+      "key": "openai/gpt-6-luna-decisions",
+      "name": "GPT-6 Luna Decisions (OpenAI)",
+      "note": "A third decision model, OpenAI's GPT-6 Luna Decisions, was run afterwards on exactly the same 69 posts with the same questions. 2 round-5 calls on the core questions failed on every retry (@TokenandoAI, @SeanYoung1995), so its round-5 stance covers 67 posts; its round-6 stance covers all 69.",
+      "comparability": "Its hand-label scores are not comparable with the other two. The 26 hand labels were drawn from posts where d1-ultra and Decider disagreed, so on each of them at least one of those two is wrong by construction; GPT-6 Luna was not part of that selection. Read its hand-label numbers as a look at the hard cases, not as a ranking.",
+      "agreement_text": "On round-5 stance GPT-6 Luna agrees with d1-ultra on 51 of 67 posts (kappa 0.628) and with Decider on 48 of 67 (kappa 0.538); d1-ultra and Decider agree on 52 of 69 (kappa 0.61). With the reporting option the figures are 56, 54 and 56 of 69 (kappa 0.736, 0.691 and 0.728).",
+      "hand_text": "On the 10 round-5 posts Jesse Armand labelled, GPT-6 Luna matched 6 (d1-ultra 4, Decider 3). Across all 26 hand labels, four-way with skips as reporting, it matched 12 (Decider 16, d1-ultra 10), and 6 of the 16 he did not skip (Decider 7, d1-ultra 3). It also misses both substrate rejects, and it found 6 of the 12 reporting posts, calling 5 of them Reject.",
+      "candidates_text": "6 posts without a hand label have GPT-6 Luna disagreeing with both other models on stance, where d1-ultra and Decider agree with each other. They are the next posts to label by hand.",
+      "stance": {
+        "reject": {
+          "n": 21,
+          "pct": 31.3
+        },
+        "curious": {
+          "n": 36,
+          "pct": 53.7
+        },
+        "serious": {
+          "n": 10,
+          "pct": 14.9
+        }
+      },
+      "stance4": {
+        "reject": {
+          "n": 21,
+          "pct": 30.4
+        },
+        "curious": {
+          "n": 14,
+          "pct": 20.3
+        },
+        "serious": {
+          "n": 9,
+          "pct": 13.0
+        },
+        "reporting": {
+          "n": 25,
+          "pct": 36.2
+        }
+      },
+      "missing": [
+        {
+          "id": "2075459206782517562",
+          "username": "TokenandoAI"
+        },
+        {
+          "id": "2079479606780821781",
+          "username": "SeanYoung1995"
+        }
+      ],
+      "scores": {
+        "d1": {
+          "r5_hand_correct": 4,
+          "r5_labelled": 10,
+          "r5_rejects_called": [
+            "serious",
+            "serious"
+          ],
+          "r6_hand_correct_17": 9,
+          "r6_reporting_caught_17": 6,
+          "r6_new_correct": 0,
+          "r6_new_skips_reporting": 1,
+          "r6_rejects_called": [
+            "serious",
+            "serious"
+          ],
+          "combined_all": 10,
+          "n_all": 26,
+          "combined_stance": 3,
+          "n_stance": 16,
+          "reporting_recall": 7,
+          "reporting_n": 12,
+          "reporting_called_reject": 2,
+          "comparable": true
+        },
+        "pplx": {
+          "r5_hand_correct": 3,
+          "r5_labelled": 10,
+          "r5_rejects_called": [
+            "curious",
+            "curious"
+          ],
+          "r6_hand_correct_17": 10,
+          "r6_reporting_caught_17": 7,
+          "r6_new_correct": 4,
+          "r6_new_skips_reporting": 2,
+          "r6_rejects_called": [
+            "serious",
+            "serious"
+          ],
+          "combined_all": 16,
+          "n_all": 26,
+          "combined_stance": 7,
+          "n_stance": 16,
+          "reporting_recall": 11,
+          "reporting_n": 12,
+          "reporting_called_reject": 1,
+          "comparable": true
+        },
+        "oa": {
+          "r5_hand_correct": 6,
+          "r5_labelled": 10,
+          "r5_rejects_called": [
+            "curious",
+            "serious"
+          ],
+          "r6_hand_correct_17": 10,
+          "r6_reporting_caught_17": 5,
+          "r6_new_correct": 1,
+          "r6_new_skips_reporting": 1,
+          "r6_rejects_called": [
+            "curious",
+            "serious"
+          ],
+          "combined_all": 12,
+          "n_all": 26,
+          "combined_stance": 6,
+          "n_stance": 16,
+          "reporting_recall": 6,
+          "reporting_n": 12,
+          "reporting_called_reject": 5,
+          "comparable": false
+        }
+      },
+      "confusion": {
+        "d1": {
+          "reject": {
+            "reject": 0,
+            "curious": 0,
+            "serious": 2,
+            "reporting": 0
+          },
+          "curious": {
+            "reject": 3,
+            "curious": 3,
+            "serious": 3,
+            "reporting": 3
+          },
+          "serious": {
+            "reject": 0,
+            "curious": 0,
+            "serious": 0,
+            "reporting": 0
+          },
+          "reporting": {
+            "reject": 2,
+            "curious": 1,
+            "serious": 2,
+            "reporting": 7
+          }
+        },
+        "pplx": {
+          "reject": {
+            "reject": 0,
+            "curious": 0,
+            "serious": 2,
+            "reporting": 0
+          },
+          "curious": {
+            "reject": 3,
+            "curious": 5,
+            "serious": 1,
+            "reporting": 3
+          },
+          "serious": {
+            "reject": 0,
+            "curious": 0,
+            "serious": 0,
+            "reporting": 0
+          },
+          "reporting": {
+            "reject": 1,
+            "curious": 0,
+            "serious": 0,
+            "reporting": 11
+          }
+        },
+        "oa": {
+          "reject": {
+            "reject": 0,
+            "curious": 1,
+            "serious": 1,
+            "reporting": 0
+          },
+          "curious": {
+            "reject": 2,
+            "curious": 6,
+            "serious": 3,
+            "reporting": 1
+          },
+          "serious": {
+            "reject": 0,
+            "curious": 0,
+            "serious": 0,
+            "reporting": 0
+          },
+          "reporting": {
+            "reject": 5,
+            "curious": 1,
+            "serious": 0,
+            "reporting": 6
+          }
+        }
+      },
+      "agreement": [
+        {
+          "question": "stance",
+          "round": "round 5",
+          "pair": "d1/pplx",
+          "n": 69,
+          "agree": 52,
+          "pct": 75.4,
+          "kappa": 0.61
+        },
+        {
+          "question": "stance",
+          "round": "round 5",
+          "pair": "d1/oa",
+          "n": 67,
+          "agree": 51,
+          "pct": 76.1,
+          "kappa": 0.628
+        },
+        {
+          "question": "stance",
+          "round": "round 5",
+          "pair": "pplx/oa",
+          "n": 67,
+          "agree": 48,
+          "pct": 71.6,
+          "kappa": 0.538
+        },
+        {
+          "question": "frame",
+          "round": "round 5",
+          "pair": "d1/pplx",
+          "n": 69,
+          "agree": 62,
+          "pct": 89.9,
+          "kappa": 0.519
+        },
+        {
+          "question": "frame",
+          "round": "round 5",
+          "pair": "d1/oa",
+          "n": 69,
+          "agree": 65,
+          "pct": 94.2,
+          "kappa": 0.576
+        },
+        {
+          "question": "frame",
+          "round": "round 5",
+          "pair": "pplx/oa",
+          "n": 69,
+          "agree": 60,
+          "pct": 87.0,
+          "kappa": 0.389
+        },
+        {
+          "question": "on_topic",
+          "round": "round 5",
+          "pair": "d1/pplx",
+          "n": 69,
+          "agree": 62,
+          "pct": 89.9,
+          "kappa": 0.711
+        },
+        {
+          "question": "on_topic",
+          "round": "round 5",
+          "pair": "d1/oa",
+          "n": 67,
+          "agree": 61,
+          "pct": 91.0,
+          "kappa": 0.764
+        },
+        {
+          "question": "on_topic",
+          "round": "round 5",
+          "pair": "pplx/oa",
+          "n": 67,
+          "agree": 60,
+          "pct": 89.6,
+          "kappa": 0.694
+        },
+        {
+          "question": "policy",
+          "round": "round 5",
+          "pair": "d1/pplx",
+          "n": 69,
+          "agree": 67,
+          "pct": 97.1,
+          "kappa": 0.0
+        },
+        {
+          "question": "policy",
+          "round": "round 5",
+          "pair": "d1/oa",
+          "n": 69,
+          "agree": 65,
+          "pct": 94.2,
+          "kappa": 0.0
+        },
+        {
+          "question": "policy",
+          "round": "round 5",
+          "pair": "pplx/oa",
+          "n": 69,
+          "agree": 67,
+          "pct": 97.1,
+          "kappa": 0.653
+        },
+        {
+          "question": "claims_found",
+          "round": "round 5",
+          "pair": "d1/pplx",
+          "n": 69,
+          "agree": 68,
+          "pct": 98.6,
+          "kappa": 0.881
+        },
+        {
+          "question": "claims_found",
+          "round": "round 5",
+          "pair": "d1/oa",
+          "n": 69,
+          "agree": 68,
+          "pct": 98.6,
+          "kappa": 0.881
+        },
+        {
+          "question": "claims_found",
+          "round": "round 5",
+          "pair": "pplx/oa",
+          "n": 69,
+          "agree": 69,
+          "pct": 100.0,
+          "kappa": 1.0
+        },
+        {
+          "question": "stance4",
+          "round": "round 6",
+          "pair": "d1/pplx",
+          "n": 69,
+          "agree": 56,
+          "pct": 81.2,
+          "kappa": 0.728
+        },
+        {
+          "question": "stance4",
+          "round": "round 6",
+          "pair": "d1/oa",
+          "n": 69,
+          "agree": 56,
+          "pct": 81.2,
+          "kappa": 0.736
+        },
+        {
+          "question": "stance4",
+          "round": "round 6",
+          "pair": "pplx/oa",
+          "n": 69,
+          "agree": 54,
+          "pct": 78.3,
+          "kappa": 0.691
+        }
+      ],
+      "candidates": [
+        {
+          "id": "2112372961386840163",
+          "username": "NaveenKumar__T",
+          "url": "https://x.com/NaveenKumar__T/status/2112372961386840163",
+          "questions": "stance",
+          "d1_stance": "reject",
+          "pplx_stance": "reject",
+          "oa_stance": "serious",
+          "d1_stance4": "reject",
+          "pplx_stance4": "reject",
+          "oa_stance4": "reject"
+        },
+        {
+          "id": "2112355641947742624",
+          "username": "HOTSPOTSREPORTS",
+          "url": "https://x.com/HOTSPOTSREPORTS/status/2112355641947742624",
+          "questions": "stance",
+          "d1_stance": "curious",
+          "pplx_stance": "curious",
+          "oa_stance": "reject",
+          "d1_stance4": "reporting",
+          "pplx_stance4": "reporting",
+          "oa_stance4": "reporting"
+        },
+        {
+          "id": "2112248014504919077",
+          "username": "lord_tgoodwin",
+          "url": "https://x.com/lord_tgoodwin/status/2112248014504919077",
+          "questions": "stance stance4",
+          "d1_stance": "reject",
+          "pplx_stance": "reject",
+          "oa_stance": "curious",
+          "d1_stance4": "reject",
+          "pplx_stance4": "reject",
+          "oa_stance4": "curious"
+        },
+        {
+          "id": "2112342179893092384",
+          "username": "NAtanason",
+          "url": "https://x.com/NAtanason/status/2112342179893092384",
+          "questions": "stance",
+          "d1_stance": "reject",
+          "pplx_stance": "reject",
+          "oa_stance": "curious",
+          "d1_stance4": "reject",
+          "pplx_stance4": "reject",
+          "oa_stance4": "reject"
+        },
+        {
+          "id": "2112334316789260563",
+          "username": "mCasual1",
+          "url": "https://x.com/mCasual1/status/2112334316789260563",
+          "questions": "stance",
+          "d1_stance": "reject",
+          "pplx_stance": "reject",
+          "oa_stance": "curious",
+          "d1_stance4": "reject",
+          "pplx_stance4": "reject",
+          "oa_stance4": "reject"
+        },
+        {
+          "id": "2112366441915908402",
+          "username": "therealkingson",
+          "url": "https://x.com/therealkingson/status/2112366441915908402",
+          "questions": "stance4",
+          "d1_stance": "curious",
+          "pplx_stance": "curious",
+          "oa_stance": "curious",
+          "d1_stance4": "curious",
+          "pplx_stance4": "curious",
+          "oa_stance4": "serious"
+        }
+      ],
+      "run": {
+        "calls": 276,
+        "answered": 274,
+        "failed": 2,
+        "gateway_cost_usd": 0.0,
+        "market_cost_usd": 0.010761,
+        "latency_total_s": 129.3,
+        "latency_median_s": 0.447,
+        "latency_p90_s": 0.55
+      }
+    },
     "key_accounts": [
       {
         "username": "anilkseth",
@@ -2479,7 +3148,8 @@
         "url": "https://x.com/anilkseth/status/2112270688769761374",
         "followers": 65709,
         "d1": "reject",
-        "pplx": "reject"
+        "pplx": "reject",
+        "oa": "reject"
       },
       {
         "username": "roanoke_gal",
@@ -2487,7 +3157,8 @@
         "url": "https://x.com/roanoke_gal/status/2112332197935923266",
         "followers": 1151,
         "d1": "curious",
-        "pplx": "reject"
+        "pplx": "reject",
+        "oa": "curious"
       },
       {
         "username": "theaigrandpa",
@@ -2495,7 +3166,8 @@
         "url": "https://x.com/theaigrandpa/status/2112348050651845002",
         "followers": 334,
         "d1": "curious",
-        "pplx": "curious"
+        "pplx": "curious",
+        "oa": "curious"
       },
       {
         "username": "Butanium_",
@@ -2503,7 +3175,8 @@
         "url": "https://x.com/Butanium_/status/2074286977961328832",
         "followers": 1236,
         "d1": "curious",
-        "pplx": "curious"
+        "pplx": "curious",
+        "oa": "curious"
       },
       {
         "username": "elephant_ben",
@@ -2511,17 +3184,21 @@
         "url": "https://x.com/elephant_ben/status/2112346375690273187",
         "followers": 1249,
         "d1": "serious",
-        "pplx": "curious"
+        "pplx": "curious",
+        "oa": "serious"
       }
     ],
     "cost_usd": {
       "round5": 0.00164,
-      "round6": 0.00045
+      "round6": 0.00045,
+      "openai_gateway": 0.0,
+      "openai_market": 0.010761
     },
     "caveats": [
       "26 hand labels from one labeller (17 in round 5, 9 in round 6), on the posts where the models disagreed: the hard cases. They say nothing about accuracy on the posts where the models agreed.",
       "Round 5 is a relevancy sample around two publications, not a draw from X; the Anthropic-paper posts date from July.",
-      "Round 5 has no Jev labels, so it is not in the Jev hybrid counts on this page."
+      "Round 5 has no Jev labels, so it is not in the Jev hybrid counts on this page.",
+      "GPT-6 Luna Decisions was added after the hand labels were drawn from the other two models' disagreements, so its hand-label scores cannot be ranked against theirs."
     ]
   },
   "model_comparison": {
@@ -3482,6 +4159,9 @@
     "data/labels_r6.csv",
     "data/questions_r6.json",
     "data/hand_labels_r6.csv",
+    "data/model_agreement_r5_6.csv",
+    "data/model_comparison_r5_6.csv",
+    "data/hand_label_candidates_r5_6.csv",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",

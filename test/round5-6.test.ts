@@ -246,3 +246,127 @@ test("lead: Tsao's discreteness quotes are verbatim from her follow-up post; the
   assert.match(l.discussion.find((x) => /hive/.test(x))!, /^Jesse/);
   assert.match(l.discussion.join(" "), /pushes against Tsao's own reading/);
 });
+
+// ---- Third model (openai/gpt-6-luna-decisions), added on the same 69 posts after the hand labels were drawn ----
+const ALL = ["d1", "pplx", "oa"] as const;
+type A = (typeof ALL)[number];
+const N3: Record<A, string> = { d1: "d1-ultra", pplx: "pplx-decider-v1.2", oa: "gpt-6-luna-decisions" };
+const hand6csv = parseCsv(read("hand_labels_r6.csv"));
+const T = R5.third_model;
+
+function kappa(a: string[], b: string[]): number | null {
+  const n = a.length;
+  const po = a.filter((x, i) => x === b[i]).length / n;
+  const cnt = (xs: string[]) => xs.reduce((m, x) => m.set(x, (m.get(x) ?? 0) + 1), new Map<string, number>());
+  const ca = cnt(a), cb = cnt(b);
+  let pe = 0;
+  for (const k of new Set([...a, ...b])) pe += (ca.get(k) ?? 0) * (cb.get(k) ?? 0);
+  pe /= n * n;
+  return pe === 1 ? null : Math.round(((po - pe) / (1 - pe)) * 1000) / 1000;
+}
+
+test("third model: same posts, the old columns untouched, coverage and stance counts", () => {
+  assert.deepEqual(r5.map((r) => r.id), posts5.map((p) => p.id));
+  assert.equal(r6.length, 69);
+  const missing = r5.filter((r) => r.oa_stance === "");
+  assert.deepEqual(missing.map((r) => r.username).sort(), ["SeanYoung1995", "TokenandoAI"]);
+  for (const r of r5) for (const c of ["oa_frame", "oa_policy", "oa_claims_found"]) assert.notEqual(r[c], "", c);
+  for (const r of r6) assert.notEqual(r.oa_stance4, "");
+  for (const r of r6) assert.equal(r.oa_stance3, by5.get(r.id!)!.oa_stance);
+  has(`| gpt-6-luna-decisions | ${["reject", "curious", "serious"].map((s) => count(r5, "oa_stance", s)).join(" | ")} |`);
+  has(`| gpt-6-luna-decisions | ${["reject", "curious", "serious", "reporting"].map((s) => count(r6, "oa_stance4", s)).join(" | ")} |`);
+  assert.equal(T.missing.length, 2);
+  assert.equal(R5.models[2]!.answered, 67);
+  assert.equal(R5.models[2]!.hand_comparable, false);
+  has(`${T.run.answered} of ${T.run.calls} calls answered`);
+  has(`gateway cost $${T.run.gateway_cost_usd}`);
+  has(`$${T.run.market_cost_usd} at list price`);
+});
+
+test("third model: pairwise agreement and Cohen's kappa on every question match the CSVs", () => {
+  const Q: [string, Record<string, string>[], "choice" | "bool", string][] = [
+    ["stance", r5, "choice", "stance"], ["frame", r5, "choice", "frame"], ["on_topic", r5, "bool", "on_topic"],
+    ["policy", r5, "bool", "policy_politics"], ["claims_found", r5, "bool", "claims_found"], ["stance4", r6, "choice", "stance (round 6)"],
+  ];
+  const ans = (r: Record<string, string>, q: string, k: A, kind: string) => (kind === "bool" ? (Number(r[`${k}_${q}`]) >= 0.5 ? "yes" : "no") : r[`${k}_${q}`]!);
+  const agreeCsv = parseCsv(read("model_agreement_r5_6.csv"));
+  const pairs: [A, A][] = [["d1", "pplx"], ["d1", "oa"], ["pplx", "oa"]];
+  for (const [q, rows, kind, label] of Q) {
+    const cells: string[] = [];
+    for (const [a, b] of pairs) {
+      const both = rows.filter((r) => r[`${a}_${q}`] !== "" && r[`${b}_${q}`] !== "");
+      const xa = both.map((r) => ans(r, q, a, kind)), xb = both.map((r) => ans(r, q, b, kind));
+      const agree = xa.filter((x, i) => x === xb[i]).length;
+      const k = kappa(xa, xb);
+      const row = agreeCsv.find((x) => x.question === q && x.pair === `${a}/${b}`)!;
+      assert.deepEqual([Number(row.n), Number(row.agree), row.kappa === "" ? null : Number(row.kappa)], [both.length, agree, k], `${q} ${a}/${b}`);
+      const j = T.agreement.find((x) => x.question === q && x.pair === `${a}/${b}`)!;
+      assert.deepEqual([j.n, j.agree, j.kappa], [both.length, agree, k]);
+      cells.push(`${agree}/${both.length} (${k === null ? "—" : Number.isInteger(k) ? k.toFixed(1) : k})`);
+    }
+    has(`| ${label} | ${cells.join(" | ")} |`);
+  }
+  assert.equal(agreeCsv.length, 18);
+});
+
+test("third model: hand-label scores, flagged as not comparable, and the four-way confusion", () => {
+  const v = (h: Record<string, string>) => (h.hand === "skip" ? "reporting" : h.hand!);
+  const all = [...hand, ...hand6csv].map((h) => [h.id!, v(h)] as const);
+  const nonskip = [...labelled, ...hand6csv.filter((h) => h.hand !== "skip")].map((h) => [h.id!, h.hand!] as const);
+  assert.equal(all.length, 26);
+  assert.equal(nonskip.length, 16);
+  // Every hand label sits on a d1-ultra / Decider disagreement, so their scores share a selection the third model did not.
+  for (const h of hand) assert.notEqual(by5.get(h.id!)!.d1_stance, by5.get(h.id!)!.pplx_stance);
+  for (const h of hand6csv) assert.notEqual(by6.get(h.id!)!.d1_stance4, by6.get(h.id!)!.pplx_stance4);
+  const s = (k: A) => ({
+    r5: labelled.filter((h) => by5.get(h.id!)![`${k}_stance`] === h.hand).length,
+    all: all.filter(([i, x]) => by6.get(i)![`${k}_stance4`] === x).length,
+    stance: nonskip.filter(([i, x]) => by6.get(i)![`${k}_stance4`] === x).length,
+  });
+  assert.deepEqual([s("pplx").all, s("d1").all, s("pplx").stance, s("d1").stance], [16, 10, 7, 3], "earlier tallies unchanged");
+  const o = s("oa"), d = s("d1"), x = s("pplx");
+  has(`gpt-6-luna-decisions matched ${o.r5} (d1-ultra ${d.r5}, pplx-decider-v1.2 ${x.r5})`);
+  has(`gpt-6-luna-decisions ${o.all}/26, pplx-decider-v1.2 ${x.all}/26, d1-ultra ${d.all}/26. On the 16 he did not skip: ${o.stance}/16, ${x.stance}/16 and ${d.stance}/16`);
+  has("**The hand-label scores below are not comparable with the other two models.**");
+  assert.equal(T.scores.oa.combined_all, o.all);
+  assert.equal(T.scores.oa.comparable, false);
+  assert.match(T.comparability, /not comparable/);
+  const rej = labelled.filter((h) => h.hand === "reject").sort((a, b) => a.username!.localeCompare(b.username!));
+  assert.deepEqual(rej.map((h) => by5.get(h.id!)!.oa_stance), T.scores.oa.r5_rejects_called);
+  assert.ok(!T.scores.oa.r5_rejects_called.includes("reject"), "it misses both substrate rejects too");
+  const rep = all.filter(([, x]) => x === "reporting");
+  has(`it found ${rep.filter(([i]) => by6.get(i)!.oa_stance4 === "reporting").length} of the ${rep.length} reporting posts and called ${rep.filter(([i]) => by6.get(i)!.oa_stance4 === "reject").length} of them reject`);
+  const S4 = ["reject", "curious", "serious", "reporting"] as const;
+  const comp = parseCsv(read("model_comparison_r5_6.csv"));
+  for (const k of ALL)
+    for (const t of S4)
+      for (const p of S4) {
+        const nn = all.filter(([i, x]) => x === t && by6.get(i)![`${k}_stance4`] === p).length;
+        assert.equal((T.confusion as Record<string, Record<string, Record<string, number>>>)[k]![t]![p], nn);
+        assert.equal(Number(comp.find((c) => c.model.endsWith(N3[k]) && c.metric === `confusion_hand_${t}_model_${p}`)!.correct), nn);
+      }
+  for (const c of comp.filter((c) => c.model.includes("gpt-6"))) assert.match(c.comparable, /^no/);
+});
+
+test("third model: hand-label candidates are exactly the unlabelled posts where it disagrees with both others", () => {
+  const labelledIds = new Set([...hand, ...hand6csv].map((h) => h.id!));
+  const want = r5
+    .filter((r) => !labelledIds.has(r.id!))
+    .filter((r) => {
+      const q6 = by6.get(r.id!)!;
+      const off5 = r.oa_stance !== "" && r.oa_stance !== r.d1_stance && r.oa_stance !== r.pplx_stance;
+      const off6 = q6.oa_stance4 !== q6.d1_stance4 && q6.oa_stance4 !== q6.pplx_stance4;
+      return off5 || off6;
+    })
+    .map((r) => r.id!);
+  const cands = parseCsv(read("hand_label_candidates_r5_6.csv"));
+  assert.deepEqual(cands.map((c) => c.id), want);
+  assert.deepEqual(T.candidates.map((c) => c.id), want);
+  has(`There are ${want.length} posts without a hand label where gpt-6-luna-decisions disagrees`);
+  for (const c of cands) {
+    assert.ok(!labelledIds.has(c.id!));
+    has(`- ${c.username} (${c.id}): `);
+    const r = by5.get(c.id!)!, q6 = by6.get(c.id!)!;
+    assert.deepEqual([c.d1_stance, c.pplx_stance, c.oa_stance, c.oa_stance4], [r.d1_stance, r.pplx_stance, r.oa_stance, q6.oa_stance4]);
+  }
+});

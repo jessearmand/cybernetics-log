@@ -1,0 +1,73 @@
+model,metric,correct,n,pct,comparable
+liquid/d1-ultra,r5_hand_correct,4,10,40.0,yes
+liquid/d1-ultra,r6_hand_correct_17,9,17,52.9,yes
+liquid/d1-ultra,r6_new_correct,0,6,0.0,yes
+liquid/d1-ultra,r6_new_skips_reporting,1,3,33.3,yes
+liquid/d1-ultra,combined_all,10,26,38.5,yes
+liquid/d1-ultra,combined_stance,3,16,18.8,yes
+liquid/d1-ultra,reporting_recall,7,12,58.3,yes
+liquid/d1-ultra,reporting_called_reject,2,12,16.7,yes
+liquid/d1-ultra,confusion_hand_reject_model_reject,0,2,0.0,yes
+liquid/d1-ultra,confusion_hand_reject_model_curious,0,2,0.0,yes
+liquid/d1-ultra,confusion_hand_reject_model_serious,2,2,100.0,yes
+liquid/d1-ultra,confusion_hand_reject_model_reporting,0,2,0.0,yes
+liquid/d1-ultra,confusion_hand_curious_model_reject,3,12,25.0,yes
+liquid/d1-ultra,confusion_hand_curious_model_curious,3,12,25.0,yes
+liquid/d1-ultra,confusion_hand_curious_model_serious,3,12,25.0,yes
+liquid/d1-ultra,confusion_hand_curious_model_reporting,3,12,25.0,yes
+liquid/d1-ultra,confusion_hand_serious_model_reject,0,0,0.0,yes
+liquid/d1-ultra,confusion_hand_serious_model_curious,0,0,0.0,yes
+liquid/d1-ultra,confusion_hand_serious_model_serious,0,0,0.0,yes
+liquid/d1-ultra,confusion_hand_serious_model_reporting,0,0,0.0,yes
+liquid/d1-ultra,confusion_hand_reporting_model_reject,2,12,16.7,yes
+liquid/d1-ultra,confusion_hand_reporting_model_curious,1,12,8.3,yes
+liquid/d1-ultra,confusion_hand_reporting_model_serious,2,12,16.7,yes
+liquid/d1-ultra,confusion_hand_reporting_model_reporting,7,12,58.3,yes
+perplexity/pplx-decider-v1.2,r5_hand_correct,3,10,30.0,yes
+perplexity/pplx-decider-v1.2,r6_hand_correct_17,10,17,58.8,yes
+perplexity/pplx-decider-v1.2,r6_new_correct,4,6,66.7,yes
+perplexity/pplx-decider-v1.2,r6_new_skips_reporting,2,3,66.7,yes
+perplexity/pplx-decider-v1.2,combined_all,16,26,61.5,yes
+perplexity/pplx-decider-v1.2,combined_stance,7,16,43.8,yes
+perplexity/pplx-decider-v1.2,reporting_recall,11,12,91.7,yes
+perplexity/pplx-decider-v1.2,reporting_called_reject,1,12,8.3,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reject_model_reject,0,2,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reject_model_curious,0,2,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reject_model_serious,2,2,100.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reject_model_reporting,0,2,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_curious_model_reject,3,12,25.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_curious_model_curious,5,12,41.7,yes
+perplexity/pplx-decider-v1.2,confusion_hand_curious_model_serious,1,12,8.3,yes
+perplexity/pplx-decider-v1.2,confusion_hand_curious_model_reporting,3,12,25.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_serious_model_reject,0,0,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_serious_model_curious,0,0,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_serious_model_serious,0,0,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_serious_model_reporting,0,0,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reporting_model_reject,1,12,8.3,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reporting_model_curious,0,12,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reporting_model_serious,0,12,0.0,yes
+perplexity/pplx-decider-v1.2,confusion_hand_reporting_model_reporting,11,12,91.7,yes
+openai/gpt-6-luna-decisions,r5_hand_correct,6,10,60.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,r6_hand_correct_17,10,17,58.8,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,r6_new_correct,1,6,16.7,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,r6_new_skips_reporting,1,3,33.3,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,combined_all,12,26,46.2,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,combined_stance,6,16,37.5,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,reporting_recall,6,12,50.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,reporting_called_reject,5,12,41.7,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reject_model_reject,0,2,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reject_model_curious,1,2,50.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reject_model_serious,1,2,50.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reject_model_reporting,0,2,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_curious_model_reject,2,12,16.7,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_curious_model_curious,6,12,50.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_curious_model_serious,3,12,25.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_curious_model_reporting,1,12,8.3,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_serious_model_reject,0,0,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_serious_model_curious,0,0,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_serious_model_serious,0,0,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_serious_model_reporting,0,0,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reporting_model_reject,5,12,41.7,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reporting_model_curious,1,12,8.3,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reporting_model_serious,0,12,0.0,no (hand labels drawn from d1-ultra/Decider disagreements)
+openai/gpt-6-luna-decisions,confusion_hand_reporting_model_reporting,6,12,50.0,no (hand labels drawn from d1-ultra/Decider disagreements)

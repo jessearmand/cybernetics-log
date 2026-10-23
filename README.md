@@ -61,11 +61,14 @@ data/
   authors.json                  per-author model shares and hand reading
   hand_labels.json              40 hand labels (the ground truth: R 45% / C 25% / S 30%)
   jev_report.md                 full Jev write-up
-  posts_r5.jsonl, labels_r5.csv  round 5: 69 posts, d1-ultra and Decider labels side by side (+ dropped_r5.jsonl, questions_r5.json)
+  posts_r5.jsonl, labels_r5.csv  round 5: 69 posts, d1-ultra, Decider and GPT-6 Luna (oa_*) labels side by side (+ dropped_r5.jsonl, questions_r5.json)
   hand_labels_r5.csv            17 hand labels on the posts where the two models disagreed
   hand_labels_r6.csv            9 hand labels on the new round 6 (four-way) disagreements
   tsao_followup.json            Doris Tsao's 18 Oct follow-up post (source for the quotes in the lead)
   labels_r6.csv                 round 6: four-way stance (with reporting) on the round-5 posts (+ questions_r6.json)
+  model_agreement_r5_6.csv      pairwise agreement and Cohen's kappa between the three round 5/6 models, per question
+  model_comparison_r5_6.csv     hand-label scores and four-way confusion per model (GPT-6 Luna marked not comparable)
+  hand_label_candidates_r5_6.csv  unlabelled posts where GPT-6 Luna disagrees with both other models (next to hand-label)
   round5_6.md                   rounds 5 and 6 write-up, checked against the CSVs by test/round5-6.test.ts
   gated_stance_r4b.md           gated stance-rule experiment (not used on the page) + gated_stance_r4b.csv, questions_r4b.json
   render-instruction.md         default render instruction
@@ -85,7 +88,7 @@ The page footer links here instead of repeating these notes. They are generated 
 - **Totals:** 577 English posts from 490 authors, 24 Sep – 20 Oct 2026.
 - **Source:** X API v2 full-archive search, read-only (nothing posted, liked, replied to or DMed).
 - Five collection rounds: round 1 (268 posts, 24 Sep – 8 Oct), round 2 (64 posts, 8 – 9 Oct), round 3 (90 posts: the usage-policy debate, the Dawkins spotlight and new general posts to 10 Oct), round 4 (86 posts, 10 – 17 Oct: the Sacks / All-In fight, more policy and Dawkins posts, the Tsao preprint and general posts) and round 5 (69 posts: the Nature commentary of 19 – 20 Oct and posts on Anthropic's July workspace paper). Round 6 re-labelled the round-5 posts and added none. Clusters, the pair test and the confidence curve use round 1 only.
-- Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev.
+- Round 4 was labelled with a newer Jev version (jev-1.14.0) using the round-3 question wording; earlier rounds were not re-run. Rounds 5 and 6 were labelled with d1-ultra and Decider v1.2, not Jev; OpenAI's GPT-6 Luna Decisions was added later on the same posts and questions.
 - One @grok reply slipped through and is excluded from author counts.
 - Dropped before analysis: spam ~13, @grok replies ~15, news/news-bot ~40, retweets ~40, off-topic chatter ~100, duplicates 11.
 - The Danmar_here thread root (2105059762240979283) has been deleted; replies and quotes remain.

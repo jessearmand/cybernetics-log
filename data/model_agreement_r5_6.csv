@@ -1,0 +1,19 @@
+question,round,pair,n,agree,pct,kappa
+stance,round 5,d1/pplx,69,52,75.4,0.61
+stance,round 5,d1/oa,67,51,76.1,0.628
+stance,round 5,pplx/oa,67,48,71.6,0.538
+frame,round 5,d1/pplx,69,62,89.9,0.519
+frame,round 5,d1/oa,69,65,94.2,0.576
+frame,round 5,pplx/oa,69,60,87.0,0.389
+on_topic,round 5,d1/pplx,69,62,89.9,0.711
+on_topic,round 5,d1/oa,67,61,91.0,0.764
+on_topic,round 5,pplx/oa,67,60,89.6,0.694
+policy,round 5,d1/pplx,69,67,97.1,0.0
+policy,round 5,d1/oa,69,65,94.2,0.0
+policy,round 5,pplx/oa,69,67,97.1,0.653
+claims_found,round 5,d1/pplx,69,68,98.6,0.881
+claims_found,round 5,d1/oa,69,68,98.6,0.881
+claims_found,round 5,pplx/oa,69,69,100.0,1.0
+stance4,round 6,d1/pplx,69,56,81.2,0.728
+stance4,round 6,d1/oa,69,56,81.2,0.736
+stance4,round 6,pplx/oa,69,54,78.3,0.691
