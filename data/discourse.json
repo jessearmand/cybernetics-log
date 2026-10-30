@@ -3347,6 +3347,807 @@
       "GPT-6 Luna Decisions was added after the hand labels were drawn from the other two models' disagreements, so its hand-label scores cannot be ranked against theirs."
     ]
   },
+  "round7": {
+    "new_models": {
+      "note": "Four more AI Gateway decision models were run on the same 69 round 5 and 6 posts with the same questions: joey-1 (2B, Baseten, released 29 October 2026); elephant-1 (9B open weights, Baseten); mammoth-1 (27B open weights, Baseten, fine-tuned from Qwen3.5-27B); Decision-1 (Microsoft AI, served on Azure; size not published). All 1,104 calls were answered, with no gateway errors.",
+      "agreement_text": "On the round 6 four-way stance question, d1-ultra and Decider agree on 56 of 69 posts (κ 0.728). Decision-1 agrees with d1-ultra on 60 (κ 0.815), elephant-1 on 60 (κ 0.812), and mammoth-1 agrees with Decider on 60 (κ 0.81). Each agrees with the two reference models more often than they agree with each other.",
+      "shared_text": "That agreement is not better stance reading. On the 21 hand-labelled posts that were not skipped, d1-ultra's round 6 stance is wrong on 13. Decision-1 gives the same wrong answer on 10 of them, elephant-1 on 9 and mammoth-1 on 7; Decider repeats it on 5. In round 5 (three-way), d1-ultra is wrong on 6 of 14, and Decision-1 repeats 3 of those. High agreement here mostly means shared mistakes.",
+      "joey_text": "joey-1 is the weak one: it agrees with d1-ultra on only 32 of 69 round 6 posts (κ 0.254), and its top answer on the four-way question has a median probability of 0.42, against 0.77 to 0.95 for the other models.",
+      "comparability": "Hand-label scores are not comparable across models. The first 26 labels were picked where d1-ultra and Decider disagreed and the last 6 where GPT-6 Luna disagreed with both, so neither set is a random sample and none of these models played a part in choosing them.",
+      "agreement": {
+        "stance4": [
+          {
+            "model": "openai/gpt-6-luna-decisions",
+            "name": "GPT-6 Luna",
+            "vs_d1": {
+              "agree": 56,
+              "n": 69,
+              "kappa": 0.736
+            },
+            "vs_pplx": {
+              "agree": 54,
+              "n": 69,
+              "kappa": 0.691
+            }
+          },
+          {
+            "model": "baseten/joey-1",
+            "name": "joey-1",
+            "vs_d1": {
+              "agree": 32,
+              "n": 69,
+              "kappa": 0.254
+            },
+            "vs_pplx": {
+              "agree": 39,
+              "n": 69,
+              "kappa": 0.386
+            }
+          },
+          {
+            "model": "baseten/elephant-1",
+            "name": "elephant-1",
+            "vs_d1": {
+              "agree": 60,
+              "n": 69,
+              "kappa": 0.812
+            },
+            "vs_pplx": {
+              "agree": 57,
+              "n": 69,
+              "kappa": 0.743
+            }
+          },
+          {
+            "model": "baseten/mammoth-1",
+            "name": "mammoth-1",
+            "vs_d1": {
+              "agree": 59,
+              "n": 69,
+              "kappa": 0.793
+            },
+            "vs_pplx": {
+              "agree": 60,
+              "n": 69,
+              "kappa": 0.81
+            }
+          },
+          {
+            "model": "microsoft/microsoft-decision-1",
+            "name": "Decision-1",
+            "vs_d1": {
+              "agree": 60,
+              "n": 69,
+              "kappa": 0.815
+            },
+            "vs_pplx": {
+              "agree": 57,
+              "n": 69,
+              "kappa": 0.75
+            }
+          }
+        ],
+        "stance": [
+          {
+            "model": "openai/gpt-6-luna-decisions",
+            "name": "GPT-6 Luna",
+            "vs_d1": {
+              "agree": 51,
+              "n": 67,
+              "kappa": 0.628
+            },
+            "vs_pplx": {
+              "agree": 48,
+              "n": 67,
+              "kappa": 0.538
+            }
+          },
+          {
+            "model": "baseten/joey-1",
+            "name": "joey-1",
+            "vs_d1": {
+              "agree": 42,
+              "n": 69,
+              "kappa": 0.406
+            },
+            "vs_pplx": {
+              "agree": 43,
+              "n": 69,
+              "kappa": 0.416
+            }
+          },
+          {
+            "model": "baseten/elephant-1",
+            "name": "elephant-1",
+            "vs_d1": {
+              "agree": 56,
+              "n": 69,
+              "kappa": 0.707
+            },
+            "vs_pplx": {
+              "agree": 54,
+              "n": 69,
+              "kappa": 0.65
+            }
+          },
+          {
+            "model": "baseten/mammoth-1",
+            "name": "mammoth-1",
+            "vs_d1": {
+              "agree": 55,
+              "n": 69,
+              "kappa": 0.681
+            },
+            "vs_pplx": {
+              "agree": 53,
+              "n": 69,
+              "kappa": 0.613
+            }
+          },
+          {
+            "model": "microsoft/microsoft-decision-1",
+            "name": "Decision-1",
+            "vs_d1": {
+              "agree": 60,
+              "n": 69,
+              "kappa": 0.798
+            },
+            "vs_pplx": {
+              "agree": 57,
+              "n": 69,
+              "kappa": 0.72
+            }
+          }
+        ]
+      },
+      "baseline": {
+        "stance4": {
+          "agree": 56,
+          "n": 69,
+          "kappa": 0.728
+        },
+        "stance": {
+          "agree": 52,
+          "n": 69,
+          "kappa": 0.61
+        }
+      },
+      "shared": {
+        "stance4": {
+          "labelled": 21,
+          "d1_wrong": 13,
+          "models": [
+            {
+              "model": "perplexity/pplx-decider-v1.2",
+              "name": "Decider",
+              "same_as_d1": 5
+            },
+            {
+              "model": "openai/gpt-6-luna-decisions",
+              "name": "GPT-6 Luna",
+              "same_as_d1": 8
+            },
+            {
+              "model": "baseten/joey-1",
+              "name": "joey-1",
+              "same_as_d1": 3
+            },
+            {
+              "model": "baseten/elephant-1",
+              "name": "elephant-1",
+              "same_as_d1": 9
+            },
+            {
+              "model": "baseten/mammoth-1",
+              "name": "mammoth-1",
+              "same_as_d1": 7
+            },
+            {
+              "model": "microsoft/microsoft-decision-1",
+              "name": "Decision-1",
+              "same_as_d1": 10
+            }
+          ]
+        },
+        "stance": {
+          "labelled": 14,
+          "d1_wrong": 6,
+          "models": [
+            {
+              "model": "perplexity/pplx-decider-v1.2",
+              "name": "Decider",
+              "same_as_d1": 0
+            },
+            {
+              "model": "openai/gpt-6-luna-decisions",
+              "name": "GPT-6 Luna",
+              "same_as_d1": 3
+            },
+            {
+              "model": "baseten/joey-1",
+              "name": "joey-1",
+              "same_as_d1": 2
+            },
+            {
+              "model": "baseten/elephant-1",
+              "name": "elephant-1",
+              "same_as_d1": 2
+            },
+            {
+              "model": "baseten/mammoth-1",
+              "name": "mammoth-1",
+              "same_as_d1": 2
+            },
+            {
+              "model": "microsoft/microsoft-decision-1",
+              "name": "Decision-1",
+              "same_as_d1": 3
+            }
+          ]
+        }
+      },
+      "hand": [
+        {
+          "model": "liquid/d1-ultra",
+          "name": "d1-ultra",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 10,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 3,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 5,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 4,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 4,
+            "n": 4
+          }
+        },
+        {
+          "model": "perplexity/pplx-decider-v1.2",
+          "name": "Decider",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 16,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 7,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 5,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 3,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 4,
+            "n": 4
+          }
+        },
+        {
+          "model": "openai/gpt-6-luna-decisions",
+          "name": "GPT-6 Luna",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 12,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 6,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 3,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 6,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 1,
+            "n": 4
+          }
+        },
+        {
+          "model": "baseten/joey-1",
+          "name": "joey-1",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 13,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 6,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 2,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 5,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 3,
+            "n": 4
+          }
+        },
+        {
+          "model": "baseten/elephant-1",
+          "name": "elephant-1",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 13,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 3,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 4,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 6,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 3,
+            "n": 4
+          }
+        },
+        {
+          "model": "baseten/mammoth-1",
+          "name": "mammoth-1",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 14,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 6,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 4,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 6,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 4,
+            "n": 4
+          }
+        },
+        {
+          "model": "microsoft/microsoft-decision-1",
+          "name": "Decision-1",
+          "r6_hand26_skips_as_reporting": {
+            "correct": 12,
+            "n": 26
+          },
+          "r6_hand26_not_skipped": {
+            "correct": 4,
+            "n": 16
+          },
+          "r6_outlier6_not_skipped": {
+            "correct": 4,
+            "n": 5
+          },
+          "r5_hand26_threeway": {
+            "correct": 5,
+            "n": 10
+          },
+          "r5_outlier6_threeway": {
+            "correct": 4,
+            "n": 4
+          }
+        }
+      ],
+      "run": [
+        {
+          "model": "baseten/joey-1",
+          "name": "joey-1",
+          "about": "2B, Baseten, released 29 October 2026",
+          "calls": 276,
+          "errors": 0,
+          "gateway_cost_usd": 0.00076,
+          "median_latency_s": 1.274
+        },
+        {
+          "model": "baseten/elephant-1",
+          "name": "elephant-1",
+          "about": "9B open weights, Baseten",
+          "calls": 276,
+          "errors": 0,
+          "gateway_cost_usd": 0.002661,
+          "median_latency_s": 1.264
+        },
+        {
+          "model": "baseten/mammoth-1",
+          "name": "mammoth-1",
+          "about": "27B open weights, Baseten, fine-tuned from Qwen3.5-27B",
+          "calls": 276,
+          "errors": 0,
+          "gateway_cost_usd": 0.007603,
+          "median_latency_s": 1.481
+        },
+        {
+          "model": "microsoft/microsoft-decision-1",
+          "name": "Decision-1",
+          "about": "Microsoft AI, served on Azure; size not published",
+          "calls": 276,
+          "errors": 0,
+          "gateway_cost_usd": 0.002003,
+          "median_latency_s": 1.356
+        }
+      ]
+    },
+    "x_set": {
+      "note": "Seeker collected a fresh set of X posts on the machine-consciousness debate from 8 to 30 October 2026, with 6 searches capped at 25 posts each and sorted by relevancy. Of 136 posts, 20 were duplicates and 37 were off-topic, leaving 79. All seven models answered the round 6 stance question and a new question, use, on every post: 1,106 calls, no gateway errors.",
+      "question": "How does the post deal with AI consciousness? applied = the author made or changed something concrete (a guardrail, persona rule, model-retirement decision, memory setting, or how an agent may run) because of their stance on AI consciousness; commentary = reacts to someone else's product or policy decision (for example Anthropic's end-conversation feature or usage policy, a model-welfare line in an S-1 filing, or a system prompt rule); academic = purely academic or philosophical discussion",
+      "seeker": {
+        "applied": 0,
+        "commentary": 34,
+        "academic": 45
+      },
+      "headline": "No post in this set describes applying a stance on AI consciousness to a product decision. Seeker labels: applied 0, commentary 34, academic 45. Seven posts were called applied, each by a single model and by no other: joey-1's 6 are all reactions to Anthropic's own measures (its usage policy, end-conversation feature and welfare programme), and d1-ultra's one (@veryangelic1, P 0.41) is a posted chat-log experiment. Anthropic is the one making the product decisions; on X it appears only as the thing others react to.",
+      "seeker_text": "Decider, GPT-6 Luna, elephant-1 and mammoth-1 match Seeker labels on 67 to 69 of 79 posts (κ 0.70 to 0.75). d1-ultra and Decision-1 match on 55: each calls 23 of Seeker's academic posts commentary.",
+      "stance_text": "The round 7 stance answers have no human labels, so only agreement between models is shown. d1-ultra and Decider agree on 51 of 79 posts (κ 0.537). Several models lean towards serious here (d1-ultra 41, joey-1 40, GPT-6 Luna 37 of 79).",
+      "seeker_rows": [
+        {
+          "model": "liquid/d1-ultra",
+          "name": "d1-ultra",
+          "agree": 55,
+          "n": 79,
+          "kappa": 0.435,
+          "applied": 1,
+          "commentary": 57,
+          "academic_called_commentary": 23,
+          "commentary_called_academic": 0
+        },
+        {
+          "model": "perplexity/pplx-decider-v1.2",
+          "name": "Decider",
+          "agree": 69,
+          "n": 79,
+          "kappa": 0.749,
+          "applied": 0,
+          "commentary": 42,
+          "academic_called_commentary": 9,
+          "commentary_called_academic": 1
+        },
+        {
+          "model": "openai/gpt-6-luna-decisions",
+          "name": "GPT-6 Luna",
+          "agree": 68,
+          "n": 79,
+          "kappa": 0.713,
+          "applied": 0,
+          "commentary": 31,
+          "academic_called_commentary": 4,
+          "commentary_called_academic": 7
+        },
+        {
+          "model": "baseten/joey-1",
+          "name": "joey-1",
+          "agree": 48,
+          "n": 79,
+          "kappa": 0.286,
+          "applied": 6,
+          "commentary": 43,
+          "academic_called_commentary": 20,
+          "commentary_called_academic": 5
+        },
+        {
+          "model": "baseten/elephant-1",
+          "name": "elephant-1",
+          "agree": 68,
+          "n": 79,
+          "kappa": 0.715,
+          "applied": 0,
+          "commentary": 33,
+          "academic_called_commentary": 5,
+          "commentary_called_academic": 6
+        },
+        {
+          "model": "baseten/mammoth-1",
+          "name": "mammoth-1",
+          "agree": 67,
+          "n": 79,
+          "kappa": 0.701,
+          "applied": 0,
+          "commentary": 44,
+          "academic_called_commentary": 11,
+          "commentary_called_academic": 1
+        },
+        {
+          "model": "microsoft/microsoft-decision-1",
+          "name": "Decision-1",
+          "agree": 55,
+          "n": 79,
+          "kappa": 0.426,
+          "applied": 0,
+          "commentary": 56,
+          "academic_called_commentary": 23,
+          "commentary_called_academic": 1
+        }
+      ],
+      "applied": [
+        {
+          "id": "2114314858866827497",
+          "username": "itimorin",
+          "url": "https://x.com/itimorin/status/2114314858866827497",
+          "seeker": "commentary",
+          "models": [
+            "joey-1"
+          ],
+          "p": 0.888,
+          "reading": "Reacts to Anthropic's usage-policy change on cruelty towards its models."
+        },
+        {
+          "id": "2108481997220024675",
+          "username": "coincamps",
+          "url": "https://x.com/coincamps/status/2108481997220024675",
+          "seeker": "commentary",
+          "models": [
+            "joey-1"
+          ],
+          "p": 0.74,
+          "reading": "Reports Anthropic's updated usage policy on abuse towards its models."
+        },
+        {
+          "id": "2108916462198861868",
+          "username": "JoeMaristela",
+          "url": "https://x.com/JoeMaristela/status/2108916462198861868",
+          "seeker": "commentary",
+          "models": [
+            "joey-1"
+          ],
+          "p": 0.714,
+          "reading": "Discusses a video about Anthropic's usage policy on cruelty towards Claude."
+        },
+        {
+          "id": "2108609464286810342",
+          "username": "3magi_ai",
+          "url": "https://x.com/3magi_ai/status/2108609464286810342",
+          "seeker": "commentary",
+          "models": [
+            "joey-1"
+          ],
+          "p": 0.58,
+          "reading": "Reports Anthropic's updated usage policy on abusive behaviour towards Claude."
+        },
+        {
+          "id": "2109464844495991097",
+          "username": "JasonC_Dev",
+          "url": "https://x.com/JasonC_Dev/status/2109464844495991097",
+          "seeker": "commentary",
+          "models": [
+            "joey-1"
+          ],
+          "p": 0.492,
+          "reading": "Reply pointing to Anthropic's end-conversation feature for Opus 4 and 4.1."
+        },
+        {
+          "id": "2111120866448724399",
+          "username": "UAPWatchers",
+          "url": "https://x.com/UAPWatchers/status/2111120866448724399",
+          "seeker": "commentary",
+          "models": [
+            "joey-1"
+          ],
+          "p": 0.49,
+          "reading": "Headline post about Anthropic saying its models might be conscious and the welfare measures it introduced."
+        },
+        {
+          "id": "2114037006627946671",
+          "username": "veryangelic1",
+          "url": "https://x.com/veryangelic1/status/2114037006627946671",
+          "seeker": "academic",
+          "models": [
+            "d1-ultra"
+          ],
+          "p": 0.408,
+          "reading": "Posts a long chat log with Claude as an experiment on whether it is conscious; nothing about a product was changed."
+        }
+      ],
+      "stance": [
+        {
+          "model": "liquid/d1-ultra",
+          "name": "d1-ultra",
+          "reject": 18,
+          "curious": 7,
+          "serious": 41,
+          "reporting": 13,
+          "vs_d1": null,
+          "vs_pplx": {
+            "agree": 51,
+            "n": 79,
+            "kappa": 0.537
+          }
+        },
+        {
+          "model": "perplexity/pplx-decider-v1.2",
+          "name": "Decider",
+          "reject": 19,
+          "curious": 17,
+          "serious": 16,
+          "reporting": 27,
+          "vs_d1": {
+            "agree": 51,
+            "n": 79,
+            "kappa": 0.537
+          },
+          "vs_pplx": null
+        },
+        {
+          "model": "openai/gpt-6-luna-decisions",
+          "name": "GPT-6 Luna",
+          "reject": 11,
+          "curious": 15,
+          "serious": 37,
+          "reporting": 16,
+          "vs_d1": {
+            "agree": 58,
+            "n": 79,
+            "kappa": 0.606
+          },
+          "vs_pplx": {
+            "agree": 53,
+            "n": 79,
+            "kappa": 0.568
+          }
+        },
+        {
+          "model": "baseten/joey-1",
+          "name": "joey-1",
+          "reject": 9,
+          "curious": 10,
+          "serious": 40,
+          "reporting": 20,
+          "vs_d1": {
+            "agree": 41,
+            "n": 79,
+            "kappa": 0.269
+          },
+          "vs_pplx": {
+            "agree": 33,
+            "n": 79,
+            "kappa": 0.23
+          }
+        },
+        {
+          "model": "baseten/elephant-1",
+          "name": "elephant-1",
+          "reject": 13,
+          "curious": 10,
+          "serious": 24,
+          "reporting": 32,
+          "vs_d1": {
+            "agree": 54,
+            "n": 79,
+            "kappa": 0.565
+          },
+          "vs_pplx": {
+            "agree": 58,
+            "n": 79,
+            "kappa": 0.637
+          }
+        },
+        {
+          "model": "baseten/mammoth-1",
+          "name": "mammoth-1",
+          "reject": 14,
+          "curious": 15,
+          "serious": 27,
+          "reporting": 23,
+          "vs_d1": {
+            "agree": 59,
+            "n": 79,
+            "kappa": 0.647
+          },
+          "vs_pplx": {
+            "agree": 59,
+            "n": 79,
+            "kappa": 0.661
+          }
+        },
+        {
+          "model": "microsoft/microsoft-decision-1",
+          "name": "Decision-1",
+          "reject": 20,
+          "curious": 8,
+          "serious": 26,
+          "reporting": 25,
+          "vs_d1": {
+            "agree": 57,
+            "n": 79,
+            "kappa": 0.608
+          },
+          "vs_pplx": {
+            "agree": 59,
+            "n": 79,
+            "kappa": 0.659
+          }
+        }
+      ],
+      "queries": [
+        {
+          "query": "base_claude",
+          "raw": 22,
+          "kept": 19
+        },
+        {
+          "query": "base_consc",
+          "raw": 25,
+          "kept": 11
+        },
+        {
+          "query": "base_sentience",
+          "raw": 24,
+          "kept": 15
+        },
+        {
+          "query": "base_welfare",
+          "raw": 25,
+          "kept": 19
+        },
+        {
+          "query": "prod_action",
+          "raw": 21,
+          "kept": 19
+        },
+        {
+          "query": "prod_anthro",
+          "raw": 24,
+          "kept": 0
+        }
+      ],
+      "window": {
+        "first": "2026-10-08",
+        "last": "2026-10-28"
+      },
+      "cost": {
+        "gateway_usd": 0.0075,
+        "list_usd": 0.0121
+      }
+    },
+    "caveats": [
+      "Seeker labels come from a single annotator, another bot, not from Jesse's hand labels. They are a reference, not ground truth.",
+      "The 23 academic-versus-commentary disagreements by d1-ultra and Decision-1 are a split over the definition, not a plain model error. Seeker kept commentary for reactions to a specific product or policy decision, and labelled news about Anthropic's welfare research and meetings, and general debate about whether Claude is conscious, as academic. d1-ultra and Decision-1 read any reaction or opinion as commentary.",
+      "Round 7 stance has no human labels, so only agreement between models is reported. The lean towards serious probably reflects the searches (model welfare pulls in people who already take it seriously), not a shift since round 6.",
+      "The AI psychosis search returned 24 posts, all off-topic: the phrase is mostly slang for over-trusting AI tools. It should be dropped next time.",
+      "The set is a relevancy sample capped at 25 posts per search, not a random draw from X.",
+      "Hand-label scores on the round 5 and 6 posts are not comparable across models: neither labelled subset is a random sample."
+    ],
+    "files": [
+      "data/labels_r7.csv",
+      "data/model_agreement_r7.csv",
+      "data/model_comparison_r7.csv",
+      "data/run_r7.csv",
+      "data/posts_r7.csv",
+      "data/questions_r7.json",
+      "data/labels_r7_x.csv",
+      "data/model_agreement_r7_x.csv",
+      "data/model_vs_seeker_r7_x.csv",
+      "data/distribution_r7_x.csv",
+      "data/applied_candidates_r7_x.csv",
+      "data/run_r7_x.csv"
+    ]
+  },
   "model_comparison": {
     "note": "Three decision models on AI Gateway, given identical questions, scored on the same 40 stance and 20 policy hand labels. One call per post, no repeats.",
     "hand_reject_n": 18,
@@ -4309,6 +5110,12 @@
     "data/model_comparison_r5_6.csv",
     "data/hand_label_candidates_r5_6.csv",
     "data/hand_labels_r5_6_openai.csv",
+    "data/labels_r7.csv",
+    "data/model_agreement_r7.csv",
+    "data/model_comparison_r7.csv",
+    "data/posts_r7.csv",
+    "data/labels_r7_x.csv",
+    "data/model_vs_seeker_r7_x.csv",
     "data/posts_r2.jsonl",
     "data/authors.json",
     "data/hand_labels.json",

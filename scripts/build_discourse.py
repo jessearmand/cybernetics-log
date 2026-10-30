@@ -868,6 +868,158 @@ def r5_block(rows5, hand5, rows6, hand6, posts5, users5, returning5, cost5, cost
     }
 
 
+# Round 7: four more decision models on the round 5/6 posts, and a fresh X set with Seeker labels.
+R7_NAMES = {"liquid/d1-ultra": "d1-ultra", "perplexity/pplx-decider-v1.2": "Decider", "openai/gpt-6-luna-decisions": "GPT-6 Luna",
+            "baseten/joey-1": "joey-1", "baseten/elephant-1": "elephant-1", "baseten/mammoth-1": "mammoth-1", "microsoft/microsoft-decision-1": "Decision-1"}
+R7_NEW = ["baseten/joey-1", "baseten/elephant-1", "baseten/mammoth-1", "microsoft/microsoft-decision-1"]
+# From each model's AI Gateway listing. Only mammoth-1 is documented as a fine-tune of another model.
+R7_ABOUT = {"baseten/joey-1": "2B, Baseten, released 29 October 2026",
+            "baseten/elephant-1": "9B open weights, Baseten",
+            "baseten/mammoth-1": "27B open weights, Baseten, fine-tuned from Qwen3.5-27B",
+            "microsoft/microsoft-decision-1": "Microsoft AI, served on Azure; size not published"}
+R7_X_KEYS = {"d1": "liquid/d1-ultra", "pplx": "perplexity/pplx-decider-v1.2", "oa": "openai/gpt-6-luna-decisions", "joey": "baseten/joey-1",
+             "elephant": "baseten/elephant-1", "mammoth": "baseten/mammoth-1", "msd1": "microsoft/microsoft-decision-1"}
+# Read by hand: every post a model called "applied" (Seeker labelled none applied).
+R7_APPLIED_READING = {
+    "2114037006627946671": "Posts a long chat log with Claude as an experiment on whether it is conscious; nothing about a product was changed.",
+    "2114314858866827497": "Reacts to Anthropic's usage-policy change on cruelty towards its models.",
+    "2108481997220024675": "Reports Anthropic's updated usage policy on abuse towards its models.",
+    "2108916462198861868": "Discusses a video about Anthropic's usage policy on cruelty towards Claude.",
+    "2108609464286810342": "Reports Anthropic's updated usage policy on abusive behaviour towards Claude.",
+    "2109464844495991097": "Reply pointing to Anthropic's end-conversation feature for Opus 4 and 4.1.",
+    "2111120866448724399": "Headline post about Anthropic saying its models might be conscious and the welfare measures it introduced.",
+}
+# Seeker's search keys; prod_anthro is the "AI psychosis" search.
+R7_PSYCHOSIS_QUERY = "prod_anthro"
+
+
+def r7_block(src7: Path) -> dict:
+    rd = lambda name: list(csv.DictReader(open(OUT / name, newline="", encoding="utf-8")))
+    hand = rd("hand_labels_r5.csv") + rd("hand_labels_r6.csv") + rd("hand_labels_r5_6_openai.csv")
+    L5, L6, L7 = {r["id"]: r for r in rd("labels_r5.csv")}, {r["id"]: r for r in rd("labels_r6.csv")}, {r["id"]: r for r in rd("labels_r7.csv")}
+    old = {"liquid/d1-ultra": "d1", "perplexity/pplx-decider-v1.2": "pplx", "openai/gpt-6-luna-decisions": "oa"}
+    def stance(i, m, q):
+        return (L5 if q == "stance" else L6)[i][f"{old[m]}_{q}"] if m in old else L7[i][f"{m}:{q}"]
+    agr56 = rd("model_agreement_r5_6.csv"); agr7 = rd("model_agreement_r7.csv")
+    def pair(m, ref, q):
+        if m in old:
+            a, b = old[m], old[ref]
+            row = next(r for r in agr56 if r["question"] == q and r["pair"] in (f"{a}/{b}", f"{b}/{a}"))
+        else:
+            row = next(r for r in agr7 if r["model"] == m and r["question"] == q and r["vs"] == ref)
+        return {"agree": int(row["agree"]), "n": int(row["n"]), "kappa": float(row["kappa"]) if row["kappa"] else None}
+    D1, PX = "liquid/d1-ultra", "perplexity/pplx-decider-v1.2"
+    agreement = {q: [{"model": m, "name": R7_NAMES[m], "vs_d1": pair(m, D1, q), "vs_pplx": pair(m, PX, q)} for m in ["openai/gpt-6-luna-decisions", *R7_NEW]]
+                 for q in ["stance4", "stance"]}
+    base = {q: pair(D1, PX, q) for q in ["stance4", "stance"]}
+    # Shared mistakes: on hand-labelled posts where d1-ultra is wrong, how often does each model give d1-ultra's answer?
+    S3 = {"reject", "curious", "serious"}
+    # Round 5 is scored, as before, only on labels with a three-way option from the round 5 hand check and the outlier set.
+    hand5x = rd("hand_labels_r5.csv") + rd("hand_labels_r5_6_openai.csv")
+    sets = {"stance4": [(h["id"], h["hand"]) for h in hand if h["hand"] != "skip"], "stance": [(h["id"], h["hand"]) for h in hand5x if h["hand"] in S3]}
+    shared = {}
+    for q, S in sets.items():
+        wrong = [i for i, t in S if stance(i, D1, q) != t]
+        shared[q] = {"labelled": len(S), "d1_wrong": len(wrong),
+                     "models": [{"model": m, "name": R7_NAMES[m], "same_as_d1": sum(stance(i, m, q) == stance(i, D1, q) for i in wrong)} for m in [PX, "openai/gpt-6-luna-decisions", *R7_NEW]]}
+    comp = rd("model_comparison_r7.csv")
+    sc = lambda m, metric: next({"correct": int(r["correct"]), "n": int(r["n"])} for r in comp if r["model"] == m and r["metric"] == metric)
+    METRICS = ["r6_hand26_skips_as_reporting", "r6_hand26_not_skipped", "r6_outlier6_not_skipped", "r5_hand26_threeway", "r5_outlier6_threeway"]
+    hand_rows = [{"model": m, "name": R7_NAMES[m], **{k: sc(m, k) for k in METRICS}} for m in R7_NAMES]
+    run = rd("run_r7.csv")
+    def g(m, key):
+        return round(sum(float(r[key]) for r in run if r["model"] == m), 6)
+    newrun = [{"model": m, "name": R7_NAMES[m], "about": R7_ABOUT[m], "calls": sum(int(r["answered"]) for r in run if r["model"] == m),
+               "errors": sum(int(r["errors"]) for r in run if r["model"] == m), "gateway_cost_usd": g(m, "gateway_cost_usd"),
+               "median_latency_s": sorted(float(r["median_latency_s"]) for r in run if r["model"] == m)[2]} for m in R7_NEW]
+    s6, s5 = shared["stance4"], shared["stance"]
+    # Median top-answer probability on the round 6 stance question, from the raw outputs.
+    def med_conf(m):
+        ps = sorted(max(r["answers"]["stance"]["probabilities"].values()) for l in open(src7.parent / "round6" / "raw" / f"stance4_{m.replace('/', '_')}.jsonl") if '"answers"' in l for r in [json.loads(l)])
+        return ps[len(ps) // 2]
+    conf = {m: med_conf(m) for m in R7_NAMES}
+    sm = lambda q, m: next(x["same_as_d1"] for x in shared[q]["models"] if x["model"] == m)
+    a6 = {x["model"]: x for x in agreement["stance4"]}
+    new_models = {
+        "note": (f"Four more AI Gateway decision models were run on the same {len(L7)} round 5 and 6 posts with the same questions: "
+                 + "; ".join(f"{R7_NAMES[m]} ({R7_ABOUT[m]})" for m in R7_NEW)
+                 + f". All {sum(x['calls'] for x in newrun):,} calls were answered, with no gateway errors."),
+        "agreement_text": (f"On the round 6 four-way stance question, d1-ultra and Decider agree on {base['stance4']['agree']} of {base['stance4']['n']} posts (κ {base['stance4']['kappa']}). "
+                           f"Decision-1 agrees with d1-ultra on {a6['microsoft/microsoft-decision-1']['vs_d1']['agree']} (κ {a6['microsoft/microsoft-decision-1']['vs_d1']['kappa']}), elephant-1 on {a6['baseten/elephant-1']['vs_d1']['agree']} (κ {a6['baseten/elephant-1']['vs_d1']['kappa']}), "
+                           f"and mammoth-1 agrees with Decider on {a6['baseten/mammoth-1']['vs_pplx']['agree']} (κ {a6['baseten/mammoth-1']['vs_pplx']['kappa']}). "
+                           "Each agrees with the two reference models more often than they agree with each other."),
+        "shared_text": (f"That agreement is not better stance reading. On the {s6['labelled']} hand-labelled posts that were not skipped, d1-ultra's round 6 stance is wrong on {s6['d1_wrong']}. "
+                        f"Decision-1 gives the same wrong answer on {sm('stance4', 'microsoft/microsoft-decision-1')} of them, elephant-1 on {sm('stance4', 'baseten/elephant-1')} and mammoth-1 on {sm('stance4', 'baseten/mammoth-1')}; "
+                        f"Decider repeats it on {sm('stance4', PX)}. In round 5 (three-way), d1-ultra is wrong on {s5['d1_wrong']} of {s5['labelled']}, and Decision-1 repeats {sm('stance', 'microsoft/microsoft-decision-1')} of those. "
+                        "High agreement here mostly means shared mistakes."),
+        "joey_text": (f"joey-1 is the weak one: it agrees with d1-ultra on only {a6['baseten/joey-1']['vs_d1']['agree']} of {a6['baseten/joey-1']['vs_d1']['n']} round 6 posts (κ {a6['baseten/joey-1']['vs_d1']['kappa']}), "
+                      f"and its top answer on the four-way question has a median probability of {conf['baseten/joey-1']:.2f}, against {min(v for m, v in conf.items() if m != 'baseten/joey-1'):.2f} to {max(conf.values()):.2f} for the other models."),
+        "comparability": "Hand-label scores are not comparable across models. The first 26 labels were picked where d1-ultra and Decider disagreed and the last 6 where GPT-6 Luna disagreed with both, so neither set is a random sample and none of these models played a part in choosing them.",
+        "agreement": agreement, "baseline": base, "shared": shared, "hand": hand_rows, "run": newrun,
+    }
+    # The fresh X set.
+    raw = [json.loads(l) for l in open(src7 / "posts_labeled.jsonl", encoding="utf-8")]
+    lab = Counter(p["r7_label"] for p in raw)
+    posts = rd("posts_r7.csv"); X = {r["id"]: r for r in rd("labels_r7_x.csv")}
+    assert len(posts) == lab["applied"] + lab["commentary"] + lab["academic"] == len(X)
+    seek = Counter(p["seeker_label"] for p in posts)
+    vs = rd("model_vs_seeker_r7_x.csv"); dist = rd("distribution_r7_x.csv"); agx = rd("model_agreement_r7_x.csv")
+    seeker_rows = [{"model": r["model"], "name": R7_NAMES[r["model"]], "agree": int(r["agree"]), "n": int(r["n"]), "kappa": float(r["kappa"]),
+                    "applied": int(r["model_applied"]), "commentary": sum(int(r[f"seeker_{s}_model_commentary"]) for s in ["applied", "commentary", "academic"]),
+                    "academic_called_commentary": int(r["seeker_academic_model_commentary"]), "commentary_called_academic": int(r["seeker_commentary_model_academic"])} for r in vs]
+    close = [r for r in seeker_rows if r["kappa"] >= 0.7]
+    by_name = {r["name"]: r for r in seeker_rows}
+    assert by_name["d1-ultra"]["academic_called_commentary"] == by_name["Decision-1"]["academic_called_commentary"]
+    cands = rd("applied_candidates_r7_x.csv")
+    assert {c["id"] for c in cands} == set(R7_APPLIED_READING), "applied candidates drifted from the hand reading"
+    k2m = R7_X_KEYS
+    applied = [{"id": c["id"], "username": c["username"], "url": c["url"], "seeker": c["seeker_label"], "models": [R7_NAMES[m] for m in c["models"].split(";")],
+                "p": max(float(c[f"{k}_p_applied"]) for k, m in k2m.items() if m in c["models"].split(";")), "reading": R7_APPLIED_READING[c["id"]]} for c in cands]
+    applied.sort(key=lambda a: (a["models"] != ["joey-1"], -a["p"]))
+    joey_n = sum(a["models"] == ["joey-1"] for a in applied)
+    d1a = next(a for a in applied if a["models"] == ["d1-ultra"])
+    def pairx(m, ref):
+        r = next(r for r in agx if r["question"] == "stance4" and {r["model_a"], r["model_b"]} == {m, ref})
+        return {"agree": int(r["agree"]), "n": int(r["n"]), "kappa": float(r["kappa"])}
+    stance_rows = [{"model": m, "name": R7_NAMES[m], **{o: int(next(r["count"] for r in dist if r["model"] == m and r["question"] == "stance4" and r["option"] == o)) for o in R6_STANCES},
+                    "vs_d1": None if m == D1 else pairx(m, D1), "vs_pplx": None if m == PX else pairx(m, PX)} for m in R7_NAMES]
+    runx = rd("run_r7_x.csv")
+    qcount = Counter(q for p in raw for q in p["queries"])
+    created = sorted(p["created_at"] for p in posts)
+    use_q = json.load(open(OUT / "questions_r7.json", encoding="utf-8"))["use"]["args"][1].split("=", 1)[1]
+    serious = {r["name"]: r["serious"] for r in stance_rows}
+    x_set = {
+        "note": (f"Seeker collected a fresh set of X posts on the machine-consciousness debate from 8 to 30 October 2026, with {len(qcount)} searches capped at 25 posts each and sorted by relevancy. "
+                 f"Of {len(raw)} posts, {lab['duplicate']} were duplicates and {lab['off_topic']} were off-topic, leaving {len(posts)}. All seven models answered the round 6 stance question and a new question, use, on every post: "
+                 f"{sum(int(r['answered']) for r in runx):,} calls, no gateway errors."),
+        "question": use_q,
+        "seeker": {k: seek.get(k, 0) for k in ["applied", "commentary", "academic"]},
+        "headline": (f"No post in this set describes applying a stance on AI consciousness to a product decision. Seeker labels: applied {seek.get('applied', 0)}, commentary {seek['commentary']}, academic {seek['academic']}. "
+                     f"Seven posts were called applied, each by a single model and by no other: joey-1's {joey_n} are all reactions to Anthropic's own measures (its usage policy, end-conversation feature and welfare programme), "
+                     f"and d1-ultra's one (@{d1a['username']}, P {d1a['p']:.2f}) is a posted chat-log experiment. Anthropic is the one making the product decisions; on X it appears only as the thing others react to."),
+        "seeker_text": (f"{', '.join(r['name'] for r in close[:-1])} and {close[-1]['name']} match Seeker labels on {min(r['agree'] for r in close)} to {max(r['agree'] for r in close)} of {len(posts)} posts (κ {min(r['kappa'] for r in close):.2f} to {max(r['kappa'] for r in close):.2f}). "
+                        f"d1-ultra and Decision-1 match on {next(r['agree'] for r in seeker_rows if r['name'] == 'd1-ultra')}: each calls {next(r['academic_called_commentary'] for r in seeker_rows if r['name'] == 'd1-ultra')} of Seeker's academic posts commentary."),
+        "stance_text": (f"The round 7 stance answers have no human labels, so only agreement between models is shown. d1-ultra and Decider agree on {pairx(PX, D1)['agree']} of {len(posts)} posts (κ {pairx(PX, D1)['kappa']}). "
+                        f"Several models lean towards serious here (d1-ultra {serious['d1-ultra']}, joey-1 {serious['joey-1']}, GPT-6 Luna {serious['GPT-6 Luna']} of {len(posts)})."),
+        "seeker_rows": seeker_rows, "applied": applied, "stance": stance_rows,
+        "queries": [{"query": q, "raw": qcount[q], "kept": sum(q in p["queries"].split(";") for p in posts)} for q in sorted(qcount)],
+        "window": {"first": created[0][:10], "last": created[-1][:10]},
+        "cost": {"gateway_usd": round(sum(float(r["gateway_cost_usd"]) for r in runx), 4), "list_usd": round(sum(float(r["market_cost_usd"]) for r in runx), 4)},
+    }
+    caveats = [
+        "Seeker labels come from a single annotator, another bot, not from Jesse's hand labels. They are a reference, not ground truth.",
+        (f"The {by_name['d1-ultra']['academic_called_commentary']} academic-versus-commentary disagreements by d1-ultra and Decision-1 are a split over the definition, not a plain model error. "
+         "Seeker kept commentary for reactions to a specific product or policy decision, and labelled news about Anthropic's welfare research and meetings, and general debate about whether Claude is conscious, as academic. d1-ultra and Decision-1 read any reaction or opinion as commentary."),
+        "Round 7 stance has no human labels, so only agreement between models is reported. The lean towards serious probably reflects the searches (model welfare pulls in people who already take it seriously), not a shift since round 6.",
+        f"The AI psychosis search returned {qcount[R7_PSYCHOSIS_QUERY]} posts, all off-topic: the phrase is mostly slang for over-trusting AI tools. It should be dropped next time.",
+        "The set is a relevancy sample capped at 25 posts per search, not a random draw from X.",
+        "Hand-label scores on the round 5 and 6 posts are not comparable across models: neither labelled subset is a random sample.",
+    ]
+    return {"new_models": new_models, "x_set": x_set, "caveats": caveats,
+            "files": ["data/labels_r7.csv", "data/model_agreement_r7.csv", "data/model_comparison_r7.csv", "data/run_r7.csv", "data/posts_r7.csv", "data/questions_r7.json",
+                      "data/labels_r7_x.csv", "data/model_agreement_r7_x.csv", "data/model_vs_seeker_r7_x.csv", "data/distribution_r7_x.csv", "data/applied_candidates_r7_x.csv", "data/run_r7_x.csv"]}
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     rows = list(csv.DictReader(open(SRC / "jev_labels.csv", newline="", encoding="utf-8")))
@@ -1144,6 +1296,7 @@ def main() -> None:
         "workspace_paper": {**WORKSPACE, "posts": sum(p["flashpoint"] == "anthropic_gwt" for p in posts5)},
         "nature_comment": {**NATURE, "posts": sum(p["flashpoint"] in ("nature_search", "seth_replies", "nature_quotes", "seth_quotes") for p in posts5)},
         "round5": r5_block(rows5, hand5, rows6, hand6, posts5, users5, len(users5 & ((users1 | users2 | users3 | users4) - {"grok"})), cost5, cost6, third),
+        "round7": r7_block(SRC / "round7"),
         "model_comparison": model_comparison_block(cmp_, tsao_off, sum(v == "R" for v in hand.values())),
         "key_accounts_round4": {
             "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",
@@ -1194,7 +1347,7 @@ def main() -> None:
                  "round3_jev_usd": jev3_cost, "round3_jev_total_usd": round(sum(v or 0 for v in jev3_cost.values()), 4),
                  "round4_jev_usd": round(jev4_cost, 4), "round4_model_comparison_usd": {m["model"]: m["cost_usd"] for m in cmp_["summary"]},
                  "round5_usd": round(cost5, 5), "round6_usd": round(cost6, 5)},
-        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/tsao_followup.json", "data/labels_r6.csv", "data/questions_r6.json", "data/hand_labels_r6.csv", "data/model_agreement_r5_6.csv", "data/model_comparison_r5_6.csv", "data/hand_label_candidates_r5_6.csv", "data/hand_labels_r5_6_openai.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
+        "files": ["data/jev_labels.csv", "data/jev_labels_r2.csv", "data/jev_labels_r3.csv", "data/posts_r3.jsonl", "data/policy_labels.csv", "data/hand_labels_policy.json", "data/topic_r2.csv", "data/questions_r3.json", "data/jev_labels_r4.csv", "data/posts_r4.jsonl", "data/policy_labels_r4.csv", "data/questions_r4.json", "data/model_comparison_stance.csv", "data/model_comparison_policy.csv", "data/model_comparison_summary.csv", "data/posts_r5.jsonl", "data/dropped_r5.jsonl", "data/labels_r5.csv", "data/hand_labels_r5.csv", "data/questions_r5.json", "data/tsao_followup.json", "data/labels_r6.csv", "data/questions_r6.json", "data/hand_labels_r6.csv", "data/model_agreement_r5_6.csv", "data/model_comparison_r5_6.csv", "data/hand_label_candidates_r5_6.csv", "data/hand_labels_r5_6_openai.csv", "data/labels_r7.csv", "data/model_agreement_r7.csv", "data/model_comparison_r7.csv", "data/posts_r7.csv", "data/labels_r7_x.csv", "data/model_vs_seeker_r7_x.csv", "data/posts_r2.jsonl", "data/authors.json", "data/hand_labels.json", "data/jev_report.md"],
     }
 
     (OUT / "discourse.json").write_text(json.dumps(discourse, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
