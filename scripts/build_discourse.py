@@ -975,7 +975,7 @@ def r7_block(src7: Path, rows5: list, rows6: list, hand5: list, hand6: list, han
     assert len(posts) == lab["applied"] + lab["commentary"] + lab["academic"] == len(X)
     seek = Counter(p["seeker_label"] for p in posts)
     vs = rd("model_vs_seeker_r7_x.csv"); dist = rd("distribution_r7_x.csv"); agx = rd("model_agreement_r7_x.csv")
-    seeker_rows = [{"model": r["model"], "name": R7_NAMES[r["model"]], "agree": int(r["agree"]), "n": int(r["n"]), "kappa": float(r["kappa"]),
+    seeker_rows = [{"model": r["model"], "name": R7_NAMES[r["model"]], "agree": int(r["agree"]), "n": int(r["n"]), "kappa": (float(r["kappa"]) if r["kappa"] else None),
                     "applied": int(r["model_applied"]), "commentary": sum(int(r[f"seeker_{s}_model_commentary"]) for s in ["applied", "commentary", "academic"]),
                     "academic_called_commentary": int(r["seeker_academic_model_commentary"]), "commentary_called_academic": int(r["seeker_commentary_model_academic"])} for r in vs]
     close = [r for r in seeker_rows if r["kappa"] >= 0.7]
@@ -991,7 +991,7 @@ def r7_block(src7: Path, rows5: list, rows6: list, hand5: list, hand6: list, han
     d1a = next(a for a in applied if a["models"] == ["d1-ultra"])
     def pairx(m, ref):
         r = next(r for r in agx if r["question"] == "stance4" and {r["model_a"], r["model_b"]} == {m, ref})
-        return {"agree": int(r["agree"]), "n": int(r["n"]), "kappa": float(r["kappa"])}
+        return {"agree": int(r["agree"]), "n": int(r["n"]), "kappa": (float(r["kappa"]) if r["kappa"] else None)}
     stance_rows = [{"model": m, "name": R7_NAMES[m], **{o: int(next(r["count"] for r in dist if r["model"] == m and r["question"] == "stance4" and r["option"] == o)) for o in R6_STANCES},
                     "vs_d1": None if m == D1 else pairx(m, D1), "vs_pplx": None if m == PX else pairx(m, PX)} for m in R7_NAMES]
     runx = rd("run_r7_x.csv")

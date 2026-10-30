@@ -85,7 +85,7 @@ for i in ids:
     who = [k for k in MODELS if A[k, 'use'].get(i) == 'applied']
     if who:
         cands.append({'id': i, 'username': P[i]['username'], 'seeker_label': P[i]['seeker_label'], 'n_models': len(who),
-                      'models': ';'.join(MODELS[k] for k in who), **{f'{k}_p_applied': round(PR[k, 'use'][i]['applied'], 3) for k in MODELS},
+                      'models': ';'.join(MODELS[k] for k in who), **{f'{k}_p_applied': round(PR[k, 'use'][i]['applied'], 3) if i in PR[k, 'use'] else '' for k in MODELS},
                       'url': P[i]['url'], 'text': ' '.join(P[i]['text'].split())})
 cands.sort(key=lambda r: -r['n_models'])
 if cands: write('applied_candidates_r7_x.csv', cands)
