@@ -8,7 +8,8 @@ import vm from "node:vm";
 import { ANCHOR_REDIRECTS, anchorRedirectScript, anchorRedirectScriptHash } from "../agent/lib/anchors.ts";
 import { contentSecurityPolicy } from "../agent/lib/headers.ts";
 import { PLACEHOLDER_EDITORIAL, pageAt, renderSite } from "../agent/lib/render.ts";
-import { latestRound, listRounds, matchSitePath, pathToStorageKey, roundPath } from "../agent/lib/rounds.ts";
+import { SECTION_PAGES, latestRound, listRounds, matchSitePath, pathToStorageKey, roundPath, siteLayout } from "../agent/lib/rounds.ts";
+import type { SectionKey } from "../agent/lib/render.ts";
 
 const meta = { renderedAt: "2026-10-09T00:00:00Z", model: "deepseek/deepseek-v4.1-flash", dataSource: "bundled" };
 
@@ -208,4 +209,28 @@ test("home one-liner and round headers carry the round summary", () => {
   const r7 = listRounds(discourse).find((r) => r.n === 7)!;
   assert.ok(home.includes(r7.summary));
   assert.ok(pageAt(site, "/rounds/3")!.includes(listRounds(discourse).find((r) => r.n === 3)!.summary));
+});
+
+test("layout: each section note renders exactly on the pages siteLayout reports", () => {
+  const keys = Object.keys(SECTION_PAGES) as SectionKey[];
+  const sectionNotes = Object.fromEntries(keys.map((k) => [k, `NOTE-MARKER-${k}-END`])) as Record<SectionKey, string>;
+  const editorial = { ...PLACEHOLDER_EDITORIAL, headline: "HEADLINE-MARKER-END for the log", sectionNotes };
+  const site = renderSite(discourse, editorial, meta);
+  const layout = siteLayout(discourse);
+  assert.equal(layout.latest_round, site.latestRound);
+  assert.deepEqual(
+    layout.pages.map((p) => p.path).sort(),
+    site.pages.map((p) => p.path).sort(),
+  );
+  for (const page of layout.pages) {
+    const html = pageAt(site, page.path)!;
+    for (const k of keys) {
+      assert.equal(html.includes(`NOTE-MARKER-${k}-END`), page.section_notes.includes(k), `${k} on ${page.path}`);
+    }
+    assert.equal(html.includes("<h1>HEADLINE-MARKER-END"), page.editorial.includes("headline"), `headline on ${page.path}`);
+  }
+  const home = layout.pages.find((p) => p.path === "/")!;
+  assert.equal(home.round, 7);
+  assert.deepEqual(home.section_notes, ["round7"]);
+  assert.equal(SECTION_PAGES.lead, 4, "the Tsao lead is a round 4 section, not home");
 });

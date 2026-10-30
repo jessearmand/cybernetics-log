@@ -16,15 +16,15 @@ export default defineTool({
     "rendered deterministically from the committed data for this deployment. Use **bold** for emphasis; no HTML or links in your text. " +
     "Call exactly once, after load_discourse_data.",
   inputSchema: z.object({
-    headline: z.string().trim().min(10).max(140).describe("Page title (H1)."),
-    dek: z.string().trim().min(20).max(320).describe("One or two sentence standfirst under the title."),
-    summary: z.array(z.string().trim().min(20).max(900)).min(1).max(4).describe("Opening paragraphs."),
-    takeaways: z.array(z.string().trim().min(5).max(240)).max(5).optional().describe("Short key findings shown as cards."),
+    headline: z.string().trim().min(10).max(140).describe("Home page title (H1), about the latest round."),
+    dek: z.string().trim().min(20).max(320).describe("One or two sentence standfirst under the home title."),
+    summary: z.array(z.string().trim().min(20).max(900)).min(1).max(4).describe("Home page opening paragraphs, about the latest round."),
+    takeaways: z.array(z.string().trim().min(5).max(240)).max(5).optional().describe("Latest-round key findings shown as cards on the home page."),
     section_notes: z
       .object({ stance: note, methods: note, confidence: note, pairTest: note, clusters: note, accounts: note, caveats: note, policy: note, dawkins: note, politics: note, neuro: note, models: note, lead: note, workspace: note, nature: note, round5: note, round7: note })
       .partial()
       .optional()
-      .describe("Optional one-paragraph intro for each section."),
+      .describe("Optional one-paragraph intro for each section, shown on the page load_discourse_data's layout names."),
     accent: z.enum(ACCENTS).optional().describe("Accent colour, if the instruction asks for one."),
     instruction_summary: z.string().trim().max(300).optional().describe("One sentence on how you applied the deployment instruction."),
   }),

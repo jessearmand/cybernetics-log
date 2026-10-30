@@ -1,4 +1,5 @@
 import type { Discourse } from "./data.ts";
+import type { SectionKey } from "./render.ts";
 
 /**
  * One analysis round in the log. Adding round 8 means appending an entry here
@@ -63,6 +64,70 @@ export const ROUND_DEFS: readonly RoundDef[] = [
     present: (d) => has(d, "round7"),
   },
 ];
+
+/**
+ * Where each section note renders: a round number or the about page. Keep in
+ * step with `roundBody` and `renderAboutPage` in render.ts (a test checks).
+ */
+export const SECTION_PAGES: Readonly<Record<SectionKey, number | "about">> = {
+  stance: 1,
+  confidence: 1,
+  pairTest: 1,
+  clusters: 1,
+  accounts: 1,
+  policy: 3,
+  dawkins: 3,
+  lead: 4,
+  politics: 4,
+  neuro: 4,
+  models: 4,
+  workspace: 5,
+  nature: 5,
+  round5: 5,
+  round7: 7,
+  methods: "about",
+  caveats: "about",
+};
+
+export interface PageLayout {
+  readonly path: string;
+  readonly round: number | null;
+  readonly date?: string;
+  readonly summary?: string;
+  /** Editorial fields shown on this page. */
+  readonly editorial: readonly string[];
+  /** Section notes shown on this page. */
+  readonly section_notes: readonly SectionKey[];
+}
+
+/**
+ * Which page shows which piece of editorial copy, for the agent. Headline,
+ * dek, summary and takeaways appear only on `/`, which renders the latest round.
+ */
+export function siteLayout(d: Discourse): { latest_round: number; pages: PageLayout[] } {
+  const rounds = listRounds(d);
+  const latest = rounds[0]?.n ?? 1;
+  // The round-6 section reuses the round5 note; the neuro aside only renders on data without lead_tsao.
+  const shown = (k: SectionKey) => k !== "neuro" || !has(d, "lead_tsao");
+  const notesFor = (where: number | "about"): SectionKey[] =>
+    (Object.keys(SECTION_PAGES) as SectionKey[]).filter((k) => shown(k) && (SECTION_PAGES[k] === where || (where === 6 && k === "round5")));
+  const latestDef = rounds[0];
+  return {
+    latest_round: latest,
+    pages: [
+      {
+        path: "/",
+        round: latest,
+        date: latestDef?.date,
+        summary: latestDef?.summary,
+        editorial: ["headline", "dek", "summary", "takeaways"],
+        section_notes: notesFor(latest),
+      },
+      ...rounds.map((r) => ({ path: roundPath(r.n), round: r.n, date: r.date, summary: r.summary, editorial: [], section_notes: notesFor(r.n) })),
+      { path: aboutPath(), round: null, editorial: [], section_notes: notesFor("about") },
+    ],
+  };
+}
 
 /** Rounds present in this data, newest first. */
 export function listRounds(d: Discourse): RoundDef[] {
