@@ -1,4 +1,5 @@
 import { defineChannel, GET, POST } from "eve/channels";
+import { failure } from "eve/events";
 
 import {
   allowedRepository,
@@ -83,7 +84,7 @@ export default defineChannel({
         "Call load_discourse_data, then publish_page once.",
       ].join("\n");
 
-      const session = await from(address).send(message, {
+      const accepted = await from(address).send(message, {
         auth: {
           authenticator: DEPLOYMENT_AUTHENTICATOR,
           principalType: "service",
@@ -91,16 +92,32 @@ export default defineChannel({
           attributes: triggerToAttributes(t),
         },
       });
-      console.info(`[github-deployment] render started for deployment ${t.deploymentId} @ ${t.sha.slice(0, 7)} (session ${session.id})`);
-      return Response.json({ ok: true, sessionId: session.id, deploymentId: t.deploymentId, sha: t.sha }, { status: 202 });
+      console.info(`[github-deployment] render started for deployment ${t.deploymentId} @ ${t.sha.slice(0, 7)} (session ${accepted.sessionId})`);
+      return Response.json({ ok: true, sessionId: accepted.sessionId, deploymentId: t.deploymentId, sha: t.sha }, { status: 202 });
     }),
 
     // Lets the webhook URL be sanity-checked in a browser without exposing anything.
     GET("/github/deployments", async () => Response.json({ ok: true, accepts: "POST deployment_status webhooks (signed)" })),
   ],
   events: {
-    "session.failed"(event) {
-      console.error("[github-deployment] render session failed", event);
+    // eve 0.84+ (v27 events): failures are the `outcome` of `turn.settled` and
+    // `session.ended`. A session failure settles its turn `cancelled` and carries
+    // the error on `session.ended`, so logging both never reports one failure twice.
+    "turn.settled"(event, ctx) {
+      if (event.data.outcome !== "failed") return;
+      console.error("[github-deployment] render turn failed", {
+        sessionId: ctx.session.id,
+        turnId: event.data.turnId,
+        error: event.data.error ?? failure(ctx.view, event.data.turnId),
+      });
+    },
+    "session.ended"(event, ctx) {
+      if (event.data.outcome !== "failed") return;
+      console.error("[github-deployment] render session failed", {
+        sessionId: ctx.session.id,
+        cause: event.data.cause,
+        error: event.data.error,
+      });
     },
   },
 });
