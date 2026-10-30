@@ -25,8 +25,8 @@ export const ANCHOR_REDIRECTS: Readonly<Record<string, string>> = {
   // Round 4
   lead: `${roundPath(4)}#lead`,
   politics: `${roundPath(4)}#politics`,
-  // The neuro aside was replaced by the lead section, so old #neuro links land there.
-  neuro: `${roundPath(4)}#lead`,
+  // Older data draws the neuro aside; newer data puts an id="neuro" alias on the lead section.
+  neuro: `${roundPath(4)}#neuro`,
   models: `${roundPath(4)}#models`,
 
   // Round 3

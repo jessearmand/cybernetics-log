@@ -80,6 +80,24 @@ test("render: data committed before round 4 still renders (older deployments, re
   assert.ok(pageAt(site, "/rounds/4"));
 });
 
+test("render: /rounds/4 always has a #neuro target for old /#neuro links", () => {
+  const count = (html: string) => (html.match(/id="neuro"/g) ?? []).length;
+  const shipped = htmlOf("/rounds/4");
+  assert.equal(count(shipped), 1);
+  assert.match(shipped, /<section id="lead" class="callout"><span id="neuro"><\/span>/);
+  const older = structuredClone(discourse) as Record<string, unknown>;
+  delete older.lead_tsao;
+  older.neuroscience_sidebar = {
+    title: "Neuroscience sidebar", summary: ["A preprint summary."], note: "A note.",
+    paper: { title: "A preprint", url: "https://www.biorxiv.org/content/example" },
+    links: [{ url: "https://x.com/example/status/1", username: "example", date: "2026-10-12", blurb: "a post" }],
+  };
+  const page = htmlOf("/rounds/4", older as typeof discourse);
+  assert.equal(count(page), 1);
+  assert.match(page, /<aside id="neuro"/);
+  assert.ok(!page.includes('id="lead"'));
+});
+
 test("render: the Dawkins section is compressed to two lines once round 5 is present", () => {
   const html = htmlOf("/rounds/3");
   const sec = sectionHtml(html, "dawkins");

@@ -341,7 +341,8 @@ const cite = (p: Paper) => `<p class="cite">${esc(p.authors)}, ${link(p.url, `â€
 function leadSection(d: Discourse, e: Editorial): string {
   if (!has(d, "lead_tsao")) return "";
   const l = d.lead_tsao;
-  return `<section id="lead" class="callout"><h2>${esc(l.title)}</h2>${note(e, "lead")}${cite(l.paper)}
+  // The lead replaces the round-4 neuro aside, so it keeps that id alive for old /#neuro links.
+  return `<section id="lead" class="callout"><span id="neuro"></span><h2>${esc(l.title)}</h2>${note(e, "lead")}${cite(l.paper)}
 ${fold("The preprint in brief", l.summary)}
 ${fold(l.discussion_title, l.discussion)}
 <p class="fine">${[...l.links, l.followup].map((x) => `${link(x.url, `@${esc(x.username)}`)} (${esc(x.date)}): ${esc(x.blurb)}`).join(" Â· ")}. ${esc(l.note)}</p></section>`;

@@ -70,7 +70,7 @@ test("anchors: legacy fragment ids map onto the new URLs", () => {
   assert.equal(ANCHOR_REDIRECTS["round-5"], "/rounds/5");
   assert.equal(ANCHOR_REDIRECTS.round6, "/rounds/6");
   assert.equal(ANCHOR_REDIRECTS.lead, "/rounds/4#lead");
-  assert.equal(ANCHOR_REDIRECTS.neuro, "/rounds/4#lead");
+  assert.equal(ANCHOR_REDIRECTS.neuro, "/rounds/4#neuro");
   assert.equal(ANCHOR_REDIRECTS.workspace, "/rounds/5#workspace");
   assert.equal(ANCHOR_REDIRECTS.nature, "/rounds/5#nature");
   assert.equal(ANCHOR_REDIRECTS.policy, "/rounds/3#policy");
