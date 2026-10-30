@@ -1,0 +1,21 @@
+model,group,answered,total,errors,error_sample,retried_calls,input_tokens,gateway_cost_usd,market_cost_usd,median_latency_s,max_latency_s
+openai/gpt-6-luna-decisions,core,67,69,2,Error: Invalid error response format: Gateway request failed ,0,46666,0.0,0.004667,0.486,1.11
+openai/gpt-6-luna-decisions,framing,69,69,0,,0,28870,0.0,0.002887,0.447,0.948
+openai/gpt-6-luna-decisions,attribution,69,69,0,,0,16105,0.0,0.00161,0.437,0.979
+openai/gpt-6-luna-decisions,stance4,69,69,0,,0,15967,0.0,0.001597,0.42,1.071
+baseten/joey-1,core,69,69,0,,0,27545,0.000275,0.000275,1.275,2.853
+baseten/joey-1,framing,69,69,0,,0,21059,0.000211,0.000211,1.244,1.537
+baseten/joey-1,attribution,69,69,0,,0,12710,0.000127,0.000127,1.249,1.96
+baseten/joey-1,stance4,69,69,0,,0,14711,0.000147,0.000147,1.274,2.358
+baseten/elephant-1,core,69,69,0,,0,27545,0.000964,0.000964,1.28,1.848
+baseten/elephant-1,framing,69,69,0,,0,21059,0.000737,0.000737,1.256,1.7
+baseten/elephant-1,attribution,69,69,0,,0,12710,0.000445,0.000445,1.252,1.644
+baseten/elephant-1,stance4,69,69,0,,0,14711,0.000515,0.000515,1.264,2.196
+baseten/mammoth-1,core,69,69,0,,0,27545,0.002755,0.002755,1.712,15.869
+baseten/mammoth-1,framing,69,69,0,,0,21059,0.002106,0.002106,1.481,3.226
+baseten/mammoth-1,attribution,69,69,0,,0,12710,0.001271,0.001271,1.332,2.685
+baseten/mammoth-1,stance4,69,69,0,,0,14711,0.001471,0.001471,1.41,7.851
+microsoft/microsoft-decision-1,core,69,69,0,,0,15152,0.000636,0.000636,1.447,3.299
+microsoft/microsoft-decision-1,framing,69,69,0,,0,14669,0.000616,0.000616,1.356,2.081
+microsoft/microsoft-decision-1,attribution,69,69,0,,0,7217,0.000303,0.000303,1.351,2.292
+microsoft/microsoft-decision-1,stance4,69,69,0,,0,10667,0.000448,0.000448,1.341,7.428
