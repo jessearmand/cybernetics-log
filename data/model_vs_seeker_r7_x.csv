@@ -1,0 +1,8 @@
+model,n,agree,pct,kappa,model_applied,seeker_applied_model_applied,seeker_applied_model_commentary,seeker_applied_model_academic,seeker_commentary_model_applied,seeker_commentary_model_commentary,seeker_commentary_model_academic,seeker_academic_model_applied,seeker_academic_model_commentary,seeker_academic_model_academic
+liquid/d1-ultra,79,55,69.6,0.435,1,0,0,0,0,34,0,1,23,21
+perplexity/pplx-decider-v1.2,79,69,87.3,0.749,0,0,0,0,0,33,1,0,9,36
+openai/gpt-6-luna-decisions,79,68,86.1,0.713,0,0,0,0,0,27,7,0,4,41
+baseten/joey-1,79,48,60.8,0.286,6,0,0,0,6,23,5,0,20,25
+baseten/elephant-1,79,68,86.1,0.715,0,0,0,0,0,28,6,0,5,40
+baseten/mammoth-1,79,67,84.8,0.701,0,0,0,0,0,33,1,0,11,34
+microsoft/microsoft-decision-1,79,55,69.6,0.426,0,0,0,0,0,33,1,0,23,22
