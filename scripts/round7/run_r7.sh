@@ -15,7 +15,9 @@ python3 ../round6/run_r6.py stance4 "$m" posts_r5.jsonl ../round6/raw/stance4_$s
 for f in raw/{core,framing,attribution}_$s.jsonl ../round6/raw/stance4_$s.jsonl; do
   [ -f "$f" ] || continue
   if grep -q '"error"' "$f"; then
-    grep '"error"' "$f" >> "$f.errors"; grep -v '"error"' "$f" > "$f.tmp"; mv "$f.tmp" "$f"
+    grep '"error"' "$f" >> "$f.errors"
+    # grep -v exits 1 when every line is an error; under set -e that would end the run before the retry.
+    { grep -v '"error"' "$f" || true; } > "$f.tmp"; mv "$f.tmp" "$f"
     g=$(basename "$f" | cut -d_ -f1)
     if [ "$g" = stance4 ]; then python3 ../round6/run_r6.py stance4 "$m" posts_r5.jsonl "$f"; else python3 run_r5.py $g "$m" posts_r5.jsonl "$f"; fi
   fi
