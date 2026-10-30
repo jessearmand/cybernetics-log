@@ -1,0 +1,15 @@
+model,question,answered,total,errors,error_sample,retried_calls,input_tokens,gateway_cost_usd,market_cost_usd,median_latency_s,max_latency_s
+liquid/d1-ultra,use,79,79,0,,0,15152,0.000636,0.000636,1.347,2.484
+liquid/d1-ultra,stance4,79,79,0,,0,11992,0.000504,0.000504,1.409,5.425
+perplexity/pplx-decider-v1.2,use,79,79,0,,0,18847,0.0,0.000377,1.315,1.633
+perplexity/pplx-decider-v1.2,stance4,79,79,0,,0,15924,0.0,0.000318,1.356,5.206
+openai/gpt-6-luna-decisions,use,79,79,0,,0,20951,0.0,0.002095,1.179,1.752
+openai/gpt-6-luna-decisions,stance4,79,79,0,,0,18028,0.0,0.001803,1.164,5.216
+baseten/joey-1,use,79,79,0,,0,19400,0.000194,0.000194,1.264,1.742
+baseten/joey-1,stance4,79,79,0,,0,16635,0.000166,0.000166,1.303,2.271
+baseten/elephant-1,use,79,79,0,,0,19400,0.000679,0.000679,1.26,1.779
+baseten/elephant-1,stance4,79,79,0,,0,16635,0.000582,0.000582,1.289,4.914
+baseten/mammoth-1,use,79,79,0,,0,19400,0.00194,0.00194,1.234,1.6
+baseten/mammoth-1,stance4,79,79,0,,0,16635,0.001664,0.001664,1.457,5.419
+microsoft/microsoft-decision-1,use,79,79,0,,0,15123,0.000635,0.000635,1.349,2.072
+microsoft/microsoft-decision-1,stance4,79,79,0,,0,12042,0.000506,0.000506,1.399,5.709

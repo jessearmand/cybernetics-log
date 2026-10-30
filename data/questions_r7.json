@@ -1,0 +1,28 @@
+{
+ "_note": "Round 7 (X posts 2026-10-08 to 2026-10-30, Seeker's set). stance4 is the round 6 question verbatim. 'use' is new; its labels mirror Seeker's applied/commentary/academic reference labels.",
+ "models": [
+  "liquid/d1-ultra",
+  "perplexity/pplx-decider-v1.2",
+  "openai/gpt-6-luna-decisions",
+  "baseten/joey-1",
+  "baseten/elephant-1",
+  "baseten/mammoth-1",
+  "microsoft/microsoft-decision-1"
+ ],
+ "stance4": {
+  "args": [
+   "--choice",
+   "stance=What is the author's stance on whether AI could be conscious? reject = dismisses it; curious = unsure, open or just interested; serious = treats it as a real possibility or deserving moral concern; reporting = only summarizes or relays news or research without giving their own view",
+   "--choices",
+   "stance=reject,curious,serious,reporting"
+  ]
+ },
+ "use": {
+  "args": [
+   "--choice",
+   "use=How does the post deal with AI consciousness? applied = the author made or changed something concrete (a guardrail, persona rule, model-retirement decision, memory setting, or how an agent may run) because of their stance on AI consciousness; commentary = reacts to someone else's product or policy decision (for example Anthropic's end-conversation feature or usage policy, a model-welfare line in an S-1 filing, or a system prompt rule); academic = purely academic or philosophical discussion",
+   "--choices",
+   "use=applied,commentary,academic"
+  ]
+ }
+}

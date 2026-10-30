@@ -33,6 +33,9 @@ jobs:
           # Set one of these repository secrets (Settings → Secrets and variables → Actions).
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Cursor Cloud Agent pushes fail the action with "non-human actor" unless listed.
+          # Without this, a required review check stays red after every bot commit on the PR.
+          allowed_bots: cursor
           track_progress: true
           prompt: |
             REPO: ${{ github.repository }}
