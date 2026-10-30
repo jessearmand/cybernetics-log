@@ -2,6 +2,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { BLOB_PREFIX, blobAccess } from "./config.ts";
+import { pathToStorageKey } from "./rounds.ts";
+import type { SitePage } from "./render.ts";
 
 /**
  * Where rendered pages live.
@@ -18,46 +20,83 @@ export function storeKind(): "blob" | "local" {
 }
 
 const LOCAL_DIR = path.join(process.cwd(), ".eve", "rendered");
-const LATEST = "index.html";
 
-export interface SavedPage {
+export interface SavedSite {
   readonly store: "blob" | "local";
-  readonly latest: string;
-  readonly archived: string;
+  readonly paths: readonly string[];
+  readonly archivedPrefix: string;
   readonly bytes: number;
 }
 
-/** Saves the page as the latest render plus an archived copy keyed by commit and deployment. */
-export async function savePage(html: string, key: string): Promise<SavedPage> {
-  const archivedName = `renders/${key.replace(/[^a-zA-Z0-9._-]/g, "_")}.html`;
-  const bytes = Buffer.byteLength(html);
+const putOpts = () =>
+  ({ access: blobAccess(), contentType: "text/html; charset=utf-8", addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 60 }) as const;
+
+/**
+ * Saves every page of a render. Idempotent per deployment: the same relative
+ * Blob keys are overwritten (`index.html`, `about.html`, `rounds/N.html`) and
+ * a full copy is archived under `renders/<key>/`.
+ */
+export async function saveSite(pages: readonly SitePage[], key: string): Promise<SavedSite> {
+  const safeKey = key.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const archivedPrefix = `renders/${safeKey}`;
+  const bytes = pages.reduce((n, p) => n + Buffer.byteLength(p.html), 0);
+  const paths = pages.map((p) => p.path);
+
   if (storeKind() === "blob") {
     const { put } = await import("@vercel/blob");
-    const opts = { access: blobAccess(), contentType: "text/html; charset=utf-8", addRandomSuffix: false, allowOverwrite: true, cacheControlMaxAge: 60 } as const;
-    const archived = await put(`${BLOB_PREFIX}/${archivedName}`, html, opts);
-    const latest = await put(`${BLOB_PREFIX}/${LATEST}`, html, opts);
-    return { store: "blob", latest: latest.pathname, archived: archived.pathname, bytes };
+    const opts = putOpts();
+    await Promise.all(
+      pages.flatMap((page) => {
+        const rel = pathToStorageKey(page.path);
+        return [
+          put(`${BLOB_PREFIX}/${rel}`, page.html, opts),
+          put(`${BLOB_PREFIX}/${archivedPrefix}/${rel}`, page.html, opts),
+        ];
+      }),
+    );
+    // Manifest so a deploy can be inspected without listing the whole store.
+    const manifest = JSON.stringify({ key: safeKey, paths, archivedPrefix, renderedAt: new Date().toISOString() });
+    await put(`${BLOB_PREFIX}/manifest.json`, manifest, { ...opts, contentType: "application/json; charset=utf-8" });
+    await put(`${BLOB_PREFIX}/${archivedPrefix}/manifest.json`, manifest, { ...opts, contentType: "application/json; charset=utf-8" });
+    return { store: "blob", paths, archivedPrefix, bytes };
   }
-  await mkdir(path.join(LOCAL_DIR, "renders"), { recursive: true });
-  await writeFile(path.join(LOCAL_DIR, archivedName), html, "utf8");
-  await writeFile(path.join(LOCAL_DIR, LATEST), html, "utf8");
-  return { store: "local", latest: path.join(LOCAL_DIR, LATEST), archived: path.join(LOCAL_DIR, archivedName), bytes };
+
+  for (const page of pages) {
+    const rel = pathToStorageKey(page.path);
+    const latestPath = path.join(LOCAL_DIR, rel);
+    const archivedPath = path.join(LOCAL_DIR, archivedPrefix, rel);
+    await mkdir(path.dirname(latestPath), { recursive: true });
+    await mkdir(path.dirname(archivedPath), { recursive: true });
+    await writeFile(latestPath, page.html, "utf8");
+    await writeFile(archivedPath, page.html, "utf8");
+  }
+  const manifest = JSON.stringify({ key: safeKey, paths, archivedPrefix, renderedAt: new Date().toISOString() }, null, 2);
+  await writeFile(path.join(LOCAL_DIR, "manifest.json"), manifest, "utf8");
+  await mkdir(path.join(LOCAL_DIR, archivedPrefix), { recursive: true });
+  await writeFile(path.join(LOCAL_DIR, archivedPrefix, "manifest.json"), manifest, "utf8");
+  return { store: "local", paths, archivedPrefix, bytes };
 }
 
-/** Loads the latest rendered page, or null when nothing has been rendered yet. */
-export async function loadLatestPage(): Promise<string | null> {
+/** Loads one rendered page by site path (`/`, `/about`, `/rounds/7`), or null. */
+export async function loadPage(pagePath: string): Promise<string | null> {
+  const rel = pathToStorageKey(pagePath);
   try {
     if (storeKind() === "blob") {
       const { get } = await import("@vercel/blob");
-      const result = await get(`${BLOB_PREFIX}/${LATEST}`, { access: blobAccess(), useCache: false });
+      const result = await get(`${BLOB_PREFIX}/${rel}`, { access: blobAccess(), useCache: false });
       if (!result || !result.stream) return null;
       return await new Response(result.stream).text();
     }
-    return await readFile(path.join(LOCAL_DIR, LATEST), "utf8");
+    return await readFile(path.join(LOCAL_DIR, rel), "utf8");
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
-      console.error("[cybernetics-log] could not load latest page:", (error as Error).message);
+      console.error("[cybernetics-log] could not load page", pagePath, (error as Error).message);
     }
     return null;
   }
+}
+
+/** Loads the home page (latest round + earlier-rounds index). */
+export async function loadLatestPage(): Promise<string | null> {
+  return loadPage("/");
 }

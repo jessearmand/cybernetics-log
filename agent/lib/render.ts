@@ -1,4 +1,6 @@
+import { anchorRedirectScript } from "./anchors.ts";
 import type { Discourse } from "./data.ts";
+import { aboutPath, latestRound, listRounds, roundPath, type RoundDef } from "./rounds.ts";
 
 /** Editorial copy written by the agent. Everything numeric comes from the data, never from here. */
 export interface Editorial {
@@ -79,6 +81,11 @@ function safeUrl(url: unknown): string | null {
 function link(url: unknown, text: string): string {
   const href = safeUrl(url);
   return href ? `<a href="${esc(href)}" rel="noopener noreferrer" target="_blank">${text}</a>` : text;
+}
+
+/** Same-origin path (e.g. `/rounds/7`, `/about`). */
+function ilink(href: string, text: string): string {
+  return `<a href="${esc(href)}">${text}</a>`;
 }
 
 function note(editorial: Editorial, key: SectionKey): string {
@@ -433,25 +440,41 @@ function round5Section(d: Discourse, e: Editorial): string {
   if (!has(d, "round5")) return "";
   const r = d.round5;
   const S3 = ["reject", "curious", "serious"];
-  const S4 = [...S3, "reporting"];
-  const bars = r.models.map((m) => countBar(m.stance as Counts, S3, `${m.name}: three-way`, `${m.answered ?? r.posts} posts`)).join("")
-    + r.models.map((m) => countBar(m.round6.stance as Counts, S4, `${m.name}: with reporting`, `${r.posts} posts · round 6`)).join("");
+  const bars = r.models.map((m) => countBar(m.stance as Counts, S3, `${m.name}: three-way`, `${m.answered ?? r.posts} posts`)).join("");
   const rows = r.models
-    .map((m) => `<tr><th scope="row">${esc(m.name)}${m.hand_comparable === false ? NOT_COMPARABLE : ""}</th><td>${m.hand_correct} of ${r.hand_check.labelled}</td><td>${m.round6.hand_correct_all} of ${r.hand_check.n}</td><td>${m.round6.reporting_caught} of ${r.hand_check.skipped}</td><td>${m.round6.curious_before} → ${m.round6.curious_after}</td><td>${m.on_topic.yes} (${m.on_topic.pct}%)</td><td>${m.claims_found.length}</td></tr>`)
+    .map((m) => `<tr><th scope="row">${esc(m.name)}${m.hand_comparable === false ? NOT_COMPARABLE : ""}</th><td>${m.hand_correct} of ${r.hand_check.labelled}</td><td>${m.on_topic.yes} (${m.on_topic.pct}%)</td><td>${m.claims_found.length}</td></tr>`)
     .join("");
   return `<section id="round5"><h2>Round 5: decision models on the Nature and Anthropic posts</h2>${note(e, "round5")}<p class="fine">${esc(r.note)}</p>
-<div class="legend">${S4.map((s) => `<span><i style="background:${R5_STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
+<div class="legend">${S3.map((s) => `<span><i style="background:${R5_STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
 <div class="bars">${bars}</div>
 <p>d1-ultra and Decider agree on stance for <b>${r.agreement.agree}</b> of ${r.agreement.n} posts (${r.agreement.pct}%). ${esc(r.hand_check.note)}</p>
-<div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on labelled disagreements</th><th>Matches with reporting (round 6)</th><th>Skipped posts called reporting</th><th>Curious, three-way → four-way</th><th>On topic</th><th>Misattribution flags</th></tr></thead><tbody>${rows}</tbody></table></div>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches on labelled disagreements</th><th>On topic</th><th>Misattribution flags</th></tr></thead><tbody>${rows}</tbody></table></div>
 ${r.models.some((m) => m.hand_comparable === false) ? `<p class="fine">${NOT_COMPARABLE} Hand-label columns are not comparable for this model: the labelled posts were picked because d1-ultra and Decider disagreed.</p>` : ""}
-<p>${esc(r.hand_check.text)}</p><p>${esc(r.round6.text)}</p><p>${esc(r.round6.caveat)}</p>
-${hand6Block(r)}
-${thirdModelBlock(r)}
+<p>${esc(r.hand_check.text)}</p>
 <h3>Who says Anthropic found consciousness?</h3><p class="fine">${esc(r.claims_found.question)}</p><p>${esc(r.claims_found.text)}</p>
 ${fold("Round 5: notable accounts", r.key_accounts.map((a) => `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)} <span class="chip">d1-ultra: ${esc(CAP(a.d1))}</span> <span class="chip">Decider: ${esc(CAP(a.pplx))}</span>${a.oa ? ` <span class="chip">GPT-6 Luna: ${esc(CAP(a.oa))}</span>` : ""}`), { list: "r3acc", plain: true })}
-<p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5, $${r.cost_usd.round6} for round 6${r.third_model ? `; GPT-6 Luna billed $${r.third_model.run.gateway_cost_usd} through the gateway ($${r.third_model.run.market_cost_usd} at list price) for ${r.third_model.run.calls} calls, median ${r.third_model.run.latency_median_s}s` : ""}.</p>
+<p class="fine">Flashpoints: ${r.flashpoints.map((f) => `${esc(f.name)} (${f.posts})`).join(" · ")}. ${r.authors} authors, ${r.returning_authors} seen in earlier rounds. Cost: $${r.cost_usd.round5} for round 5.</p>
 ${fold("Caveats", r.caveats, { list: "caveats" })}</section>`;
+}
+
+/** Round 6: four-way stance on the same posts, plus the third model added afterwards. */
+function round6Section(d: Discourse, e: Editorial): string {
+  if (!has(d, "round5")) return "";
+  const r = d.round5;
+  const S4 = ["reject", "curious", "serious", "reporting"];
+  const bars = r.models.map((m) => countBar(m.round6.stance as Counts, S4, `${m.name}: with reporting`, `${r.posts} posts · round 6`)).join("");
+  const rows = r.models
+    .map((m) => `<tr><th scope="row">${esc(m.name)}${m.hand_comparable === false ? NOT_COMPARABLE : ""}</th><td>${m.round6.hand_correct_all} of ${r.hand_check.n}</td><td>${m.round6.reporting_caught} of ${r.hand_check.skipped}</td><td>${m.round6.curious_before} → ${m.round6.curious_after}</td></tr>`)
+    .join("");
+  return `<section id="round6"><h2>Round 6: stance with a reporting option</h2>${note(e, "round5")}<p class="fine">${esc(r.note)}</p>
+<div class="legend">${S4.map((s) => `<span><i style="background:${R5_STANCE_COLOR[s]}"></i>${CAP(s)}</span>`).join("")}</div>
+<div class="bars">${bars}</div>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Model</th><th>Matches with reporting (round 6)</th><th>Skipped posts called reporting</th><th>Curious, three-way → four-way</th></tr></thead><tbody>${rows}</tbody></table></div>
+${r.models.some((m) => m.hand_comparable === false) ? `<p class="fine">${NOT_COMPARABLE} Hand-label columns are not comparable for this model: the labelled posts were picked because d1-ultra and Decider disagreed.</p>` : ""}
+<p>${esc(r.round6.text)}</p><p>${esc(r.round6.caveat)}</p>
+${hand6Block(r)}
+${thirdModelBlock(r)}
+<p class="fine">Cost: $${r.cost_usd.round6} for round 6${r.third_model ? `; GPT-6 Luna billed $${r.third_model.run.gateway_cost_usd} through the gateway ($${r.third_model.run.market_cost_usd} at list price) for ${r.third_model.run.calls} calls, median ${r.third_model.run.latency_median_s}s` : ""}.</p></section>`;
 }
 
 /** Agreement cell: "60 of 69" with kappa underneath. */
@@ -560,6 +583,10 @@ function modelsSection(d: Discourse, e: Editorial): string {
 ${fold("Caveats", m.caveats, { list: "caveats" })}</section>`;
 }
 
+const accItem = (a: { url: string; username: string; followers?: number | string | null; blurb: string; jev_hybrid?: string | null }) =>
+  `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}`;
+
+/** Cross-round Jev overview for the about page (project-wide, not one round). */
 function roundsSection(d: Discourse): string {
   const r = d.rounds;
   const rows = r.items
@@ -572,35 +599,62 @@ function roundsSection(d: Discourse): string {
     .map((it) => `<tr><th scope="row">${esc(it.label)}</th><td>${it.posts}</td>${STANCES.map((s) => `<td>${it.jev_three_way[s].n} (${it.jev_three_way[s].pct}%)</td>`).join("")}${STANCES.map((s) => `<td>${(it.jev_hybrid as Counts)[s]!.n}</td>`).join("")}<td>${(it.jev_hybrid as Counts).uncertain!.n} (${(it.jev_hybrid as Counts).uncertain!.pct}%)</td></tr>`)
     .join("");
   const fl = r.items.map((it) => ("flashpoint" in it && it.flashpoint ? `<p class="fine"><b>${esc(it.label)}:</b> ${esc(it.flashpoint)}</p>` : "")).join("");
-  const fps = d.corpus.flashpoints.filter((f) => f.round === 2).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
-  const fps3 = d.corpus.flashpoints.filter((f) => f.round === 3).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
-  const fps4 = d.corpus.flashpoints.filter((f) => f.round === 4).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
-  const fr = has(d, "round4_framing") ? d.round4_framing : null;
-  const FP4: Record<string, string> = { all: "All round 4", sacks_allin: "Sacks / All-In", anthropic_abuse_policy: "Abuse policy", general: "General", dawkins: "Dawkins", tsao_gwt: "Tsao preprint" };
-  const frRows = !fr ? "" : Object.keys(FP4)
-    .map((k) => {
-      const pv = (fr.policy_vs_minds as Record<string, { n: number; yes: number; pct: number }>)[k]!;
-      const ot = (fr.on_topic as Record<string, { n: number; yes: number; pct: number }>)[k]!;
-      const f = (fr.frame as Record<string, Record<string, { n: number; pct: number }>>)[k]!;
-      return `<tr><th scope="row">${esc(FP4[k])}</th><td>${pv.n}</td><td>${pv.yes} (${pv.pct}%)</td><td>${ot.yes} (${ot.pct}%)</td><td>${f.political_cultural!.n} (${f.political_cultural!.pct}%)</td><td>${f.philosophical_scientific!.n} (${f.philosophical_scientific!.pct}%)</td></tr>`;
-    })
-    .join("");
-  const r4frame = !fr ? "" : `<h3>Round 4: policy or minds, on topic, and framing</h3><p class="fine">${esc(fr.note)}</p>
-<div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About policy or politics</th><th>About machine minds</th><th>Framed politically</th><th>Framed philosophically</th></tr></thead><tbody>${frRows}</tbody></table></div><p class="fine">${esc(fr.caveat)}</p>`;
-  const ka4 = has(d, "key_accounts_round4") ? d.key_accounts_round4 : null;
-  const accItem = (a: { url: string; username: string; followers?: number | string | null; blurb: string; jev_hybrid?: string | null }) =>
-    `${link(a.url, `<b>@${esc(a.username)}</b>`)}${a.followers ? ` <span class="fol">${Number(a.followers).toLocaleString("en-US")} followers</span>` : ""} — ${esc(a.blurb)}${a.jev_hybrid ? ` <span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}`;
-  const r4list = !ka4 ? "" : `<p class="fine">${esc(ka4.note)}</p>${fold("Round 4: notable new accounts", ka4.items.map(accItem), { list: "r3acc", plain: true })}`;
-  const ka3 = d.key_accounts_round3;
-  const r3list = `<p class="fine">${esc(ka3.note)}</p>${fold("Round 3: notable new accounts", ka3.items.map(accItem), { list: "r3acc", plain: true })}`;
+  const fps = (n: number) => d.corpus.flashpoints.filter((f) => f.round === n).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  return `<section id="rounds"><h2>Rounds 1–4 at a glance</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
+<div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
+${fl}<p class="fine">Round-2 flashpoints: ${fps(2)}.</p><p class="fine">Round-3 flashpoints: ${fps(3)}.</p>${fps(4) ? `<p class="fine">Round-4 flashpoints: ${fps(4)}.</p>` : ""}
+<p class="fine">Per-round write-ups, accounts and framing live on each ${ilink("/", "round page")}.</p></section>`;
+}
+
+/** Collection-round bar + flashpoint for rounds 1–4 pages. */
+function collectionRoundIntro(d: Discourse, n: number): string {
+  const it = d.rounds.items.find((x) => x.round === n);
+  if (!it) return "";
+  const h = it.jev_hybrid as Counts;
+  const bar = stackedBar(bucketsOf(h).map((s) => ({ stance: s, n: h[s]!.n, pct: h[s]!.pct })), `${it.label}: Jev hybrid`, `${it.posts} posts · ${it.authors} authors · ${it.window.start} → ${it.window.end}`);
+  const fp = "flashpoint" in it && it.flashpoint ? `<p class="lede">${esc(it.flashpoint)}</p>` : "";
+  const fps = d.corpus.flashpoints.filter((f) => f.round === n).map((f) => `${esc(f.name)} (${f.posts})`).join(" · ");
+  return `<section id="round-${n}-overview"><h2>${esc(it.label)}</h2>${fp}<div class="bars">${bar}</div>${fps ? `<p class="fine">Flashpoints: ${fps}.</p>` : ""}</section>`;
+}
+
+function round2Accounts(d: Discourse): string {
   const ka = d.key_accounts_round2;
+  const n = STANCES.reduce((s, x) => s + ka[x].length, 0);
   const col = (s: StanceName) =>
     `<div class="acol ${s}"><h3><i style="background:${STANCE_COLOR[s]}"></i>${CAP(s)}</h3><ul>${ka[s]
       .map((a) => `<li>${link(a.url, `<b>@${esc(a.username)}</b>`)}<p>${esc(a.blurb)}</p><div class="chips">${a.jev_hybrid ? `<span class="chip">Jev hybrid: ${esc(CAP(a.jev_hybrid))}</span>` : ""}</div></li>`)
       .join("")}</ul></div>`;
-  return `<section id="rounds"><h2>Rounds</h2><p class="fine">${esc(r.note)}</p><div class="bars">${rows}</div>
-<div class="tablewrap"><table class="methods"><thead><tr><th>Round</th><th>Posts</th><th>3-way R</th><th>3-way C</th><th>3-way S</th><th>Hybrid R</th><th>Hybrid C</th><th>Hybrid S</th><th>Uncertain</th></tr></thead><tbody>${t3}</tbody></table></div>
-${fl}<p class="fine">Round-2 flashpoints: ${fps}.</p><p class="fine">Round-3 flashpoints: ${fps3}.</p>${fps4 ? `<p class="fine">Round-4 flashpoints: ${fps4}.</p>` : ""}${r4frame}${r4list}${r3list}<p class="fine">${esc(ka.note)}</p><details class="fold"><summary><h3 class="flabel">Round 2 key accounts</h3><span class="fcount">${STANCES.reduce((s, x) => s + ka[x].length, 0)} accounts</span></summary><div class="acols">${STANCES.map(col).join("")}</div></details></section>`;
+  return `<section id="round2-accounts"><h2>Round 2 key accounts</h2><p class="fine">${esc(ka.note)}</p>
+<details class="fold"><summary><h3 class="flabel">Round 2 key accounts</h3><span class="fcount">${n} accounts</span></summary><div class="acols">${STANCES.map(col).join("")}</div></details></section>`;
+}
+
+function round3Accounts(d: Discourse): string {
+  const ka3 = d.key_accounts_round3;
+  return `<section id="round3-accounts"><h2>Round 3 accounts</h2><p class="fine">${esc(ka3.note)}</p>${fold("Round 3: notable new accounts", ka3.items.map(accItem), { list: "r3acc", plain: true })}</section>`;
+}
+
+function round4Extras(d: Discourse): string {
+  const fr = has(d, "round4_framing") ? d.round4_framing : null;
+  const FP4: Record<string, string> = { all: "All round 4", sacks_allin: "Sacks / All-In", anthropic_abuse_policy: "Abuse policy", general: "General", dawkins: "Dawkins", tsao_gwt: "Tsao preprint" };
+  const frRows = !fr
+    ? ""
+    : Object.keys(FP4)
+        .map((k) => {
+          const pv = (fr.policy_vs_minds as Record<string, { n: number; yes: number; pct: number }>)[k]!;
+          const ot = (fr.on_topic as Record<string, { n: number; yes: number; pct: number }>)[k]!;
+          const f = (fr.frame as Record<string, Record<string, { n: number; pct: number }>>)[k]!;
+          return `<tr><th scope="row">${esc(FP4[k])}</th><td>${pv.n}</td><td>${pv.yes} (${pv.pct}%)</td><td>${ot.yes} (${ot.pct}%)</td><td>${f.political_cultural!.n} (${f.political_cultural!.pct}%)</td><td>${f.philosophical_scientific!.n} (${f.philosophical_scientific!.pct}%)</td></tr>`;
+        })
+        .join("");
+  const r4frame = !fr
+    ? ""
+    : `<section id="round4-framing"><h2>Round 4: policy or minds, on topic, and framing</h2><p class="fine">${esc(fr.note)}</p>
+<div class="tablewrap"><table class="methods"><thead><tr><th></th><th>Posts</th><th>About policy or politics</th><th>About machine minds</th><th>Framed politically</th><th>Framed philosophically</th></tr></thead><tbody>${frRows}</tbody></table></div><p class="fine">${esc(fr.caveat)}</p></section>`;
+  const ka4 = has(d, "key_accounts_round4") ? d.key_accounts_round4 : null;
+  const r4list = !ka4
+    ? ""
+    : `<section id="round4-accounts"><h2>Round 4 accounts</h2><p class="fine">${esc(ka4.note)}</p>${fold("Round 4: notable new accounts", ka4.items.map(accItem), { list: "r3acc", plain: true })}</section>`;
+  return `${r4frame}${r4list}`;
 }
 
 function caveatsSection(d: Discourse, e: Editorial): string {
@@ -613,14 +667,28 @@ const CSS = `
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px;overflow-x:clip}
 .banner{background:#fef3c7;color:#78350f;padding:8px 20px;font-size:14px;text-align:center}
 header.hero{padding:56px 0 28px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--accent-soft),transparent)}
+header.hero.compact{padding:28px 0 18px}
 .kicker{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
 h1{font-size:clamp(28px,4.4vw,46px);line-height:1.12;margin:12px 0 12px;letter-spacing:-.02em}
+header.hero.compact h1{font-size:clamp(24px,3.6vw,36px);margin:8px 0}
 .dek{font-size:19px;color:var(--muted);max-width:760px;margin:0}
+.one-liner{font-size:16px;color:var(--muted);max-width:760px;margin:0 0 14px}
 .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.stats span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:14px}
-nav.toc{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+nav.toc,nav.site,nav.pager{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;padding:14px 0;border-bottom:1px solid var(--line);align-items:center}
+nav.pager{justify-content:space-between;gap:10px}
+nav.pager .grow{flex:1}
+nav.rounds{display:flex;flex-wrap:wrap;gap:8px 12px;font-size:13px;padding:10px 0 14px;border-bottom:1px solid var(--line)}
+nav.rounds a[aria-current="page"]{font-weight:700;color:var(--ink);text-decoration:none}
+.round-index{padding:28px 0 8px}.round-index h2{margin-bottom:8px}
+.round-index ol{list-style:none;padding:0;margin:12px 0 0;border-top:1px solid var(--line)}
+.round-index li{border-bottom:1px solid var(--line)}
+.round-index a{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;padding:14px 0;color:inherit;text-decoration:none}
+.round-index a:hover .rtitle{color:var(--accent);text-decoration:underline}
+.round-index .rtitle{font-weight:600;font-size:16px}.round-index .rdate{color:var(--muted);font-size:13px;grid-column:2}.round-index .rsum{grid-column:1/-1;color:var(--muted);font-size:14px;margin:0}
+@media (max-width:520px){.round-index a{grid-template-columns:1fr}.round-index .rdate{grid-column:1}}
 section{padding:36px 0;border-bottom:1px solid var(--line)}
 h2{font-size:24px;margin:0 0 12px;letter-spacing:-.01em}h3{font-size:16px;margin:0 0 6px}
 .summary p{font-size:18px;max-width:780px}
@@ -634,7 +702,7 @@ h2{font-size:24px;margin:0 0 12px;letter-spacing:-.01em}h3{font-size:16px;margin
 .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap}
 .barcounts{display:flex;gap:8px;font:12.5px ui-monospace,Menlo,monospace;color:var(--muted)}
 @media (max-width:640px){.barrow{grid-template-columns:1fr}.barcounts{display:none}}
-.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14.5px}
+.tablewrap{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}table{border-collapse:collapse;width:100%;font-size:14.5px}
 th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}thead th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 tr.best th{color:var(--accent)}tr.baseline{color:var(--muted)}
 .acc{position:relative;min-width:120px;height:22px;background:var(--line);border-radius:5px;overflow:hidden}.accbar{position:absolute;inset:0 auto 0 0;background:var(--accent);opacity:.8}.acc b{position:relative;padding-left:8px;font-size:13px;line-height:22px;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.45)}
@@ -671,7 +739,10 @@ details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
 .cite{font-size:14px;color:var(--muted)}
 .studynote{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px}
-.r3acc{padding-left:18px;font-size:14px}.r3acc li{margin-bottom:6px}.xtabs{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media (max-width:860px){.xtabs{grid-template-columns:1fr}}
+.r3acc{padding-left:18px;font-size:14px}.r3acc li{margin-bottom:6px}
+.xtabs{display:grid;grid-template-columns:1fr 1fr;gap:18px;min-width:0}.xtabs>div{min-width:0}
+@media (max-width:860px){.xtabs{grid-template-columns:1fr}}
+@media (max-width:400px){table.methods th,table.methods td,table.xtab th,table.xtab td{padding:6px 5px;font-size:12.5px}}
 footer{padding:28px 0 60px;color:var(--muted);font-size:13px}footer dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px}footer dt{font-weight:600}footer dd{margin:0;word-break:break-word}
 @media (max-width:640px){footer dl{grid-template-columns:1fr;gap:2px}footer dd{margin-bottom:12px}}
 footer pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12.5px}
@@ -680,36 +751,188 @@ code{font:13px ui-monospace,Menlo,monospace;background:var(--accent-soft);paddin
 
 const REPO_URL = "https://github.com/jessearmand/cybernetics-log";
 
-/** Renders the full page. Pure function of (data, editorial, meta). */
-export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string {
-  const [accent, soft] = ACCENT_HEX[e.accent && e.accent in ACCENT_HEX ? e.accent : "indigo"];
+export interface SitePage {
+  readonly path: string;
+  readonly html: string;
+}
+
+export interface RenderedSite {
+  readonly pages: readonly SitePage[];
+  readonly latestRound: number;
+  readonly availableRounds: readonly number[];
+}
+
+function siteNav(rounds: readonly RoundDef[], current: string): string {
+  const roundLinks = rounds.map((r) => `<a href="${roundPath(r.n)}"${current === roundPath(r.n) || (current === "/" && r === rounds[0]) ? ' aria-current="page"' : ""}>Round ${r.n}</a>`).join("");
+  return `<nav class="site" aria-label="Site"><a href="/"${current === "/" ? ' aria-current="page"' : ""}>Latest</a><a href="${aboutPath()}"${current === aboutPath() ? ' aria-current="page"' : ""}>About</a></nav>
+<nav class="rounds" aria-label="Rounds">${roundLinks}</nav>`;
+}
+
+function pager(rounds: readonly RoundDef[], n: number): string {
+  const newer = rounds.find((r) => r.n === n + 1);
+  const older = rounds.find((r) => r.n === n - 1);
+  const left = newer ? `<a href="${roundPath(newer.n)}" rel="next">← Newer · Round ${newer.n}</a>` : `<span></span>`;
+  const right = older ? `<a href="${roundPath(older.n)}" rel="prev">Older · Round ${older.n} →</a>` : `<span></span>`;
+  return `<nav class="pager" aria-label="Round order">${left}<span class="grow"></span>${right}</nav>`;
+}
+
+function footerHtml(d: Discourse, e: Editorial, meta: RenderMeta): string {
   const dep = meta.deployment;
   const commitUrl = dep ? `https://github.com/${dep.repository}/commit/${dep.sha}` : null;
-  const takeaways = e.takeaways?.length ? `<ul class="takeaways">${e.takeaways.map((t) => `<li>${prose(t)}</li>`).join("")}</ul>` : "";
   const warnings = meta.warnings?.length ? `<dt>Warnings</dt><dd>${meta.warnings.map(esc).join("<br>")}</dd>` : "";
-  return `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(e.headline)} · cybernetics-log</title>
-<meta name="description" content="${esc(e.dek)}">
-<meta name="generator" content="cybernetics-log eve agent (${esc(meta.model)})">
-<style>${CSS}:root{--accent:${accent}}@media (prefers-color-scheme:light){:root{--accent-soft:${soft}}}</style></head>
-<body>${meta.banner ? `<div class="banner">${esc(meta.banner)}</div>` : ""}
-<header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
-<h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
-<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.corpus.collection_rounds ?? d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
-<div class="wrap"><nav class="toc">${has(d, "lead_tsao") ? `<a href="#lead">Time slices</a>` : ""}${has(d, "workspace_paper") ? `<a href="#workspace">Workspace paper</a>` : ""}${has(d, "nature_comment") ? `<a href="#nature">Nature</a>` : ""}${has(d, "round5") ? `<a href="#round5">Round 5</a>` : ""}${has(d, "round7") ? `<a href="#round7">Round 7</a>` : ""}<a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a>${has(d, "politics_spotlight") ? `<a href="#politics">Sacks / All-In</a>` : ""}${has(d, "neuroscience_sidebar") && !has(d, "lead_tsao") ? `<a href="#neuro">Neuroscience</a>` : ""}${has(d, "model_comparison") ? `<a href="#models">Models</a>` : ""}<a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
-<section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
-${leadSection(d, e)}${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}${round7Section(d, e)}${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
-<footer><dl>
+  return `<footer><dl>
 <dt>Data</dt><dd>${link(`${REPO_URL}/tree/main/data`, "Complete data on GitHub")}: label files, hand labels, write-ups, and the corpus and collection notes (${link(`${REPO_URL}#corpus`, "README")}).</dd>
 <dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev, d1-ultra and Decider via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>
+<dt>About</dt><dd>${ilink(aboutPath(), "Methods, round overview and caveats")} · ${listRounds(d).map((r) => ilink(roundPath(r.n), `Round ${r.n}`)).join(" · ")}</dd>
 <dt>Rendered</dt><dd>${esc(meta.renderedAt)} by ${esc(meta.model)} · data ${esc(meta.dataSource)}</dd>
 ${dep ? `<dt>Triggered by</dt><dd>GitHub deployment ${esc(dep.id)} (${esc(dep.environment)}) · commit ${link(commitUrl, `<code>${esc(dep.sha.slice(0, 7))}</code>`)}${dep.targetUrl ? ` · ${link(dep.targetUrl, "deployment")}` : ""}</dd>` : ""}
 ${e.instructionSummary ? `<dt>How the instruction was applied</dt><dd>${prose(e.instructionSummary)}</dd>` : ""}
 ${meta.instruction ? `<dt>Deployment instruction</dt><dd><details><summary>Show</summary><pre>${esc(meta.instruction)}</pre></details></dd>` : ""}
 ${warnings}
 <dt>Source</dt><dd>${link(REPO_URL, "github.com/jessearmand/cybernetics-log")}</dd>
-</dl></footer></div></body></html>`;
+</dl></footer>`;
+}
+
+function documentShell(opts: {
+  title: string;
+  description: string;
+  accent: Accent;
+  banner?: string;
+  body: string;
+  extraHead?: string;
+  model: string;
+}): string {
+  const [accent, soft] = ACCENT_HEX[opts.accent && opts.accent in ACCENT_HEX ? opts.accent : "indigo"];
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(opts.title)} · cybernetics-log</title>
+<meta name="description" content="${esc(opts.description)}">
+<meta name="generator" content="cybernetics-log eve agent (${esc(opts.model)})">
+<style>${CSS}:root{--accent:${accent}}@media (prefers-color-scheme:light){:root{--accent-soft:${soft}}}</style>${opts.extraHead ?? ""}</head>
+<body>${opts.banner ? `<div class="banner">${esc(opts.banner)}</div>` : ""}${opts.body}</body></html>`;
+}
+
+/** Body sections for one analysis round. Adding round 8: append a case here. */
+function roundBody(d: Discourse, e: Editorial, n: number): string {
+  switch (n) {
+    case 1:
+      return `${collectionRoundIntro(d, 1)}${stanceSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}`;
+    case 2:
+      return `${collectionRoundIntro(d, 2)}${round2Accounts(d)}`;
+    case 3:
+      return `${collectionRoundIntro(d, 3)}${policySection(d, e)}${dawkinsSection(d, e)}${round3Accounts(d)}`;
+    case 4:
+      return `${collectionRoundIntro(d, 4)}${leadSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${round4Extras(d)}`;
+    case 5:
+      return `${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}`;
+    case 6:
+      return `${round6Section(d, e)}`;
+    case 7:
+      return `${round7Section(d, e)}`;
+    default:
+      return "";
+  }
+}
+
+function earlierRoundsIndex(rounds: readonly RoundDef[], latest: number): string {
+  const earlier = rounds.filter((r) => r.n < latest);
+  if (!earlier.length) return "";
+  return `<section class="round-index" id="earlier-rounds"><h2>Earlier rounds</h2>
+<p class="fine">Newest first. Each link is the full write-up for that round.</p>
+<ol>${earlier
+    .map(
+      (r) =>
+        `<li><a href="${roundPath(r.n)}"><span class="rtitle">Round ${r.n}</span><span class="rdate">${esc(r.date)}</span><span class="rsum">${esc(r.summary)}</span></a></li>`,
+    )
+    .join("")}</ol></section>`;
+}
+
+function renderHome(d: Discourse, e: Editorial, meta: RenderMeta, rounds: readonly RoundDef[]): string {
+  const latest = rounds[0]!;
+  const takeaways = e.takeaways?.length ? `<ul class="takeaways">${e.takeaways.map((t) => `<li>${prose(t)}</li>`).join("")}</ul>` : "";
+  const body = `
+<header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
+<h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
+<div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${rounds.length} analysis rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
+<div class="wrap">${siteNav(rounds, "/")}
+<section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
+${pager(rounds, latest.n)}
+<p class="one-liner"><b>Round ${latest.n}</b> · ${esc(latest.date)} — ${esc(latest.summary)}</p>
+${roundBody(d, e, latest.n)}
+${earlierRoundsIndex(rounds, latest.n)}
+${footerHtml(d, e, meta)}</div>${anchorRedirectScript()}`;
+  return documentShell({
+    title: e.headline,
+    description: e.dek,
+    accent: e.accent ?? "indigo",
+    banner: meta.banner,
+    body,
+    model: meta.model,
+  });
+}
+
+function renderRoundPage(d: Discourse, e: Editorial, meta: RenderMeta, rounds: readonly RoundDef[], def: RoundDef): string {
+  const body = `
+<header class="hero compact"><div class="wrap"><div class="kicker"><a href="/">cybernetics-log</a> · round ${def.n}</div>
+<h1>Round ${def.n}</h1>
+<p class="one-liner">${esc(def.date)} — ${esc(def.summary)}</p></div></header>
+<div class="wrap">${siteNav(rounds, roundPath(def.n))}
+${pager(rounds, def.n)}
+${roundBody(d, e, def.n)}
+${footerHtml(d, e, meta)}</div>`;
+  return documentShell({
+    title: `Round ${def.n}: ${def.summary}`,
+    description: def.summary,
+    accent: e.accent ?? "indigo",
+    banner: meta.banner,
+    body,
+    model: meta.model,
+  });
+}
+
+function renderAboutPage(d: Discourse, e: Editorial, meta: RenderMeta, rounds: readonly RoundDef[]): string {
+  const body = `
+<header class="hero compact"><div class="wrap"><div class="kicker"><a href="/">cybernetics-log</a> · about</div>
+<h1>About this log</h1>
+<p class="dek">How stance was labelled, how the rounds compare, and what the numbers do not mean.</p></div></header>
+<div class="wrap">${siteNav(rounds, aboutPath())}
+<section class="summary"><p>Project-wide notes live here so each ${ilink("/", "round page")} stays a log entry. The corpus and collection notes are on GitHub (${link(`${REPO_URL}#corpus`, "README")}).</p></section>
+${methodsSection(d, e)}${roundsSection(d)}${caveatsSection(d, e)}
+${footerHtml(d, e, meta)}</div>`;
+  return documentShell({
+    title: "About",
+    description: "Methods, round overview and caveats for the cybernetics-log.",
+    accent: e.accent ?? "indigo",
+    banner: meta.banner,
+    body,
+    model: meta.model,
+  });
+}
+
+/**
+ * Renders the whole multi-page log. Pure function of (data, editorial, meta).
+ * Home (`/`) is the latest round plus a short index of earlier rounds; each
+ * `/rounds/N` is one log entry; `/about` holds methods, the 1–4 overview and caveats.
+ */
+export function renderSite(d: Discourse, e: Editorial, meta: RenderMeta): RenderedSite {
+  const rounds = listRounds(d);
+  const latest = latestRound(d);
+  const pages: SitePage[] = [
+    { path: "/", html: renderHome(d, e, meta, rounds) },
+    { path: aboutPath(), html: renderAboutPage(d, e, meta, rounds) },
+    ...rounds.map((r) => ({ path: roundPath(r.n), html: renderRoundPage(d, e, meta, rounds, r) })),
+  ];
+  return { pages, latestRound: latest, availableRounds: rounds.map((r) => r.n) };
+}
+
+/** @deprecated Prefer renderSite. Returns the home page HTML for callers that still expect one string. */
+export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string {
+  return renderSite(d, e, meta).pages.find((p) => p.path === "/")!.html;
+}
+
+/** Look up one rendered page by path. */
+export function pageAt(site: RenderedSite, path: string): string | undefined {
+  return site.pages.find((p) => p.path === path)?.html;
 }
 
 /** Editorial used before the first deployment-triggered render (and for previews in tests). */

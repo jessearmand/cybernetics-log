@@ -3,15 +3,16 @@ import { z } from "zod";
 
 import { DEFAULT_MODEL } from "../lib/config.ts";
 import { loadData } from "../lib/data.ts";
-import { ACCENTS, renderPage } from "../lib/render.ts";
+import { ACCENTS, renderSite } from "../lib/render.ts";
 import { deploymentFromSession } from "../lib/session.ts";
-import { savePage } from "../lib/store.ts";
+import { saveSite } from "../lib/store.ts";
 
 const note = z.string().trim().max(700).optional();
 
 export default defineTool({
   description:
-    "Render and publish the styled HTML page. You supply only the editorial copy; every chart, table, number, quote and link is " +
+    "Render and publish the multi-page log (home = latest round, /rounds/N per round, /about for methods). " +
+    "You supply only the editorial copy; every chart, table, number, quote and link is " +
     "rendered deterministically from the committed data for this deployment. Use **bold** for emphasis; no HTML or links in your text. " +
     "Call exactly once, after load_discourse_data.",
   inputSchema: z.object({
@@ -34,7 +35,7 @@ export default defineTool({
     const instruction = [trigger?.payloadInstruction ? `Payload instruction:\n${trigger.payloadInstruction}` : null, data.instructionFile]
       .filter(Boolean)
       .join("\n\n");
-    const html = renderPage(
+    const site = renderSite(
       data.discourse,
       {
         headline: input.headline,
@@ -57,8 +58,16 @@ export default defineTool({
       },
     );
     const key = trigger ? `${trigger.sha.slice(0, 12)}-${trigger.deploymentId}` : `dev-${Date.now()}`;
-    const saved = await savePage(html, key);
-    return { published: true, store: saved.store, latest: saved.latest, archived: saved.archived, bytes: saved.bytes };
+    const saved = await saveSite(site.pages, key);
+    return {
+      published: true,
+      store: saved.store,
+      paths: saved.paths,
+      latestRound: site.latestRound,
+      archivedPrefix: saved.archivedPrefix,
+      bytes: saved.bytes,
+      pages: site.pages.length,
+    };
   },
   endsTurn: (output) => output.published === true,
 });

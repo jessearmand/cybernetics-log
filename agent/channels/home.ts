@@ -1,25 +1,33 @@
 import { defineChannel, GET, HEAD } from "eve/channels";
 
-import { loadData } from "../lib/data.ts";
-import { PLACEHOLDER_EDITORIAL, renderPage } from "../lib/render.ts";
-import { loadLatestPage } from "../lib/store.ts";
 import { DEFAULT_MODEL } from "../lib/config.ts";
+import { loadData } from "../lib/data.ts";
+import { PLACEHOLDER_EDITORIAL, pageAt, renderSite } from "../lib/render.ts";
+import { listRounds, matchSitePath } from "../lib/rounds.ts";
+import { loadPage } from "../lib/store.ts";
 
 /**
- * Serves the latest page the agent rendered. Read-only: there is no input here.
- * Before the first deployment-triggered render it shows the data-only layout
- * with a banner, so the URL never 404s.
+ * Serves the multi-page log. Read-only: there is no input here.
+ * Before the first deployment-triggered render it builds pages from the
+ * committed data with a banner, so known URLs never 404.
  */
-async function page(): Promise<{ html: string; rendered: boolean }> {
-  const stored = await loadLatestPage();
-  if (stored) return { html: stored, rendered: true };
+async function htmlFor(pathname: string): Promise<{ html: string; rendered: boolean } | { notFound: true }> {
   const data = await loadData(null);
-  const html = renderPage(data.discourse, PLACEHOLDER_EDITORIAL, {
+  const available = listRounds(data.discourse).map((r) => r.n);
+  const matched = matchSitePath(pathname, available);
+  if (!matched) return { notFound: true };
+
+  const stored = await loadPage(matched);
+  if (stored) return { html: stored, rendered: true };
+
+  const site = renderSite(data.discourse, PLACEHOLDER_EDITORIAL, {
     renderedAt: new Date().toISOString(),
     model: `${DEFAULT_MODEL} (not yet run)`,
     dataSource: data.source,
     banner: "Awaiting the first deployment-triggered render: showing committed data without the agent's editorial copy.",
   });
+  const html = pageAt(site, matched);
+  if (!html) return { notFound: true };
   return { html, rendered: false };
 }
 
@@ -29,19 +37,29 @@ function headers(rendered: boolean): HeadersInit {
     "cache-control": rendered ? "public, max-age=0, s-maxage=60, stale-while-revalidate=300" : "no-store",
     "x-content-type-options": "nosniff",
     "referrer-policy": "strict-origin-when-cross-origin",
-    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+    // script-src allows the tiny legacy-hash redirect on `/` only.
+    "content-security-policy":
+      "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
   };
+}
+
+async function respond(pathname: string, method: "GET" | "HEAD"): Promise<Response> {
+  const result = await htmlFor(pathname);
+  if ("notFound" in result) {
+    return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
+  }
+  const h = headers(result.rendered);
+  if (method === "HEAD") return new Response(null, { headers: h });
+  return new Response(result.html, { headers: h });
 }
 
 export default defineChannel({
   routes: [
-    GET("/", async () => {
-      const { html, rendered } = await page();
-      return new Response(html, { headers: headers(rendered) });
-    }),
-    HEAD("/", async () => {
-      const { rendered } = await page();
-      return new Response(null, { headers: headers(rendered) });
-    }),
+    GET("/", async () => respond("/", "GET")),
+    HEAD("/", async () => respond("/", "HEAD")),
+    GET("/about", async () => respond("/about", "GET")),
+    HEAD("/about", async () => respond("/about", "HEAD")),
+    GET("/rounds/:round", async (_req, { params }) => respond(`/rounds/${params.round}`, "GET")),
+    HEAD("/rounds/:round", async (_req, { params }) => respond(`/rounds/${params.round}`, "HEAD")),
   ],
 });
