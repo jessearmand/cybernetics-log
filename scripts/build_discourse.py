@@ -904,6 +904,24 @@ def refresh_round7() -> None:
     shutil.copyfile(SRC / "round7" / "questions_r7.json", OUT / "questions_r7.json")
 
 
+def r7_applied(out: Path) -> dict:
+    """Posts a model called applied in the round 7 X set, and the sentence that ends the headline.
+    A missing applied_candidates_r7_x.csv means the same as a header-only one: no post was called applied."""
+    f = out / "applied_candidates_r7_x.csv"
+    cands = list(csv.DictReader(open(f, newline="", encoding="utf-8"))) if f.exists() else []
+    if not cands:
+        return {"applied": [], "summary": "No model called any post applied."}
+    assert {c["id"] for c in cands} == set(R7_APPLIED_READING), "applied candidates drifted from the hand reading"
+    applied = [{"id": c["id"], "username": c["username"], "url": c["url"], "seeker": c["seeker_label"], "models": [R7_NAMES[m] for m in c["models"].split(";")],
+                "p": max(float(c[f"{k}_p_applied"]) for k, m in R7_X_KEYS.items() if m in c["models"].split(";")), "reading": R7_APPLIED_READING[c["id"]]} for c in cands]
+    applied.sort(key=lambda a: (a["models"] != ["joey-1"], -a["p"]))
+    joey_n = sum(a["models"] == ["joey-1"] for a in applied)
+    d1a = next(a for a in applied if a["models"] == ["d1-ultra"])
+    return {"applied": applied,
+            "summary": (f"Seven posts were called applied, each by a single model and by no other: joey-1's {joey_n} are all reactions to Anthropic's own measures (its usage policy, end-conversation feature and welfare programme), "
+                        f"and d1-ultra's one (@{d1a['username']}, P {d1a['p']:.2f}) is a posted chat-log experiment. Anthropic is the one making the product decisions; on X it appears only as the thing others react to.")}
+
+
 def r7_block(src7: Path, rows5: list, rows6: list, hand5: list, hand6: list, hand_oa: list, agr56: list) -> dict:
     rd = lambda name: list(csv.DictReader(open(OUT / name, newline="", encoding="utf-8")))
     hand = hand5 + hand6 + hand_oa
@@ -981,14 +999,8 @@ def r7_block(src7: Path, rows5: list, rows6: list, hand5: list, hand6: list, han
     close = [r for r in seeker_rows if r["kappa"] >= 0.7]
     by_name = {r["name"]: r for r in seeker_rows}
     assert by_name["d1-ultra"]["academic_called_commentary"] == by_name["Decision-1"]["academic_called_commentary"]
-    cands = rd("applied_candidates_r7_x.csv")
-    assert {c["id"] for c in cands} == set(R7_APPLIED_READING), "applied candidates drifted from the hand reading"
-    k2m = R7_X_KEYS
-    applied = [{"id": c["id"], "username": c["username"], "url": c["url"], "seeker": c["seeker_label"], "models": [R7_NAMES[m] for m in c["models"].split(";")],
-                "p": max(float(c[f"{k}_p_applied"]) for k, m in k2m.items() if m in c["models"].split(";")), "reading": R7_APPLIED_READING[c["id"]]} for c in cands]
-    applied.sort(key=lambda a: (a["models"] != ["joey-1"], -a["p"]))
-    joey_n = sum(a["models"] == ["joey-1"] for a in applied)
-    d1a = next(a for a in applied if a["models"] == ["d1-ultra"])
+    ap = r7_applied(OUT)
+    applied = ap["applied"]
     def pairx(m, ref):
         r = next(r for r in agx if r["question"] == "stance4" and {r["model_a"], r["model_b"]} == {m, ref})
         return {"agree": int(r["agree"]), "n": int(r["n"]), "kappa": (float(r["kappa"]) if r["kappa"] else None)}
@@ -1006,8 +1018,7 @@ def r7_block(src7: Path, rows5: list, rows6: list, hand5: list, hand6: list, han
         "question": use_q,
         "seeker": {k: seek.get(k, 0) for k in ["applied", "commentary", "academic"]},
         "headline": (f"No post in this set describes applying a stance on AI consciousness to a product decision. Seeker labels: applied {seek.get('applied', 0)}, commentary {seek['commentary']}, academic {seek['academic']}. "
-                     f"Seven posts were called applied, each by a single model and by no other: joey-1's {joey_n} are all reactions to Anthropic's own measures (its usage policy, end-conversation feature and welfare programme), "
-                     f"and d1-ultra's one (@{d1a['username']}, P {d1a['p']:.2f}) is a posted chat-log experiment. Anthropic is the one making the product decisions; on X it appears only as the thing others react to."),
+                     + ap["summary"]),
         "seeker_text": (f"{', '.join(r['name'] for r in close[:-1])} and {close[-1]['name']} match Seeker labels on {min(r['agree'] for r in close)} to {max(r['agree'] for r in close)} of {len(posts)} posts (κ {min(r['kappa'] for r in close):.2f} to {max(r['kappa'] for r in close):.2f}). "
                         f"d1-ultra and Decision-1 match on {next(r['agree'] for r in seeker_rows if r['name'] == 'd1-ultra')}: each calls {next(r['academic_called_commentary'] for r in seeker_rows if r['name'] == 'd1-ultra')} of Seeker's academic posts commentary."),
         "stance_text": (f"The round 7 stance answers have no human labels, so only agreement between models is shown. d1-ultra and Decider agree on {pairx(PX, D1)['agree']} of {len(posts)} posts (κ {pairx(PX, D1)['kappa']}). "

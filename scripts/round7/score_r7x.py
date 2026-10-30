@@ -43,12 +43,15 @@ for k, m in MODELS.items():
 A = {(k, g): {i: r['answers'][QKEY[g]]['choice'] for i, r in raw[k, g].items()} for k in MODELS for g in OPTS}
 PR = {(k, g): {i: r['answers'][QKEY[g]]['probabilities'] for i, r in raw[k, g].items()} for k in MODELS for g in OPTS}
 
-def write(name, rows):
+def write(name, rows, fields):
+    """Always (re)write the file, header-only when there are no rows, so a rescore never leaves stale rows behind."""
     with open(os.path.join(out, name), 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
+        w = csv.DictWriter(fh, fieldnames=fields); w.writeheader(); w.writerows(rows)
+cols = lambda rows: list(rows[0])  # for exports that always have rows (one per model, question or pair)
 
 write('posts_r7.csv', [{'id': p['id'], 'username': p['username'], 'created_at': p['created_at'], 'url': p['url'], 'queries': ';'.join(p['queries']),
-                        'seeker_label': p['seeker_label'], 'text': p['text']} for p in posts])
+                        'seeker_label': p['seeker_label'], 'text': p['text']} for p in posts],
+      ['id', 'username', 'created_at', 'url', 'queries', 'seeker_label', 'text'])
 labels = []
 for i in ids:
     row = {'id': i, 'username': P[i]['username'], 'seeker_label': P[i]['seeker_label']}
@@ -57,7 +60,7 @@ for i in ids:
             row[f'{k}_{g}'] = A[k, g].get(i, '')
             row[f'{k}_{g}_conf'] = round(max(PR[k, g][i].values()), 3) if i in PR[k, g] else ''
     labels.append(row)
-write('labels_r7_x.csv', labels)
+write('labels_r7_x.csv', labels, ['id', 'username', 'seeker_label', *(f'{k}_{g}{c}' for k in MODELS for g in OPTS for c in ('', '_conf'))])
 agree = []
 for g in OPTS:
     for a, b in combinations(MODELS, 2):
@@ -65,7 +68,7 @@ for g in OPTS:
         xa, xb = [A[a, g][i] for i in both], [A[b, g][i] for i in both]
         ag = sum(x == y for x, y in zip(xa, xb))
         agree.append({'question': g, 'model_a': MODELS[a], 'model_b': MODELS[b], 'n': len(both), 'agree': ag, 'pct': pct(ag, len(both)), 'kappa': kappa(xa, xb)})
-write('model_agreement_r7_x.csv', agree)
+write('model_agreement_r7_x.csv', agree, cols(agree))
 seeker = []
 for k, m in MODELS.items():
     both = [i for i in ids if i in A[k, 'use']]
@@ -76,10 +79,10 @@ for k, m in MODELS.items():
         for c in OPTS['use']:
             row[f'seeker_{s}_model_{c}'] = sum(x == s and y == c for x, y in zip(xs, xm))
     seeker.append(row)
-write('model_vs_seeker_r7_x.csv', seeker)
+write('model_vs_seeker_r7_x.csv', seeker, cols(seeker))
 dist = [{'model': m, 'question': g, 'option': o, 'count': sum(v == o for v in A[k, g].values())} for g in OPTS for k, m in MODELS.items() for o in OPTS[g]]
 dist += [{'model': 'Seeker labels', 'question': 'use', 'option': o, 'count': sum(p['seeker_label'] == o for p in posts)} for o in OPTS['use']]
-write('distribution_r7_x.csv', dist)
+write('distribution_r7_x.csv', dist, cols(dist))
 cands = []
 for i in ids:
     who = [k for k in MODELS if A[k, 'use'].get(i) == 'applied']
@@ -88,6 +91,6 @@ for i in ids:
                       'models': ';'.join(MODELS[k] for k in who), **{f'{k}_p_applied': round(PR[k, 'use'][i]['applied'], 3) if i in PR[k, 'use'] else '' for k in MODELS},
                       'url': P[i]['url'], 'text': ' '.join(P[i]['text'].split())})
 cands.sort(key=lambda r: -r['n_models'])
-if cands: write('applied_candidates_r7_x.csv', cands)
-write('run_r7_x.csv', run)
+write('applied_candidates_r7_x.csv', cands, ['id', 'username', 'seeker_label', 'n_models', 'models', *(f'{k}_p_applied' for k in MODELS), 'url', 'text'])
+write('run_r7_x.csv', run, cols(run))
 print(json.dumps({'applied_candidates': len(cands)}))

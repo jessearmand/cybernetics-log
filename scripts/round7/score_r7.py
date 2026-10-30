@@ -116,9 +116,13 @@ for k, m in allm.items():
         comp.append({'model': m, 'metric': name, 'correct': c, 'n': n, 'pct': pct(c, n), 'unanswered': un,
                      'comparable': cmp_ if k in REF else cmp_.replace('no (', 'no (sample not drawn for this model; ')})
 
-def write(name, rs):
-    if not rs: return
+def write(name, rs, fields):
+    """Always (re)write the file, header-only when there are no rows, so a rescore never leaves stale rows behind."""
     with open(os.path.join(outdir, name), 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rs[0])); w.writeheader(); w.writerows(rs)
-write('labels_r7.csv', rows); write('model_agreement_r7.csv', agree); write('model_comparison_r7.csv', comp); write('run_r7.csv', [r for r in runinfo if r['model'] in models])
+        w = csv.DictWriter(fh, fieldnames=fields); w.writeheader(); w.writerows(rs)
+write('labels_r7.csv', rows, ['id', 'username', *(f'{m}:{q[0]}' for m in models for q in QS)])
+write('model_agreement_r7.csv', agree, ['model', 'question', 'round', 'vs', 'n', 'agree', 'pct', 'kappa'])
+write('model_comparison_r7.csv', comp, ['model', 'metric', 'correct', 'n', 'pct', 'unanswered', 'comparable'])
+write('run_r7.csv', [r for r in runinfo if r['model'] in models], ['model', 'group', 'answered', 'total', 'errors', 'error_sample', 'retried_calls', 'input_tokens',
+                                                                   'gateway_cost_usd', 'market_cost_usd', 'median_latency_s', 'max_latency_s'])
 print(json.dumps({'agreement_rows': len(agree), 'comparison_rows': len(comp)}))

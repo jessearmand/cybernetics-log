@@ -514,7 +514,7 @@ ${agreeTable("stance", "Round 5 stance, three-way.")}
 <p class="fine">The use question: ${esc(x.question)}.</p>
 <p>${esc(x.seeker_text)}</p>
 <div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>Matches Seeker labels</th><th>κ</th><th>Called applied</th></tr></thead><tbody>${seekRows}</tbody></table></div>
-${fold("Posts a model called applied", applied, { list: "r3acc", plain: true })}
+${applied.length ? fold("Posts a model called applied", applied, { list: "r3acc", plain: true }) : "<p>No model called any post applied.</p>"}
 <p>${esc(x.stance_text)}</p>
 <details class="fold"><summary><h3 class="flabel">Round 7 stance, every model</h3><span class="fcount">${x.stance.length} models</span></summary><div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>Reject</th><th>Curious</th><th>Serious</th><th>Reporting</th><th>With d1-ultra</th><th>With Decider</th></tr></thead><tbody>${stanceRows}</tbody></table></div></details>
 ${fold("Round 7 caveats", r.caveats, { list: "caveats" })}
