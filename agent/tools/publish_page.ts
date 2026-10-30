@@ -58,7 +58,12 @@ export default defineTool({
       },
     );
     const key = trigger ? `${trigger.sha.slice(0, 12)}-${trigger.deploymentId}` : `dev-${Date.now()}`;
-    const saved = await saveSite(site.pages, key);
+    let saved;
+    try {
+      saved = await saveSite(site.pages, key);
+    } catch (error) {
+      return { published: false, error: `saving pages failed: ${(error as Error).message}`, latestRound: site.latestRound };
+    }
     return {
       published: true,
       store: saved.store,

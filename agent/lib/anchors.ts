@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { aboutPath, roundPath } from "./rounds.ts";
 
 /**
@@ -44,8 +46,18 @@ export const ANCHOR_REDIRECTS: Readonly<Record<string, string>> = {
   caveats: `${aboutPath()}#caveats`,
 };
 
+/** Body of the legacy-hash redirect. Own-property lookup so `#constructor` etc. are ignored. */
+function anchorRedirectSource(): string {
+  const json = JSON.stringify(ANCHOR_REDIRECTS);
+  return `(function(){var m=${json};var h=location.hash.slice(1);if(!h)return;var d=Object.prototype.hasOwnProperty.call(m,h)&&m[h];if(typeof d==="string")location.replace(d);})();`;
+}
+
 /** Inline script for `/` only: map legacy hashes onto the new URLs. */
 export function anchorRedirectScript(): string {
-  const json = JSON.stringify(ANCHOR_REDIRECTS);
-  return `<script>(function(){var m=${json};var h=location.hash.slice(1);if(!h)return;var d=m[h];if(d)location.replace(d);})();</script>`;
+  return `<script>${anchorRedirectSource()}</script>`;
+}
+
+/** CSP hash source that allows exactly the redirect script and nothing else. */
+export function anchorRedirectScriptHash(): string {
+  return `'sha256-${createHash("sha256").update(anchorRedirectSource(), "utf8").digest("base64")}'`;
 }

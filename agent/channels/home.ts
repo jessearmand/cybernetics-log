@@ -2,6 +2,7 @@ import { defineChannel, GET, HEAD } from "eve/channels";
 
 import { DEFAULT_MODEL } from "../lib/config.ts";
 import { loadData } from "../lib/data.ts";
+import { pageHeaders } from "../lib/headers.ts";
 import { PLACEHOLDER_EDITORIAL, pageAt, renderSite } from "../lib/render.ts";
 import { listRounds, matchSitePath } from "../lib/rounds.ts";
 import { loadPage } from "../lib/store.ts";
@@ -11,14 +12,14 @@ import { loadPage } from "../lib/store.ts";
  * Before the first deployment-triggered render it builds pages from the
  * committed data with a banner, so known URLs never 404.
  */
-async function htmlFor(pathname: string): Promise<{ html: string; rendered: boolean } | { notFound: true }> {
+async function htmlFor(pathname: string): Promise<{ html: string; path: string; rendered: boolean } | { notFound: true }> {
   const data = await loadData(null);
   const available = listRounds(data.discourse).map((r) => r.n);
   const matched = matchSitePath(pathname, available);
   if (!matched) return { notFound: true };
 
   const stored = await loadPage(matched);
-  if (stored) return { html: stored, rendered: true };
+  if (stored) return { html: stored, path: matched, rendered: true };
 
   const site = renderSite(data.discourse, PLACEHOLDER_EDITORIAL, {
     renderedAt: new Date().toISOString(),
@@ -28,19 +29,7 @@ async function htmlFor(pathname: string): Promise<{ html: string; rendered: bool
   });
   const html = pageAt(site, matched);
   if (!html) return { notFound: true };
-  return { html, rendered: false };
-}
-
-function headers(rendered: boolean): HeadersInit {
-  return {
-    "content-type": "text/html; charset=utf-8",
-    "cache-control": rendered ? "public, max-age=0, s-maxage=60, stale-while-revalidate=300" : "no-store",
-    "x-content-type-options": "nosniff",
-    "referrer-policy": "strict-origin-when-cross-origin",
-    // script-src allows the tiny legacy-hash redirect on `/` only.
-    "content-security-policy":
-      "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
-  };
+  return { html, path: matched, rendered: false };
 }
 
 async function respond(pathname: string, method: "GET" | "HEAD"): Promise<Response> {
@@ -48,7 +37,7 @@ async function respond(pathname: string, method: "GET" | "HEAD"): Promise<Respon
   if ("notFound" in result) {
     return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
   }
-  const h = headers(result.rendered);
+  const h = pageHeaders(result.path, result.rendered);
   if (method === "HEAD") return new Response(null, { headers: h });
   return new Response(result.html, { headers: h });
 }

@@ -41,19 +41,17 @@ export async function saveSite(pages: readonly SitePage[], key: string): Promise
   const archivedPrefix = `renders/${safeKey}`;
   const bytes = pages.reduce((n, p) => n + Buffer.byteLength(p.html), 0);
   const paths = pages.map((p) => p.path);
+  // Archive first, then live pages with `index.html` last, then the manifest:
+  // a failed write never leaves `/` linking to a round page that isn't stored.
+  const rest = pages.filter((p) => p.path !== "/");
+  const home = pages.filter((p) => p.path === "/");
 
   if (storeKind() === "blob") {
     const { put } = await import("@vercel/blob");
     const opts = putOpts();
-    await Promise.all(
-      pages.flatMap((page) => {
-        const rel = pathToStorageKey(page.path);
-        return [
-          put(`${BLOB_PREFIX}/${rel}`, page.html, opts),
-          put(`${BLOB_PREFIX}/${archivedPrefix}/${rel}`, page.html, opts),
-        ];
-      }),
-    );
+    await Promise.all(pages.map((page) => put(`${BLOB_PREFIX}/${archivedPrefix}/${pathToStorageKey(page.path)}`, page.html, opts)));
+    await Promise.all(rest.map((page) => put(`${BLOB_PREFIX}/${pathToStorageKey(page.path)}`, page.html, opts)));
+    for (const page of home) await put(`${BLOB_PREFIX}/${pathToStorageKey(page.path)}`, page.html, opts);
     // Manifest so a deploy can be inspected without listing the whole store.
     const manifest = JSON.stringify({ key: safeKey, paths, archivedPrefix, renderedAt: new Date().toISOString() });
     await put(`${BLOB_PREFIX}/manifest.json`, manifest, { ...opts, contentType: "application/json; charset=utf-8" });
@@ -62,13 +60,14 @@ export async function saveSite(pages: readonly SitePage[], key: string): Promise
   }
 
   for (const page of pages) {
-    const rel = pathToStorageKey(page.path);
-    const latestPath = path.join(LOCAL_DIR, rel);
-    const archivedPath = path.join(LOCAL_DIR, archivedPrefix, rel);
-    await mkdir(path.dirname(latestPath), { recursive: true });
+    const archivedPath = path.join(LOCAL_DIR, archivedPrefix, pathToStorageKey(page.path));
     await mkdir(path.dirname(archivedPath), { recursive: true });
-    await writeFile(latestPath, page.html, "utf8");
     await writeFile(archivedPath, page.html, "utf8");
+  }
+  for (const page of [...rest, ...home]) {
+    const latestPath = path.join(LOCAL_DIR, pathToStorageKey(page.path));
+    await mkdir(path.dirname(latestPath), { recursive: true });
+    await writeFile(latestPath, page.html, "utf8");
   }
   const manifest = JSON.stringify({ key: safeKey, paths, archivedPrefix, renderedAt: new Date().toISOString() }, null, 2);
   await writeFile(path.join(LOCAL_DIR, "manifest.json"), manifest, "utf8");

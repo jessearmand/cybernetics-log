@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import discourse from "../data/discourse.json" with { type: "json" };
-import { ANCHOR_REDIRECTS, anchorRedirectScript } from "../agent/lib/anchors.ts";
+import { createHash } from "node:crypto";
+import vm from "node:vm";
+
+import { ANCHOR_REDIRECTS, anchorRedirectScript, anchorRedirectScriptHash } from "../agent/lib/anchors.ts";
+import { contentSecurityPolicy } from "../agent/lib/headers.ts";
 import { PLACEHOLDER_EDITORIAL, pageAt, renderSite } from "../agent/lib/render.ts";
 import { latestRound, listRounds, matchSitePath, pathToStorageKey, roundPath } from "../agent/lib/rounds.ts";
 
@@ -88,6 +92,37 @@ test("anchors: legacy fragment ids map onto the new URLs", () => {
   assert.ok(home.includes('"methods":"/about#methods"'));
   // Round pages do not carry the redirect script.
   assert.ok(!pageAt(renderSite(discourse, PLACEHOLDER_EDITORIAL, meta), "/rounds/5")!.includes("location.replace"));
+});
+
+function runRedirect(hash: string): string | null {
+  const body = anchorRedirectScript().replace(/^<script>|<\/script>$/g, "");
+  let target: string | null = null;
+  vm.runInNewContext(body, { location: { hash, replace: (u: unknown) => (target = String(u)) } });
+  return target;
+}
+
+test("anchors: redirect script follows own keys only", () => {
+  assert.equal(runRedirect("#round5"), "/rounds/5");
+  assert.equal(runRedirect("#methods"), "/about#methods");
+  assert.equal(runRedirect(""), null);
+  assert.equal(runRedirect("#unknown"), null);
+  for (const h of ["constructor", "toString", "__proto__", "hasOwnProperty", "valueOf"]) {
+    assert.equal(runRedirect(`#${h}`), null, `#${h} must not navigate`);
+  }
+});
+
+test("csp: no script on round/about pages; home allows only the hashed redirect", () => {
+  for (const p of ["/rounds/4", "/about"]) {
+    const csp = contentSecurityPolicy(p);
+    assert.match(csp, /default-src 'none'/);
+    assert.ok(!csp.includes("script-src"), `${p} allows no script`);
+  }
+  const home = contentSecurityPolicy("/");
+  assert.ok(!/script-src[^;]*unsafe-inline/.test(home));
+  const body = anchorRedirectScript().replace(/^<script>|<\/script>$/g, "");
+  const expected = `'sha256-${createHash("sha256").update(body).digest("base64")}'`;
+  assert.equal(anchorRedirectScriptHash(), expected);
+  assert.match(home, new RegExp(`script-src ${expected.replace(/[+/=]/g, "\\$&")};`));
 });
 
 test("content: each round's key findings still appear on its page", () => {
