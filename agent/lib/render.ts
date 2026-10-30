@@ -11,7 +11,7 @@ export interface Editorial {
   readonly instructionSummary?: string;
 }
 
-export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins" | "politics" | "neuro" | "models" | "lead" | "workspace" | "nature" | "round5";
+export type SectionKey = "stance" | "methods" | "confidence" | "pairTest" | "clusters" | "accounts" | "caveats" | "policy" | "dawkins" | "politics" | "neuro" | "models" | "lead" | "workspace" | "nature" | "round5" | "round7";
 export const ACCENTS = ["indigo", "teal", "amber", "rose", "slate"] as const;
 export type Accent = (typeof ACCENTS)[number];
 
@@ -454,6 +454,73 @@ ${fold("Round 5: notable accounts", r.key_accounts.map((a) => `${link(a.url, `<b
 ${fold("Caveats", r.caveats, { list: "caveats" })}</section>`;
 }
 
+/** Agreement cell: "60 of 69" with kappa underneath. */
+const agreeCell = (a: { agree: number; n: number; kappa: number | null } | null) => (a ? `<td>${a.agree} of ${a.n}${a.kappa == null ? "" : `<br><span class="fol">κ ${a.kappa}</span>`}</td>` : "<td>—</td>");
+/** Bolds the first sentence of a finding so the key point reads first on a phone. */
+const leadBold = (t: string) => { const i = t.indexOf(". "); return i < 0 ? `<b>${esc(t)}</b>` : `<b>${esc(t.slice(0, i + 1))}</b>${esc(t.slice(i + 1))}`; };
+const DATA_BLOB = `https://github.com/jessearmand/cybernetics-log/blob/main/data`;
+
+/** Round 7: four more decision models on the round 5/6 posts, then a fresh X set compared with Seeker labels. Absent from data built before round 7. */
+function round7Section(d: Discourse, e: Editorial): string {
+  if (!has(d, "round7")) return "";
+  const r = d.round7;
+  const n = r.new_models;
+  const x = r.x_set;
+  const agreeTable = (q: "stance4" | "stance", caption: string) => {
+    const b = n.baseline[q];
+    const rows = n.agreement[q].map((a) => `<tr><th scope="row">${esc(a.name)}</th>${agreeCell(a.vs_d1)}${agreeCell(a.vs_pplx)}</tr>`).join("");
+    return `<p class="fine">${esc(caption)} Reference: d1-ultra and Decider agree on ${b.agree} of ${b.n} (κ ${b.kappa}).</p><div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>With d1-ultra</th><th>With Decider</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  };
+  const s6 = n.shared.stance4;
+  const s5 = n.shared.stance;
+  const sharedRows = s6.models
+    .map((m) => `<tr><th scope="row">${esc(m.name)}</th><td>${m.same_as_d1} of ${s6.d1_wrong}</td><td>${s5.models.find((y) => y.model === m.model)?.same_as_d1 ?? "—"} of ${s5.d1_wrong}</td></tr>`)
+    .join("");
+  const sc = (v: { correct: number; n: number }) => `<td>${v.correct} of ${v.n}</td>`;
+  const handRows = n.hand
+    .map((h) => `<tr><th scope="row">${esc(h.name)}</th>${sc(h.r6_hand26_skips_as_reporting)}${sc(h.r6_hand26_not_skipped)}${sc(h.r6_outlier6_not_skipped)}${sc(h.r5_hand26_threeway)}${sc(h.r5_outlier6_threeway)}</tr>`)
+    .join("");
+  const seekRows = x.seeker_rows
+    .map((s) => `<tr><th scope="row">${esc(s.name)}</th><td>${s.agree} of ${s.n}</td><td>${s.kappa}</td><td>${s.applied}</td></tr>`)
+    .join("");
+  const stanceRows = x.stance
+    .map((s) => `<tr><th scope="row">${esc(s.name)}</th><td>${s.reject}</td><td>${s.curious}</td><td>${s.serious}</td><td>${s.reporting}</td>${agreeCell(s.vs_d1)}${agreeCell(s.vs_pplx)}</tr>`)
+    .join("");
+  const applied = x.applied.map((a) => `${link(a.url, `<b>@${esc(a.username)}</b>`)} <span class="chip">${a.models.map(esc).join(", ")}: P ${a.p.toFixed(2)}</span> <span class="chip">Seeker: ${esc(CAP(a.seeker))}</span> — ${esc(a.reading)}`);
+  const files: [string, string][] = [
+    ["labels_r7.csv", "answers of the four new models on the round 5 and 6 posts"],
+    ["model_agreement_r7.csv", "their agreement with d1-ultra and Decider"],
+    ["model_comparison_r7.csv", "hand-label scores"],
+    ["run_r7.csv", "cost and latency"],
+    ["posts_r7.csv", "the round 7 posts with Seeker labels"],
+    ["labels_r7_x.csv", "every model's round 7 answers"],
+    ["model_vs_seeker_r7_x.csv", "agreement with Seeker labels"],
+    ["model_agreement_r7_x.csv", "agreement between models"],
+    ["applied_candidates_r7_x.csv", "posts called applied"],
+  ];
+  return `<section id="round7"><h2>Round 7: four more decision models, and a fresh X set</h2>${note(e, "round7")}
+<h3>New models on the round 5 and 6 posts</h3><p class="fine">${esc(n.note)}</p>
+<p>${esc(n.agreement_text)}</p>
+${agreeTable("stance4", "Round 6 stance, four-way: posts on which each model gives the same answer, with Cohen's kappa (κ).")}
+<p>${leadBold(n.shared_text)}</p>
+<div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>Same wrong answer as d1-ultra, round 6</th><th>Round 5</th></tr></thead><tbody>${sharedRows}</tbody></table></div>
+<p>${esc(n.joey_text)}</p>
+${agreeTable("stance", "Round 5 stance, three-way.")}
+<p class="studynote"><b>Not comparable on hand labels:</b> ${esc(n.comparability)}</p>
+<details class="fold"><summary><h3 class="flabel">Hand-label scores, every model</h3><span class="fcount">${n.hand.length} models</span></summary><div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>Round 6, first 26 (skips as reporting)</th><th>Round 6, 16 not skipped</th><th>Round 6, outlier 5</th><th>Round 5, 10</th><th>Round 5, outlier 4</th></tr></thead><tbody>${handRows}</tbody></table></div>
+<p class="fine">The first 26 labels were picked where d1-ultra and Decider disagreed, the outlier set where GPT-6 Luna disagreed with both. Not accuracy figures.</p></details>
+<h3>A fresh X set</h3><p class="fine">${esc(x.note)}</p>
+<p>${leadBold(x.headline)}</p>
+<p class="fine">The use question: ${esc(x.question)}.</p>
+<p>${esc(x.seeker_text)}</p>
+<div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>Matches Seeker labels</th><th>κ</th><th>Called applied</th></tr></thead><tbody>${seekRows}</tbody></table></div>
+${fold("Posts a model called applied", applied, { list: "r3acc", plain: true })}
+<p>${esc(x.stance_text)}</p>
+<details class="fold"><summary><h3 class="flabel">Round 7 stance, every model</h3><span class="fcount">${x.stance.length} models</span></summary><div class="tablewrap"><table class="methods r7"><thead><tr><th>Model</th><th>Reject</th><th>Curious</th><th>Serious</th><th>Reporting</th><th>With d1-ultra</th><th>With Decider</th></tr></thead><tbody>${stanceRows}</tbody></table></div></details>
+${fold("Round 7 caveats", r.caveats, { list: "caveats" })}
+<p class="fine">Data on GitHub: ${files.map(([f, label]) => link(`${DATA_BLOB}/${f}`, esc(label))).join(" · ")}. Cost: the four new models billed $${n.run.reduce((s, m) => s + m.gateway_cost_usd, 0).toFixed(4)} on rounds 5 and 6; the round 7 run billed $${x.cost.gateway_usd} ($${x.cost.list_usd} at list price).</p></section>`;
+}
+
 function neuroSection(d: Discourse, e: Editorial): string {
   // The round-5 lead section replaces the round-4 aside; older data still renders it.
   const n = d.neuroscience_sidebar;
@@ -589,7 +656,7 @@ details.fold>summary::before{content:"";flex:none;width:8px;height:8px;margin:0 
 details.fold[open]>summary::before{transform:rotate(45deg)}
 details.fold>summary:hover .flabel{color:var(--accent)}details.fold>summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
 details.fold .flabel{margin:0;font-size:inherit;font-weight:inherit;line-height:inherit;color:inherit}details.fold .fcount{margin-left:auto;flex:none;color:var(--muted);font-size:12.5px;font-weight:400}
-details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}details.fold>.tablewrap,details.fold>p{padding:0 14px}table.agree th,table.agree td{padding:8px 6px}table.outl th,table.outl td{padding:8px 6px}.hit{font-weight:700;color:var(--ink)}.miss{color:var(--muted)}
+details.fold>ul{margin:0;padding:0 16px 12px 40px}details.fold>ul.r3acc{padding-left:40px}details.fold>.acols{padding:4px 14px 14px}details.fold>.tablewrap,details.fold>p{padding:0 14px}table.agree th,table.agree td{padding:8px 6px}table.outl th,table.outl td{padding:8px 6px}table.r7 th,table.r7 td{padding:8px 6px}table.r7 tbody th{white-space:nowrap}.hit{font-weight:700;color:var(--ink)}.miss{color:var(--muted)}
 @media (prefers-reduced-motion:reduce){details.fold>summary::before{transition:none}}
 .sidebar{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:16px 20px;margin:24px 0;font-size:15px}.sidebar h2{font-size:19px}
 .cite{font-size:14px;color:var(--muted)}
@@ -620,9 +687,9 @@ export function renderPage(d: Discourse, e: Editorial, meta: RenderMeta): string
 <header class="hero"><div class="wrap"><div class="kicker">cybernetics-log · machine consciousness on X</div>
 <h1>${esc(e.headline)}</h1><p class="dek">${prose(e.dek)}</p>
 <div class="stats"><span><b>${d.corpus.posts}</b> English posts</span><span><b>${d.corpus.authors}</b> authors</span><span>${esc(d.corpus.window.label)}</span><span>${d.stance_counts.hand_sample.n} hand-labelled</span><span>${d.corpus.collection_rounds ?? d.rounds.items.length - 1} rounds</span><span>${d.accuracy.methods.length} methods compared</span></div></div></header>
-<div class="wrap"><nav class="toc">${has(d, "lead_tsao") ? `<a href="#lead">Time slices</a>` : ""}${has(d, "workspace_paper") ? `<a href="#workspace">Workspace paper</a>` : ""}${has(d, "nature_comment") ? `<a href="#nature">Nature</a>` : ""}${has(d, "round5") ? `<a href="#round5">Round 5</a>` : ""}<a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a>${has(d, "politics_spotlight") ? `<a href="#politics">Sacks / All-In</a>` : ""}${has(d, "neuroscience_sidebar") && !has(d, "lead_tsao") ? `<a href="#neuro">Neuroscience</a>` : ""}${has(d, "model_comparison") ? `<a href="#models">Models</a>` : ""}<a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
+<div class="wrap"><nav class="toc">${has(d, "lead_tsao") ? `<a href="#lead">Time slices</a>` : ""}${has(d, "workspace_paper") ? `<a href="#workspace">Workspace paper</a>` : ""}${has(d, "nature_comment") ? `<a href="#nature">Nature</a>` : ""}${has(d, "round5") ? `<a href="#round5">Round 5</a>` : ""}${has(d, "round7") ? `<a href="#round7">Round 7</a>` : ""}<a href="#stance">Stance</a><a href="#methods">Methods</a><a href="#rounds">Rounds</a><a href="#policy">Policy fight</a><a href="#dawkins">Dawkins</a>${has(d, "politics_spotlight") ? `<a href="#politics">Sacks / All-In</a>` : ""}${has(d, "neuroscience_sidebar") && !has(d, "lead_tsao") ? `<a href="#neuro">Neuroscience</a>` : ""}${has(d, "model_comparison") ? `<a href="#models">Models</a>` : ""}<a href="#confidence">Confidence</a><a href="#pair">Pair test</a><a href="#clusters">Clusters</a><a href="#accounts">Accounts</a><a href="#caveats">Caveats</a></nav>
 <section class="summary">${e.summary.map((p) => `<p>${prose(p)}</p>`).join("")}${takeaways}</section>
-${leadSection(d, e)}${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
+${leadSection(d, e)}${workspaceSection(d, e)}${natureSection(d, e)}${round5Section(d, e)}${round7Section(d, e)}${stanceSection(d, e)}${methodsSection(d, e)}${roundsSection(d)}${policySection(d, e)}${dawkinsSection(d, e)}${politicsSection(d, e)}${neuroSection(d, e)}${modelsSection(d, e)}${confidenceSection(d, e)}${pairSection(d, e)}${clustersSection(d, e)}${accountsSection(d, e)}${caveatsSection(d, e)}
 <footer><dl>
 <dt>Data</dt><dd>${link(`${REPO_URL}/tree/main/data`, "Complete data on GitHub")}: label files, hand labels, write-ups, and the corpus and collection notes (${link(`${REPO_URL}#corpus`, "README")}).</dd>
 <dt>Classification</dt><dd>Done offline on the analysis box (embeddinggemma-2, Jev, d1-ultra and Decider via AI Gateway, hand labels) and committed to the repo. The rendering agent only writes prose around the committed numbers.</dd>

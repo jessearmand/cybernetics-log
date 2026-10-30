@@ -190,3 +190,30 @@ test("round 5: data built before the outlier hand labels still renders", () => {
   assert.ok(!html.includes("outlier posts, post by post"));
   assert.ok(!html.includes("undefined"));
 });
+
+test("round 7: tables and lists are folded on mobile, the key findings and data links stay visible", () => {
+  const html = renderPage(discourse, PLACEHOLDER_EDITORIAL, meta);
+  const s = sectionHtml(html, "round7");
+  const r = discourse.round7;
+  assert.ok(html.indexOf('<section id="round5"') < html.indexOf('<section id="round7"'));
+  assert.ok(html.includes('<a href="#round7">Round 7</a>'));
+  for (const l of ["Hand-label scores, every model", "Posts a model called applied", "Round 7 stance, every model", "Round 7 caveats"]) assert.ok(s.includes(`<summary><h3 class="flabel">${esc(l)}</h3>`), l);
+  assert.ok(!/<details class="fold" open/.test(s));
+  const visible = withoutFolds(s);
+  assert.ok(!/<li[ >]/.test(visible), "no bullet outside a fold");
+  const text = visible.replace(/<\/?b>/g, "");
+  for (const t of [r.new_models.agreement_text, r.new_models.shared_text, r.new_models.joey_text, r.new_models.comparability, r.x_set.headline, r.x_set.seeker_text]) assert.ok(text.includes(esc(t)), t);
+  assert.ok(visible.includes("<b>No post in this set describes applying a stance on AI consciousness to a product decision.</b>"));
+  for (const a of r.x_set.applied) assert.ok(!visible.includes(`@${esc(a.username)}</b>`), `@${a.username} is inside the fold`);
+  for (const f of ["posts_r7.csv", "labels_r7.csv", "model_vs_seeker_r7_x.csv", "applied_candidates_r7_x.csv"]) assert.ok(s.includes(`href="https://github.com/jessearmand/cybernetics-log/blob/main/data/${f}"`), f);
+  assert.ok(!/\.csv/.test(s.replace(/href="[^"]*"/g, "")), "no file names in the page text");
+});
+
+test("round 7: data built before round 7 still renders", () => {
+  const d = structuredClone(discourse) as Record<string, unknown>;
+  delete d.round7;
+  const html = renderPage(d as unknown as typeof discourse, PLACEHOLDER_EDITORIAL, meta);
+  assert.ok(!html.includes('id="round7"'));
+  assert.ok(!html.includes("#round7"));
+  assert.ok(!html.includes("undefined"));
+});

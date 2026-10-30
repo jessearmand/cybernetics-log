@@ -71,11 +71,20 @@ data/
   hand_label_candidates_r5_6.csv  posts where GPT-6 Luna disagreed with both other models (the selection for the next file)
   hand_labels_r5_6_openai.csv   6 hand labels on those posts (biased against GPT-6 Luna, as the first 26 are against the other two)
   round5_6.md                   rounds 5 and 6 write-up, checked against the CSVs by test/round5-6.test.ts
+  labels_r7.csv                 round 7: joey-1, elephant-1, mammoth-1 and Decision-1 on the round 5/6 posts (+ run_r7.csv cost and latency)
+  model_agreement_r7.csv        their agreement and Cohen's kappa with d1-ultra and Decider, per question and round
+  model_comparison_r7.csv       hand-label scores for all seven models (marked not comparable: no labelled subset is random)
+  posts_r7.csv                  round 7 X set: 79 on-topic posts (8–30 Oct) with Seeker labels (single-annotator reference, another bot)
+  labels_r7_x.csv               all seven models' stance and use answers on those posts (+ questions_r7.json, run_r7_x.csv)
+  model_vs_seeker_r7_x.csv      agreement with Seeker labels, kappa and confusion counts on the use question
+  model_agreement_r7_x.csv      pairwise agreement between the seven models (+ distribution_r7_x.csv)
+  applied_candidates_r7_x.csv   posts any model called applied, for a hand check
   gated_stance_r4b.md           gated stance-rule experiment (not used on the page) + gated_stance_r4b.csv, questions_r4b.json
   render-instruction.md         default render instruction
 scripts/
   build_discourse.py            box → data/ (recomputes every derivable number from the label files)
   sync-data.sh                  build + check + commit + push (push to main ⇒ deploy ⇒ re-render)
+  round7/                       round 7 runners and scorers (run on the box against AI Gateway)
   trigger-render.sh             manual re-render with an instruction (page-render deployment)
   sync-default-instruction.mjs  keeps the bundled default instruction in sync with the .md
 test/                           node:test suites (webhook, renderer, data consistency)
