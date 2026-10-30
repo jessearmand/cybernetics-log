@@ -1,11 +1,13 @@
 """Round 7: score extra decision models on the round 5/6 posts against d1-ultra, Decider and the hand labels.
 Reads raw answers directly. Writes labels_r7.csv, model_agreement_r7.csv, model_comparison_r7.csv, run_r7.csv to <outdir>.
-usage: python3 score_r7.py <hand_dir> <outdir> <model> [<model> ...]   (hand_dir holds hand_labels_r5.csv, hand_labels_r6.csv, hand_labels_r5_6_openai.csv)"""
+usage: python3 score_r7.py <outdir> <model> [<model> ...]
+The source tree (round5/, round6/ with posts, raw answers and hand labels) is $R7_SRC, or the parent of this script's directory."""
 import csv, json, os, sys
 from collections import Counter
 H = os.path.dirname(os.path.abspath(__file__))
-R5, R6 = os.path.join(H, '..', 'round5'), os.path.join(H, '..', 'round6')
-hand_dir, outdir, *models = sys.argv[1:]
+SRC = os.environ.get('R7_SRC') or os.path.join(H, '..')
+R5, R6 = os.path.join(SRC, 'round5'), os.path.join(SRC, 'round6')
+outdir, *models = sys.argv[1:]
 REF = {'d1': 'liquid/d1-ultra', 'pplx': 'perplexity/pplx-decider-v1.2'}
 QS = [('stance', 'core', 'stance', 'choice', 5), ('on_topic', 'core', 'on_topic', 'bool', 5), ('frame', 'framing', 'frame', 'choice', 5),
       ('policy', 'framing', 'policy_politics', 'bool', 5), ('claims_found', 'attribution', 'claims_found', 'bool', 5), ('stance4', 'stance4', 'stance', 'choice', 6)]
@@ -84,7 +86,7 @@ for m in models:
             ag = sum(x == y for x, y in zip(xa, xb))
             agree.append({'model': m, 'question': q, 'round': rnd, 'vs': REF[r], 'n': len(both), 'agree': ag, 'pct': pct(ag, len(both)), 'kappa': kappa(xa, xb)})
 
-rd = lambda f: list(csv.DictReader(open(os.path.join(hand_dir, f), encoding='utf-8')))
+rd = lambda f: list(csv.DictReader(open(os.path.join(R5 if f == 'hand_labels_r5.csv' else R6, f), encoding='utf-8')))
 hand5, hand6, hand_oa = rd('hand_labels_r5.csv'), rd('hand_labels_r6.csv'), rd('hand_labels_r5_6_openai.csv')
 hv = lambda h: 'reporting' if h['hand'] == 'skip' else h['hand']
 S3 = {'reject', 'curious', 'serious'}

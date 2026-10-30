@@ -26,7 +26,9 @@ from __future__ import annotations
 import csv
 import datetime as dt
 import json
+import os
 import shutil
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -893,21 +895,30 @@ R7_APPLIED_READING = {
 R7_PSYCHOSIS_QUERY = "prod_anthro"
 
 
-def r7_block(src7: Path) -> dict:
+def refresh_round7() -> None:
+    """Re-score round 7 from the source tree's raw answers into OUT, so the block below never reads stale output."""
+    env = {**os.environ, "R7_SRC": str(SRC)}
+    score = REPO / "scripts" / "round7"
+    subprocess.run([sys.executable, str(score / "score_r7.py"), str(OUT), "openai/gpt-6-luna-decisions", *R7_NEW], check=True, env=env, stdout=subprocess.DEVNULL)
+    subprocess.run([sys.executable, str(score / "score_r7x.py"), str(OUT)], check=True, env=env, stdout=subprocess.DEVNULL)
+    shutil.copyfile(SRC / "round7" / "questions_r7.json", OUT / "questions_r7.json")
+
+
+def r7_block(src7: Path, rows5: list, rows6: list, hand5: list, hand6: list, hand_oa: list, agr56: list) -> dict:
     rd = lambda name: list(csv.DictReader(open(OUT / name, newline="", encoding="utf-8")))
-    hand = rd("hand_labels_r5.csv") + rd("hand_labels_r6.csv") + rd("hand_labels_r5_6_openai.csv")
-    L5, L6, L7 = {r["id"]: r for r in rd("labels_r5.csv")}, {r["id"]: r for r in rd("labels_r6.csv")}, {r["id"]: r for r in rd("labels_r7.csv")}
+    hand = hand5 + hand6 + hand_oa
+    L5, L6, L7 = {r["id"]: r for r in rows5}, {r["id"]: r for r in rows6}, {r["id"]: r for r in rd("labels_r7.csv")}
     old = {"liquid/d1-ultra": "d1", "perplexity/pplx-decider-v1.2": "pplx", "openai/gpt-6-luna-decisions": "oa"}
     def stance(i, m, q):
         return (L5 if q == "stance" else L6)[i][f"{old[m]}_{q}"] if m in old else L7[i][f"{m}:{q}"]
-    agr56 = rd("model_agreement_r5_6.csv"); agr7 = rd("model_agreement_r7.csv")
+    agr7 = rd("model_agreement_r7.csv")
     def pair(m, ref, q):
         if m in old:
             a, b = old[m], old[ref]
             row = next(r for r in agr56 if r["question"] == q and r["pair"] in (f"{a}/{b}", f"{b}/{a}"))
         else:
             row = next(r for r in agr7 if r["model"] == m and r["question"] == q and r["vs"] == ref)
-        return {"agree": int(row["agree"]), "n": int(row["n"]), "kappa": float(row["kappa"]) if row["kappa"] else None}
+        return {"agree": int(row["agree"]), "n": int(row["n"]), "kappa": float(row["kappa"]) if row["kappa"] not in ("", None) else None}
     D1, PX = "liquid/d1-ultra", "perplexity/pplx-decider-v1.2"
     agreement = {q: [{"model": m, "name": R7_NAMES[m], "vs_d1": pair(m, D1, q), "vs_pplx": pair(m, PX, q)} for m in ["openai/gpt-6-luna-decisions", *R7_NEW]]
                  for q in ["stance4", "stance"]}
@@ -915,7 +926,7 @@ def r7_block(src7: Path) -> dict:
     # Shared mistakes: on hand-labelled posts where d1-ultra is wrong, how often does each model give d1-ultra's answer?
     S3 = {"reject", "curious", "serious"}
     # Round 5 is scored, as before, only on labels with a three-way option from the round 5 hand check and the outlier set.
-    hand5x = rd("hand_labels_r5.csv") + rd("hand_labels_r5_6_openai.csv")
+    hand5x = hand5 + hand_oa
     sets = {"stance4": [(h["id"], h["hand"]) for h in hand if h["hand"] != "skip"], "stance": [(h["id"], h["hand"]) for h in hand5x if h["hand"] in S3]}
     shared = {}
     for q, S in sets.items():
@@ -1116,6 +1127,7 @@ def main() -> None:
     oa_slug = R5_EXTRA["oa"].replace("/", "_")
     raw_oa = [[json.loads(l) for l in open(d / "raw" / f)] for d, f in [(r5_dir, f"{g}_{oa_slug}.jsonl") for g in ["core", "framing", "attribution"]] + [(r6_dir, f"stance4_{oa_slug}.jsonl")]]
     third, agreement56, cands56, comparison56 = third_model_block(rows5, rows6, hand5, hand6, raw_oa, hand_oa)
+    refresh_round7()
     users1 = usernames
     users2 = {p["username"] for p in posts2}
     users3 = {p["username"] for p in posts3}
@@ -1296,7 +1308,7 @@ def main() -> None:
         "workspace_paper": {**WORKSPACE, "posts": sum(p["flashpoint"] == "anthropic_gwt" for p in posts5)},
         "nature_comment": {**NATURE, "posts": sum(p["flashpoint"] in ("nature_search", "seth_replies", "nature_quotes", "seth_quotes") for p in posts5)},
         "round5": r5_block(rows5, hand5, rows6, hand6, posts5, users5, len(users5 & ((users1 | users2 | users3 | users4) - {"grok"})), cost5, cost6, third),
-        "round7": r7_block(SRC / "round7"),
+        "round7": r7_block(SRC / "round7", rows5, rows6, hand5, hand6, hand_oa, agreement56),
         "model_comparison": model_comparison_block(cmp_, tsao_off, sum(v == "R" for v in hand.values())),
         "key_accounts_round4": {
             "note": "Notable round-4 accounts, described from reading each post. Jev hybrid (jev-1.14.0) shown for comparison.",

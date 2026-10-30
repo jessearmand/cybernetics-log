@@ -59,6 +59,7 @@ test("round 7: shared mistakes — on hand-labelled posts d1-ultra gets wrong, h
     assert.equal(N.shared[q].d1_wrong, wrong.length);
     for (const m of N.shared[q].models) assert.equal(m.same_as_d1, wrong.filter((i) => stance(i, m.model, q) === stance(i, D1, q)).length, `${q} ${m.model}`);
   }
+  assert.deepEqual(N.shared.stance.models.map((m) => m.model), N.shared.stance4.models.map((m) => m.model), "every model has a round 5 count");
   assert.deepEqual([N.shared.stance4.labelled, N.shared.stance4.d1_wrong], [21, 13]);
   const same = (m: string) => N.shared.stance4.models.find((x) => x.model === m)!.same_as_d1;
   assert.deepEqual(["microsoft/microsoft-decision-1", "baseten/elephant-1", "baseten/mammoth-1"].map(same), [10, 9, 7]);

@@ -1,11 +1,11 @@
 """Round 7 X set: score seven decision models on the 79 on-topic posts.
 'use' is compared with Seeker labels (a single-annotator reference from another bot, not Jesse's hand labels);
 stance4 has no reference labels, so only model-vs-model agreement and distributions.
-usage: python3 score_r7x.py <outdir>   (reads posts_r7.jsonl and raw/ next to this script)"""
+usage: python3 score_r7x.py <outdir>   (reads posts_r7.jsonl and raw/ from $R7_SRC/round7, or next to this script)"""
 import csv, json, os, sys
 from collections import Counter
 from itertools import combinations
-H = os.path.dirname(os.path.abspath(__file__))
+H = os.path.join(os.environ['R7_SRC'], 'round7') if os.environ.get('R7_SRC') else os.path.dirname(os.path.abspath(__file__))
 out = sys.argv[1]
 MODELS = {'d1': 'liquid/d1-ultra', 'pplx': 'perplexity/pplx-decider-v1.2', 'oa': 'openai/gpt-6-luna-decisions', 'joey': 'baseten/joey-1',
           'elephant': 'baseten/elephant-1', 'mammoth': 'baseten/mammoth-1', 'msd1': 'microsoft/microsoft-decision-1'}
