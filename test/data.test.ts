@@ -159,3 +159,11 @@ test("data: Sacks spotlight carries the study note; model comparison covers thre
   const pub = JSON.stringify([discourse.politics_spotlight, discourse.sebo, discourse.lead_tsao, discourse.model_comparison, discourse.round4_framing, discourse.key_accounts_round4, discourse.workspace_paper, discourse.nature_comment, discourse.round5]);
   for (const bad of ["jev_labels", "posts_r4", "questions_r4", ".csv", ".json", "SKILL"]) assert.ok(!pub.includes(bad), bad);
 });
+
+test("data: the instruction's page-layout rules name no specific round", () => {
+  const md = readFileSync(new URL("../data/render-instruction.md", import.meta.url), "utf8");
+  const layout = md.slice(md.indexOf("## Page layout"), md.indexOf("\n## ", md.indexOf("## Page layout") + 1));
+  assert.ok(layout.length > 0);
+  assert.doesNotMatch(layout, /\bround \d/i, "say 'the latest round' so a new round needs no instruction edit");
+  assert.doesNotMatch(md, /^## .*`\/`/m, "no round section heading should claim the home page");
+});

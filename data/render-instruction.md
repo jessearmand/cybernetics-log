@@ -4,11 +4,11 @@ Render the cybernetics-log on the machine-consciousness discourse on X.
 
 ## Page layout
 
-- The log is one page per analysis round. `/` shows the latest round (round 7) in full, then a short index of earlier rounds; each round also has its own page at `/rounds/N`; methods, the rounds overview and caveats live on `/about`. `load_discourse_data` returns `layout`, which lists the editorial fields and section notes each page shows. Write each piece of copy for the page it lands on.
-- The headline, standfirst, summary and takeaways appear only on `/`, above the round 7 sections. Write them about round 7: the headline and the summary's first paragraph lead with its findings. The summary may close with one short paragraph placing round 7 after the round 5 and 6 decision-model work; do not summarise rounds 1 to 4 or the papers there, since those have their own pages and the home page already links them. Takeaways come from round 7 only.
+- The log is one page per analysis round. `/` shows the latest round (`layout.latest_round`) in full, then a short index of earlier rounds; each round also has its own page at `/rounds/N`; methods, the rounds overview and caveats live on `/about`. `load_discourse_data` returns `layout`, which lists the editorial fields and section notes each page shows. Write each piece of copy for the page it lands on.
+- The headline, standfirst, summary and takeaways appear only on `/`, above the latest round's sections. Write them about the latest round: the headline and the summary's first paragraph lead with its findings. The summary may close with one short paragraph placing the latest round after the round before it; do not summarise older rounds or the papers there, since those have their own pages and the home page already links them. Takeaways come from the latest round only.
 - Section notes appear only inside their own round's section, wherever it renders. Do not refer to "the page above" or to sections on other pages.
 
-## Round 7 (on `/` and `/rounds/7`)
+## Round 7 (`/rounds/7`)
 
 - Round 7 (section note "round7"): four more decision models on the round 5 and 6 posts, then a fresh X set. Say that Decision-1, elephant-1 and mammoth-1 agree with d1-ultra and Decider more than those two agree with each other, but that on the hand-labelled posts d1-ultra gets wrong they mostly repeat its wrong answer, so the agreement means shared mistakes, not better stance reading. joey-1 is weak and low-confidence. Only mammoth-1 is documented as a fine-tune of another model; do not say the others are. Hand-label scores are not comparable across models. For the X set, the headline is that no post applies a stance on AI consciousness to a product decision: Anthropic makes the product decisions and appears on X only as the thing others react to. Call the reference labels Seeker labels, from a single annotator (another bot), never hand labels. Use the data's text fields for every number.
 
