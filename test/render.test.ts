@@ -209,6 +209,17 @@ test("round 7: tables and lists are folded on mobile, the key findings and data 
   assert.ok(!/\.csv/.test(s.replace(/href="[^"]*"/g, "")), "no file names in the page text");
 });
 
+test("round 7: the bold lead stops at the first sentence, not at an abbreviation or a decimal", () => {
+  const d = structuredClone(discourse) as typeof discourse;
+  const n = d.round7.new_models as { shared_text: string };
+  const x = d.round7.x_set as { headline: string };
+  n.shared_text = "e.g. d1-ultra is wrong on 13. Decision-1 repeats that answer.";
+  x.headline = "P 0.41. Seven posts were called applied, each by one model. The rest were not.";
+  const html = renderPage(d, PLACEHOLDER_EDITORIAL, meta);
+  assert.ok(html.includes("<b>e.g. d1-ultra is wrong on 13.</b> Decision-1 repeats that answer."));
+  assert.ok(html.includes("<b>P 0.41. Seven posts were called applied, each by one model.</b> The rest were not."));
+});
+
 test("round 7: data built before round 7 still renders", () => {
   const d = structuredClone(discourse) as Record<string, unknown>;
   delete d.round7;

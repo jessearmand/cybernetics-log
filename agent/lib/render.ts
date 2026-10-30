@@ -456,8 +456,18 @@ ${fold("Caveats", r.caveats, { list: "caveats" })}</section>`;
 
 /** Agreement cell: "60 of 69" with kappa underneath. */
 const agreeCell = (a: { agree: number; n: number; kappa: number | null } | null) => (a ? `<td>${a.agree} of ${a.n}${a.kappa == null ? "" : `<br><span class="fol">κ ${a.kappa}</span>`}</td>` : "<td>—</td>");
+/** "." that does not end a sentence: an abbreviation ("e.g. ", "Dr. ") or a decimal ("P 0.41. "). */
+const NOT_A_SENTENCE = /(?:^|\s)(?:e\.g|i\.e|vs|Dr|Mr|Mrs|Ms|U\.S|U\.K|[A-Z])\.$|\d+\.\d+\.$/;
 /** Bolds the first sentence of a finding so the key point reads first on a phone. */
-const leadBold = (t: string) => { const i = t.indexOf(". "); return i < 0 ? `<b>${esc(t)}</b>` : `<b>${esc(t.slice(0, i + 1))}</b>${esc(t.slice(i + 1))}`; };
+const leadBold = (t: string) => {
+  let from = 0;
+  for (;;) {
+    const i = t.indexOf(". ", from);
+    if (i < 0) return `<b>${esc(t)}</b>`;
+    if (!NOT_A_SENTENCE.test(t.slice(0, i + 1))) return `<b>${esc(t.slice(0, i + 1))}</b>${esc(t.slice(i + 1))}`;
+    from = i + 1;
+  }
+};
 const DATA_BLOB = `https://github.com/jessearmand/cybernetics-log/blob/main/data`;
 
 /** Round 7: four more decision models on the round 5/6 posts, then a fresh X set compared with Seeker labels. Absent from data built before round 7. */
